@@ -107,14 +107,8 @@ try {
             $dt = [datetime]$_.TIMESTAMP
             [pscustomobject]@{
                 Date = $dt.Date
-				$avgC = $_.SOILTMP5AVG -as [double]
-				$minC = $_.SOILTMP5MIN -as [double]
-
-				# If either is missing/non-numeric, skip the row (prevents bogus 0.00 values)
-				if ($null -eq $avgC -or $null -eq $minC) { return }
-
-				AvgF = [Math]::Round((Convert-CtoF $avgC), 2)
-				MinF = [Math]::Round((Convert-CtoF $minC), 2)
+                AvgF = [double]($_.SOILTMP5AVG -as [double])
+                MinF = [double]($_.SOILTMP5MIN -as [double])
             }
         } |
         Sort-Object Date

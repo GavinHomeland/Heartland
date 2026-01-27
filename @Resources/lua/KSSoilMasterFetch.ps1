@@ -27,6 +27,12 @@ param(
     [string]$LastAttemptTxt
 )
 
+# --- Unit conversion: Mesonet values are coming back in Celsius; UI expects Fahrenheit.
+function Convert-CtoF {
+    param([double]$C)
+    return ($C * 9.0 / 5.0) + 32.0
+}
+
 # --- (Optional) "I ran" marker: KEEP THIS AFTER param()
 try {
     $ranPath = Join-Path (Split-Path -Parent $LastAttemptTxt) 'ks_soiltemp_ps_ran.txt'
@@ -101,8 +107,14 @@ try {
             $dt = [datetime]$_.TIMESTAMP
             [pscustomobject]@{
                 Date = $dt.Date
-                AvgF = [double]($_.SOILTMP5AVG -as [double])
-                MinF = [double]($_.SOILTMP5MIN -as [double])
+				$avgC = $_.SOILTMP5AVG -as [double]
+				$minC = $_.SOILTMP5MIN -as [double]
+
+				# If either is missing/non-numeric, skip the row (prevents bogus 0.00 values)
+				if ($null -eq $avgC -or $null -eq $minC) { return }
+
+				AvgF = [Math]::Round((Convert-CtoF $avgC), 2)
+				MinF = [Math]::Round((Convert-CtoF $minC), 2)
             }
         } |
         Sort-Object Date

@@ -1,44 +1,37 @@
 # ============================
 # KSSoilMasterFetch.ps1
 # Downloads Mesonet daily soil data and writes:
-#  - Raw CSV (as downloaded)
-#  - Master CSV: date,avgF,minF   (last MasterDays)
-#  - Rolling CSV: date,min7F,avg7F (last RollingDays; 7-day window)
-#  - LastAttemptTxt: OK/ERR timestamp + message
+# - Raw CSV (as downloaded)
+# - Master CSV: date,avgF,minF (last MasterDays)
+# - Rolling CSV: date,min7F,avg7F (last RollingDays; 7-day window)
+# - LastAttemptTxt: OK/ERR timestamp + message
 # ============================
 
 [CmdletBinding()]
 param(
-    [Parameter(Mandatory=$true)]
+    [Parameter(Mandatory = $true)]
     [string]$Station,
 
     [int]$MasterDays = 180,
     [int]$RollingDays = 45,
 
-    [Parameter(Mandatory=$true)]
+    [Parameter(Mandatory = $true)]
     [string]$MasterCsv,
 
-    [Parameter(Mandatory=$true)]
+    [Parameter(Mandatory = $true)]
     [string]$RollingCsv,
 
     [string]$RawCsv = "",
 
-    [Parameter(Mandatory=$true)]
+    [Parameter(Mandatory = $true)]
     [string]$LastAttemptTxt
 )
 
-# --- Unit conversion: Mesonet values are coming back in Celsius; UI expects Fahrenheit.
-function Convert-CtoF {
-    param([double]$C)
-    return ($C * 9.0 / 5.0) + 32.0
-}
+# ==== RUN START: KSSoilMasterFetch ====
+$ErrorActionPreference = 'Stop'
+$ProgressPreference    = 'SilentlyContinue'
 
-# --- (Optional) "I ran" marker: KEEP THIS AFTER param()
-try {
-    $ranPath = Join-Path (Split-Path -Parent $LastAttemptTxt) 'ks_soiltemp_ps_ran.txt'
-    Add-Content -LiteralPath $ranPath ("RAN " + (Get-Date -Format s))
-} catch { }
-
+# --- UTF-8 (no BOM) output
 $enc = [System.Text.UTF8Encoding]::new($false)
 
 function Write-TextFileUtf8NoBom([string]$Path, [string]$Text) {
@@ -54,30 +47,45 @@ function Write-LastAttempt([string]$Status, [string]$Message) {
     Write-TextFileUtf8NoBom $LastAttemptTxt ("{0} {1} {2}" -f $Status, $stamp, $Message)
 }
 
-try {
-    $ErrorActionPreference = 'Stop'
-    $ProgressPreference = 'SilentlyContinue'
+function Convert-CtoF([double]$C) {
+    return ($C * 9.0 / 5.0) + 32.0
+}
 
+function Parse-InvDoubleOrNull([string]$s) {
+    if ([string]::IsNullOrWhiteSpace($s)) { return $null }
+    try {
+        return [double]::Parse($s, [Globalization.CultureInfo]::InvariantCulture)
+    } catch {
+        return $null
+    }
+}
+
+# --- Optional "I ran" marker (writes next to LastAttemptTxt)
+try {
+    $ranPath = Join-Path (Split-Path -Parent $LastAttemptTxt) 'ks_soiltemp_ps_ran.txt'
+    Add-Content -LiteralPath $ranPath ("RAN " + (Get-Date -Format s))
+} catch { }
+
+try {
     # ---- Compute fetch window (pad so rolling windows exist)
-    $needDays = [Math]::Max($MasterDays, ($RollingDays + 6))
+    $needDays  = [Math]::Max($MasterDays, ($RollingDays + 6))
     $fetchDays = $needDays + 7
 
     $tEnd   = (Get-Date).Date.AddDays(1)
     $tStart = $tEnd.AddDays(-$fetchDays)
 
     $t_start = $tStart.ToString('yyyyMMdd') + '000000'
-    $t_end   = $tEnd.ToString('yyyyMMdd') + '000000'
+    $t_end   = $tEnd.ToString('yyyyMMdd')   + '000000'
 
     $base = 'http://mesonet.k-state.edu/rest/stationdata/'
     $vars = 'SOILTMP5AVG,SOILTMP5MIN'
-    $url  = $base + '?stn=' + [uri]::EscapeDataString($Station) +
-            '&int=day&t_start=' + $t_start +
-            '&t_end=' + $t_end +
-            '&vars=' + $vars
 
-    # ---- Raw file path (default inside DownloadFile next to master)
+    $url = $base + '?stn=' + [uri]::EscapeDataString($Station) +
+          '&int=day&t_start=' + $t_start + '&t_end=' + $t_end + '&vars=' + $vars
+
+    # ---- Raw file path default (DownloadFile next to master)
     if ([string]::IsNullOrWhiteSpace($RawCsv)) {
-        $root = Split-Path -Parent $MasterCsv
+        $root  = Split-Path -Parent $MasterCsv
         $RawCsv = Join-Path $root 'DownloadFile\ks_soiltemp_2in_raw.csv'
     }
 
@@ -87,7 +95,7 @@ try {
         New-Item -ItemType Directory -Path $rawDir -Force | Out-Null
     }
 
-    # ---- Download
+    # ---- Download raw
     Invoke-WebRequest -Uri $url -UseBasicParsing -OutFile $RawCsv -Headers @{
         'User-Agent' = 'Mozilla/5.0'
         'Accept'     = 'text/csv,*/*'
@@ -99,16 +107,20 @@ try {
 
     $raw = Import-Csv -LiteralPath $RawCsv
 
-    # Normalize rows -> Date, AvgF, MinF
-    $rows =
-        $raw |
+    # ---- Normalize rows -> Date, AvgF, MinF
+    $rows = $raw |
         Where-Object { $_.TIMESTAMP } |
         ForEach-Object {
-            $dt = [datetime]$_.TIMESTAMP
+            $dt   = [datetime]$_.TIMESTAMP
+
+            $avgC = Parse-InvDoubleOrNull $_.SOILTMP5AVG
+            $minC = Parse-InvDoubleOrNull $_.SOILTMP5MIN
+            if ($null -eq $avgC -or $null -eq $minC) { return }
+
             [pscustomobject]@{
                 Date = $dt.Date
-                AvgF = [double]($_.SOILTMP5AVG -as [double])
-                MinF = [double]($_.SOILTMP5MIN -as [double])
+                AvgF = Convert-CtoF $avgC
+                MinF = Convert-CtoF $minC
             }
         } |
         Sort-Object Date
@@ -123,7 +135,8 @@ try {
     $masterLines = New-Object System.Collections.Generic.List[string]
     $masterLines.Add('date,avgF,minF') | Out-Null
     foreach ($r in $master) {
-        $masterLines.Add(('{0},{1},{2}' -f
+        $masterLines.Add((
+            '{0},{1},{2}' -f
             $r.Date.ToString('yyyy-MM-dd'),
             ([math]::Round($r.AvgF,2)).ToString('0.##', [Globalization.CultureInfo]::InvariantCulture),
             ([math]::Round($r.MinF,2)).ToString('0.##', [Globalization.CultureInfo]::InvariantCulture)
@@ -134,7 +147,7 @@ try {
     # ---- ROLLING: compute 7-day window, then take last RollingDays
     $rollAll = New-Object System.Collections.Generic.List[object]
     for ($i = 6; $i -lt $master.Count; $i++) {
-        $win = $master[($i-6)..$i]
+        $win  = $master[($i-6)..$i]
         $min7 = ($win | Measure-Object -Property MinF -Minimum).Minimum
         $avg7 = ($win | Measure-Object -Property AvgF -Average).Average
         $rollAll.Add([pscustomobject]@{
@@ -149,7 +162,8 @@ try {
     $rollLines = New-Object System.Collections.Generic.List[string]
     $rollLines.Add('date,min7F,avg7F') | Out-Null
     foreach ($r in $roll) {
-        $rollLines.Add(('{0},{1},{2}' -f
+        $rollLines.Add((
+            '{0},{1},{2}' -f
             $r.Date.ToString('yyyy-MM-dd'),
             $r.Min7F.ToString('0.##', [Globalization.CultureInfo]::InvariantCulture),
             $r.Avg7F.ToString('0.##', [Globalization.CultureInfo]::InvariantCulture)

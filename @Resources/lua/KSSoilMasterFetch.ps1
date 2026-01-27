@@ -1,19 +1,11 @@
-<#
-============================================================
-KSSoilDailyBuild.ps1
-Kansas Mesonet (stationdata) daily soil temps at 5cm (~2")
-- Downloads N days of daily data (avg + min)
-- Writes MASTER CSV: date,avgF,minF
-- Writes ROLLING CSV: date,min7F,avg7F
-  * min7F = rolling 7-day minimum of daily minF
-  * avg7F = rolling 7-day average of daily avgF
-- Keeps only last RollingDays points in rolling file
-- Writes last-attempt/status TXT (optional)
-
-UTF-8 (no BOM).
-============================================================
-#>
-Add-Content -LiteralPath "$PSScriptRoot\..\..\ks_soiltemp_ps_ran.txt" ("RAN " + (Get-Date -Format s))
+# ============================
+# KSSoilMasterFetch.ps1
+# Downloads Mesonet daily soil data and writes:
+#  - Raw CSV (as downloaded)
+#  - Master CSV: date,avgF,minF   (last MasterDays)
+#  - Rolling CSV: date,min7F,avg7F (last RollingDays; 7-day window)
+#  - LastAttemptTxt: OK/ERR timestamp + message
+# ============================
 
 [CmdletBinding()]
 param(
@@ -30,145 +22,140 @@ param(
     [string]$RollingCsv,
 
     [string]$RawCsv = "",
-    [string]$LastAttemptTxt = ""
+
+    [Parameter(Mandatory=$true)]
+    [string]$LastAttemptTxt
 )
 
-$ErrorActionPreference = 'Stop'
-$ProgressPreference    = 'SilentlyContinue'
-$Utf8NoBom = New-Object System.Text.UTF8Encoding($false)
-[Console]::OutputEncoding = $Utf8NoBom
+# --- (Optional) "I ran" marker: KEEP THIS AFTER param()
+try {
+    $ranPath = Join-Path (Split-Path -Parent $LastAttemptTxt) 'ks_soiltemp_ps_ran.txt'
+    Add-Content -LiteralPath $ranPath ("RAN " + (Get-Date -Format s))
+} catch { }
 
-function Ensure-Dir([string]$path){
-    $d = [IO.Path]::GetDirectoryName($path)
-    if ($d -and -not (Test-Path $d)) { New-Item -ItemType Directory -Path $d -Force | Out-Null }
+$enc = [System.Text.UTF8Encoding]::new($false)
+
+function Write-TextFileUtf8NoBom([string]$Path, [string]$Text) {
+    $dir = Split-Path -Parent $Path
+    if ($dir -and -not (Test-Path -LiteralPath $dir)) {
+        New-Item -ItemType Directory -Path $dir -Force | Out-Null
+    }
+    [System.IO.File]::WriteAllText($Path, $Text, $enc)
 }
 
-function CToF([double]$c){ return ($c * 9.0 / 5.0) + 32.0 }
-
-function Write-Status([string]$msg){
-    if ([string]::IsNullOrWhiteSpace($LastAttemptTxt)) { return }
-    Ensure-Dir $LastAttemptTxt
-    [IO.File]::WriteAllText($LastAttemptTxt, $msg + "`r`n", $Utf8NoBom)
+function Write-LastAttempt([string]$Status, [string]$Message) {
+    $stamp = (Get-Date -Format s)
+    Write-TextFileUtf8NoBom $LastAttemptTxt ("{0} {1} {2}" -f $Status, $stamp, $Message)
 }
 
 try {
-    Ensure-Dir $MasterCsv
-    Ensure-Dir $RollingCsv
-    if ($RawCsv) { Ensure-Dir $RawCsv }
+    $ErrorActionPreference = 'Stop'
+    $ProgressPreference = 'SilentlyContinue'
 
-    # ---- Build proven Mesonet URL (concat to avoid "$base?stn" interpolation bug)
-    $base = 'http://mesonet.k-state.edu/rest/stationdata/'
-    $tEnd   = (Get-Date).Date.AddDays(1)  # tomorrow 00:00
-    $tStart = $tEnd.AddDays(-[math]::Abs($MasterDays))
+    # ---- Compute fetch window (pad so rolling windows exist)
+    $needDays = [Math]::Max($MasterDays, ($RollingDays + 6))
+    $fetchDays = $needDays + 7
+
+    $tEnd   = (Get-Date).Date.AddDays(1)
+    $tStart = $tEnd.AddDays(-$fetchDays)
+
     $t_start = $tStart.ToString('yyyyMMdd') + '000000'
     $t_end   = $tEnd.ToString('yyyyMMdd') + '000000'
+
+    $base = 'http://mesonet.k-state.edu/rest/stationdata/'
     $vars = 'SOILTMP5AVG,SOILTMP5MIN'
+    $url  = $base + '?stn=' + [uri]::EscapeDataString($Station) +
+            '&int=day&t_start=' + $t_start +
+            '&t_end=' + $t_end +
+            '&vars=' + $vars
 
-    $url =
-        $base +
-        '?stn='     + [uri]::EscapeDataString($Station) +
-        '&int=day' +
-        '&t_start=' + $t_start +
-        '&t_end='   + $t_end +
-        '&vars='    + $vars
+    # ---- Raw file path (default inside DownloadFile next to master)
+    if ([string]::IsNullOrWhiteSpace($RawCsv)) {
+        $root = Split-Path -Parent $MasterCsv
+        $RawCsv = Join-Path $root 'DownloadFile\ks_soiltemp_2in_raw.csv'
+    }
 
-    Write-Status ("TRY {0} station={1} days={2} url={3}" -f (Get-Date -Format s), $Station, $MasterDays, $url)
+    # Ensure RawCsv directory exists
+    $rawDir = Split-Path -Parent $RawCsv
+    if ($rawDir -and -not (Test-Path -LiteralPath $rawDir)) {
+        New-Item -ItemType Directory -Path $rawDir -Force | Out-Null
+    }
 
     # ---- Download
-    $resp = Invoke-WebRequest -Uri $url -UseBasicParsing -Headers @{
+    Invoke-WebRequest -Uri $url -UseBasicParsing -OutFile $RawCsv -Headers @{
         'User-Agent' = 'Mozilla/5.0'
         'Accept'     = 'text/csv,*/*'
+    } | Out-Null
+
+    if (-not (Test-Path -LiteralPath $RawCsv) -or (Get-Item $RawCsv).Length -lt 100) {
+        throw "Downloaded CSV is missing or too small."
     }
 
-    $csvText = $resp.Content
-    if ([string]::IsNullOrWhiteSpace($csvText) -or $csvText.Length -lt 50) {
-        throw "Download returned empty/short content (len=$($csvText.Length))."
+    $raw = Import-Csv -LiteralPath $RawCsv
+
+    # Normalize rows -> Date, AvgF, MinF
+    $rows =
+        $raw |
+        Where-Object { $_.TIMESTAMP } |
+        ForEach-Object {
+            $dt = [datetime]$_.TIMESTAMP
+            [pscustomobject]@{
+                Date = $dt.Date
+                AvgF = [double]($_.SOILTMP5AVG -as [double])
+                MinF = [double]($_.SOILTMP5MIN -as [double])
+            }
+        } |
+        Sort-Object Date
+
+    if (-not $rows -or $rows.Count -lt 10) {
+        throw "Not enough parsed rows from CSV."
     }
 
-    if ($RawCsv) {
-        [IO.File]::WriteAllText($RawCsv, $csvText, $Utf8NoBom)
-    }
-
-    # ---- Parse CSV to objects
-    $rows = $csvText | ConvertFrom-Csv
-    if (-not $rows -or $rows.Count -lt 1) {
-        throw "CSV parsed to zero rows."
-    }
-
-    # ---- MASTER: date,avgF,minF
-    $master = foreach ($r in $rows) {
-        $ts = [string]$r.TIMESTAMP
-        if ([string]::IsNullOrWhiteSpace($ts) -or $ts.Length -lt 10) { continue }
-
-        $date = $ts.Substring(0,10)
-
-        $avgC = $null
-        $minC = $null
-        if (-not [string]::IsNullOrWhiteSpace([string]$r.SOILTMP5AVG)) { $avgC = [double]$r.SOILTMP5AVG }
-        if (-not [string]::IsNullOrWhiteSpace([string]$r.SOILTMP5MIN)) { $minC = [double]$r.SOILTMP5MIN }
-        if ($avgC -eq $null -and $minC -eq $null) { continue }
-
-        [pscustomobject]@{
-            date = $date
-            avgF = if ($avgC -ne $null) { [math]::Round((CToF $avgC), 2) } else { $null }
-            minF = if ($minC -ne $null) { [math]::Round((CToF $minC), 2) } else { $null }
-        }
-    } | Sort-Object date
-
-    if (-not $master -or $master.Count -lt 1) {
-        throw "No usable rows after parsing."
-    }
+    # ---- MASTER: last MasterDays rows
+    $master = $rows | Select-Object -Last $MasterDays
 
     $masterLines = New-Object System.Collections.Generic.List[string]
-    $masterLines.Add('date,avgF,minF')
-    foreach ($m in $master) {
-        $a = if ($null -ne $m.avgF) { '{0:N2}' -f $m.avgF } else { '' }
-        $n = if ($null -ne $m.minF) { '{0:N2}' -f $m.minF } else { '' }
-        $masterLines.Add(("{0},{1},{2}" -f $m.date, $a, $n))
+    $masterLines.Add('date,avgF,minF') | Out-Null
+    foreach ($r in $master) {
+        $masterLines.Add(('{0},{1},{2}' -f
+            $r.Date.ToString('yyyy-MM-dd'),
+            ([math]::Round($r.AvgF,2)).ToString('0.##', [Globalization.CultureInfo]::InvariantCulture),
+            ([math]::Round($r.MinF,2)).ToString('0.##', [Globalization.CultureInfo]::InvariantCulture)
+        )) | Out-Null
     }
-    [IO.File]::WriteAllText($MasterCsv, ($masterLines -join "`r`n") + "`r`n", $Utf8NoBom)
+    Write-TextFileUtf8NoBom $MasterCsv ($masterLines -join "`n")
 
-    # ---- ROLLING: date,min7F,avg7F computed over the trailing 7-day window
-    $rollingAll = New-Object System.Collections.Generic.List[object]
-
-    for ($i=6; $i -lt $master.Count; $i++) {
-        $window = $master[($i-6)..$i]
-
-        $minWindow = $window | Where-Object { $null -ne $_.minF }
-        $avgWindow = $window | Where-Object { $null -ne $_.avgF }
-
-        if (-not $minWindow -or -not $avgWindow) { continue }
-
-        $min7 = ($minWindow | Measure-Object -Property minF -Minimum).Minimum
-        $avg7 = ($avgWindow | Measure-Object -Property avgF -Average).Average
-
-        $rollingAll.Add([pscustomobject]@{
-            date  = $master[$i].date
-            min7F = [math]::Round($min7, 2)
-            avg7F = [math]::Round($avg7, 2)
-        })
+    # ---- ROLLING: compute 7-day window, then take last RollingDays
+    $rollAll = New-Object System.Collections.Generic.List[object]
+    for ($i = 6; $i -lt $master.Count; $i++) {
+        $win = $master[($i-6)..$i]
+        $min7 = ($win | Measure-Object -Property MinF -Minimum).Minimum
+        $avg7 = ($win | Measure-Object -Property AvgF -Average).Average
+        $rollAll.Add([pscustomobject]@{
+            Date  = $master[$i].Date
+            Min7F = [math]::Round($min7, 2)
+            Avg7F = [math]::Round($avg7, 2)
+        }) | Out-Null
     }
 
-    $rolling = if ($rollingAll.Count -gt $RollingDays) {
-        $rollingAll | Select-Object -Last $RollingDays
-    } else {
-        $rollingAll
-    }
+    $roll = $rollAll | Select-Object -Last $RollingDays
 
     $rollLines = New-Object System.Collections.Generic.List[string]
-    $rollLines.Add('date,min7F,avg7F')
-    foreach ($r in $rolling) {
-        $rollLines.Add(("{0},{1:N2},{2:N2}" -f $r.date, $r.min7F, $r.avg7F))
+    $rollLines.Add('date,min7F,avg7F') | Out-Null
+    foreach ($r in $roll) {
+        $rollLines.Add(('{0},{1},{2}' -f
+            $r.Date.ToString('yyyy-MM-dd'),
+            $r.Min7F.ToString('0.##', [Globalization.CultureInfo]::InvariantCulture),
+            $r.Avg7F.ToString('0.##', [Globalization.CultureInfo]::InvariantCulture)
+        )) | Out-Null
     }
-    [IO.File]::WriteAllText($RollingCsv, ($rollLines -join "`r`n") + "`r`n", $Utf8NoBom)
+    Write-TextFileUtf8NoBom $RollingCsv ($rollLines -join "`n")
 
-    $lastDate = if ($rolling.Count -gt 0) { $rolling[-1].date } else { '' }
-    Write-Status ("OK {0} station={1} bytes={2} masterRows={3} rollRows={4} last={5}" -f (Get-Date -Format s), $Station, $csvText.Length, $master.Count, $rolling.Count, $lastDate)
-
-    "OK station=$Station bytes=$($csvText.Length) masterRows=$($master.Count) rollRows=$($rolling.Count) last=$lastDate"
+    Write-LastAttempt 'OK' ("url={0} raw={1} master={2} rolling={3}" -f $url,$RawCsv,$MasterCsv,$RollingCsv)
 }
 catch {
     $msg = $_.Exception.Message
-    Write-Status ("ERR {0} {1} station={2}" -f (Get-Date -Format s), $msg, $Station)
+    $msg = ($msg -replace '[\r\n]+',' ' -replace '[^\x20-\x7E]','?')
+    try { Write-LastAttempt 'ERR' $msg } catch { }
     throw
 }

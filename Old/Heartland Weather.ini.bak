@@ -1,0 +1,615 @@
+﻿; =================================================================================================
+; Heartland Weather.ini  (standalone, no Enigma dependencies)
+; Open-Meteo -> PowerShell fetch -> local files -> Rainmeter WebParser parses local files
+; Debug-first build (shows *actual* paths / file URLs / status / JSON head on the panel)
+; =================================================================================================
+
+
+; =================================================================================================
+; [Rainmeter]
+; =================================================================================================
+[Rainmeter]
+Update=1000
+AccurateText=1
+DynamicWindowSize=0
+Debug=2
+; IMPORTANT: Set #CurPathSlash# first, then fetch.
+OnRefreshAction=[!UpdateMeasure MeasureCurPathSlash][!CommandMeasure MeasureOM_FetchPS "Run"]
+
+
+; =================================================================================================
+; [Metadata]
+; NOTE: Rainmeter does NOT expand variables inside [Metadata]. Keep this static.
+; =================================================================================================
+[Metadata]
+Name=Heartland Weather
+Author=Chauncy
+Information=Standalone Open-Meteo weather panel for Kansas.
+Version=See Panel
+
+
+; =================================================================================================
+; [Variables]
+; =================================================================================================
+[Variables]
+W=620
+H=350
+Pad=16
+Round=14
+;   ############
+SkinVersion=3.0c
+;   ############
+City=Albert, KS
+Lat=38.35889
+Lon=-98.40119
+Timezone=auto
+
+OM_URL=https://api.open-meteo.com/v1/forecast?latitude=38.35889&longitude=-98.40119&current=temperature_2m,relative_humidity_2m,apparent_temperature,weather_code,pressure_msl,visibility,wind_speed_10m,wind_direction_10m&daily=temperature_2m_max,temperature_2m_min,weather_code,sunrise,sunset&timezone=auto&temperature_unit=fahrenheit&wind_speed_unit=mph
+OM_JSON=#CURRENTPATH#om.json
+OM_STATUS=#CURRENTPATH#om_status.txt
+
+; Runtime variable populated by [MeasureCurPathSlash]
+CurPathSlash=
+
+
+; =================================================================================================
+; [MeasureCurPathSlash] --- working... do not alter this droplet
+; Converts #CURRENTPATH# backslashes to slashes and stores runtime #CurPathSlash#.
+; =================================================================================================
+[MeasureCurPathSlash]
+Measure=String
+UpdateDivider=-1
+String=#CURRENTPATH#
+Substitute="\\":"/"
+DynamicVariables=1
+OnUpdateAction=[!SetVariable CurPathSlash "[MeasureCurPathSlash]"]
+
+
+; =================================================================================================
+; [MeasureOM_FetchPS] --- working... do not alter this droplet
+; Fetches JSON over HTTPS and writes TWO local files:
+;   #OM_JSON#   and   #OM_STATUS#
+; Then triggers updates of the local-reader measures.
+; =================================================================================================
+[MeasureOM_FetchPS]
+Measure=Plugin
+Plugin=RunCommand
+Program=powershell.exe
+UpdateDivider=-1
+DynamicVariables=1
+State=Hide
+Parameter=-NoProfile -ExecutionPolicy Bypass -Command ^
+"$ErrorActionPreference='Stop'; $ProgressPreference='SilentlyContinue'; ^
+[Console]::OutputEncoding=[Text.UTF8Encoding]::new($false); ^
+$u='#OM_URL#'; $p='#OM_JSON#'; $s='#OM_STATUS#'; $enc=[Text.UTF8Encoding]::new($false); ^
+try { ^
+  $resp=Invoke-WebRequest -UseBasicParsing -Uri $u -Headers @{ 'User-Agent'='Mozilla/5.0'; 'Accept'='application/json' }; ^
+  $j=$resp.Content; ^
+  [IO.File]::WriteAllText($p,$j,$enc); ^
+  $head=$j.Substring(0,[Math]::Min(160,$j.Length)); ^
+  $head=($head -replace '[\r\n]+',' ' -replace '[^\x20-\x7E]','?'); ^
+  $okJson=$true; try { $null=$j | ConvertFrom-Json } catch { $okJson=$false }; ^
+  $code=$resp.StatusCode; ^
+  $ct=$resp.Headers['Content-Type']; ^
+  $final=''; try { $final=$resp.BaseResponse.ResponseUri.AbsoluteUri } catch { $final='' }; ^
+  $line=('OK {0} code={1} ct={2} json={3} len={4} jsonPath={5} statusPath={6} finalUrl={7} head={8}' -f ^
+         (Get-Date -Format s),$code,$ct,$okJson,$j.Length,$p,$s,$final,$head); ^
+  [IO.File]::WriteAllText($s,$line,$enc); ^
+  Write-Output $head; ^
+} catch { ^
+  $stamp=(Get-Date -Format s); ^
+  $msg=$_.Exception.Message; ^
+  $msg=($msg -replace '[\r\n]+',' ' -replace '[^\x20-\x7E]','?'); ^
+  $line=('ERR {0} {1} url={2} jsonPath={3} statusPath={4}' -f $stamp,$msg,$u,$p,$s); ^
+  [IO.File]::WriteAllText($s,$line,$enc); ^
+  Write-Output ('FETCH ERROR: '+$msg); ^
+}"
+FinishAction=[!UpdateMeasure MeasureOM_Status][!UpdateMeasure MeasureOM_File]
+
+
+; =================================================================================================
+; [MeasureOM_Status] --- working... do not alter this droplet
+; Reads LOCAL status file using file:/// + #CurPathSlash#
+; =================================================================================================
+[MeasureOM_Status]
+Measure=Plugin
+Plugin=WebParser
+Group=OMParent
+DynamicVariables=1
+URL=file:///#CurPathSlash#om_status.txt
+RegExp=(?si)\A(.*)\z
+StringIndex=1
+Download=0
+ForceReload=1
+CodePage=65001
+
+
+; =================================================================================================
+; [MeasureOM_File] - This may be reading the wrong format somehow. It reads the file, but it's Chinese. 
+; might be the meter or something else. 
+; Reads LOCAL JSON file using file:/// + #CurPathSlash#
+; =================================================================================================
+[MeasureOM_File]
+Measure=Plugin
+Plugin=WebParser
+Group=OMParent
+DynamicVariables=1
+URL=file:///#CurPathSlash#om.json
+; Display this entire file raw on the dash in it's own meter even if it bleeds over the bottom of the dash.
+RegExp=(?si)\A(.*)\z
+StringIndex=1
+Download=0
+ForceReload=1
+CodePage=65001
+FinishAction=[!UpdateMeasureGroup OMParse][!UpdateMeterGroup OM][!Redraw]
+
+
+; =================================================================================================
+; [MeasureOM_Head]  (just a short view of the JSON for on-panel debugging)
+; =================================================================================================
+[MeasureOM_Head]
+Measure=Plugin
+Plugin=WebParser
+Group=OMParse
+URL=[MeasureOM_File]
+Download=0
+RegExp=(?si)\A(.{1,220})
+StringIndex=1
+
+
+; =================================================================================================
+; PARSERS (all read from [MeasureOM_File])
+; =================================================================================================
+[MeterBackground]
+Meter=Shape
+Group=OM
+X=0
+Y=0
+Shape=Rectangle 0,0,#W#,#H#,#Round# | Fill Color 255,255,255,255 | StrokeWidth 1 | Stroke Color 0,0,0,35
+; =================================================================================================
+; FIX — [MeasureTempRaw] (capture ONLY the numeric value, including decimals + negatives)
+; =================================================================================================
+[MeasureTempRaw]
+Measure=Plugin
+Plugin=WebParser
+Group=OMParse
+URL=[MeasureOM_File]
+Download=0
+; Capture just the number after temperature_2m:
+RegExp=(?si)"temperature_2m"\s*:\s*(-?\d+(?:\.\d+)?)
+; StringIndex=1 = whole match, StringIndex=2 = first capture group (the number)
+StringIndex=2
+
+
+; =================================================================================================
+; FIX — [MeasureTempF] (force numeric coercion, NO rounding)
+; =================================================================================================
+[MeasureTempF]
+Measure=Calc
+Group=OMParse
+Formula=([MeasureTempRaw] + 0)
+
+
+; =================================================================================================
+; NO CHANGE — [MeterDbgTempRaw]
+; =================================================================================================
+[MeterDbgTempRaw]
+Meter=String
+Group=OM
+X=#Pad#
+Y=287
+W=(#W# - (#Pad#*2))
+ClipString=1
+Text=MeasureTempRaw: [MeasureTempRaw]   MeasureTempF: [MeasureTempF:1]
+FontFace=Consolas
+FontSize=8
+FontColor=0,0,0,140
+AntiAlias=1
+DynamicVariables=1
+
+
+[MeasureFeelsRaw]
+Measure=Plugin
+Plugin=WebParser
+Group=OMParse
+URL=[MeasureOM_File]
+Download=0
+RegExp=(?si)"current"\s*:\s*\{.*?"apparent_temperature"\s*:\s*(-?\d+(\.\d+)?)
+StringIndex=1
+
+[MeasureHumidityRaw]
+Measure=Plugin
+Plugin=WebParser
+Group=OMParse
+URL=[MeasureOM_File]
+Download=0
+RegExp=(?si)"current"\s*:\s*\{.*?"relative_humidity_2m"\s*:\s*(\d+)
+StringIndex=1
+
+[MeasurePressureHpaRaw]
+Measure=Plugin
+Plugin=WebParser
+Group=OMParse
+URL=[MeasureOM_File]
+Download=0
+RegExp=(?si)"current"\s*:\s*\{.*?"pressure_msl"\s*:\s*(-?\d+(\.\d+)?)
+StringIndex=1
+
+[MeasureVisibilityMRaw]
+Measure=Plugin
+Plugin=WebParser
+Group=OMParse
+URL=[MeasureOM_File]
+Download=0
+RegExp=(?si)"current"\s*:\s*\{.*?"visibility"\s*:\s*(\d+(\.\d+)?)
+StringIndex=1
+
+[MeasureWindSpeedRaw]
+Measure=Plugin
+Plugin=WebParser
+Group=OMParse
+URL=[MeasureOM_File]
+Download=0
+RegExp=(?si)"current"\s*:\s*\{.*?"wind_speed_10m"\s*:\s*(-?\d+(\.\d+)?)
+StringIndex=1
+
+[MeasureWindDirRaw]
+Measure=Plugin
+Plugin=WebParser
+Group=OMParse
+URL=[MeasureOM_File]
+Download=0
+RegExp=(?si)"current"\s*:\s*\{.*?"wind_direction_10m"\s*:\s*(\d+)
+StringIndex=1
+
+[MeasureWMOCodeRaw]
+Measure=Plugin
+Plugin=WebParser
+Group=OMParse
+URL=[MeasureOM_File]
+Download=0
+RegExp=(?si)"current"\s*:\s*\{.*?"weather_code"\s*:\s*(\d+)
+StringIndex=1
+
+[MeasureSunrise]
+Measure=Plugin
+Plugin=WebParser
+Group=OMParse
+URL=[MeasureOM_File]
+Download=0
+RegExp=(?si)"sunrise"\s*:\s*\[\s*"[^"]*T(\d{2}:\d{2})
+StringIndex=1
+
+[MeasureSunset]
+Measure=Plugin
+Plugin=WebParser
+Group=OMParse
+URL=[MeasureOM_File]
+Download=0
+RegExp=(?si)"sunset"\s*:\s*\[\s*"[^"]*T(\d{2}:\d{2})
+StringIndex=1
+
+
+; =================================================================================================
+; CALCS / FORMATTING
+; =================================================================================================
+
+
+[MeasureFeelsF]
+Measure=Calc
+Group=OMParse
+Formula=Round([MeasureFeelsRaw])
+
+[MeasureHumidity]
+Measure=Calc
+Group=OMParse
+Formula=Round([MeasureHumidityRaw])
+
+[MeasurePressureInHg]
+Measure=Calc
+Group=OMParse
+Formula=([MeasurePressureHpaRaw]*0.0295299830714)
+
+[MeasureVisibilityMi]
+Measure=Calc
+Group=OMParse
+Formula=([MeasureVisibilityMRaw]/1609.344)
+
+[MeasureWindSpeed]
+Measure=Calc
+Group=OMParse
+Formula=Round([MeasureWindSpeedRaw])
+
+[MeasureWindDir]
+Measure=Calc
+Group=OMParse
+Formula=Round([MeasureWindDirRaw])
+
+[MeasureWindCardIndex]
+Measure=Calc
+Group=OMParse
+Formula=(Floor((([MeasureWindDir]+22.5)/45))%8)
+
+[MeasureWindCardinal]
+Measure=Calc
+Group=OMParse
+Formula=[MeasureWindCardIndex]
+Substitute="0":"N","1":"NE","2":"E","3":"SE","4":"S","5":"SW","6":"W","7":"NW"
+DynamicVariables=1
+
+[MeasureDesc]
+Measure=Calc
+Group=OMParse
+Formula=[MeasureWMOCodeRaw]
+Substitute="0":"Clear","1":"Mostly Clear","2":"Partly Cloudy","3":"Overcast","45":"Fog","48":"Rime Fog","51":"Light Drizzle","53":"Drizzle","55":"Heavy Drizzle","56":"Freezing Drizzle","57":"Freezing Drizzle","61":"Light Rain","63":"Rain","65":"Heavy Rain","66":"Freezing Rain","67":"Freezing Rain","71":"Light Snow","73":"Snow","75":"Heavy Snow","77":"Snow Grains","80":"Rain Showers","81":"Rain Showers","82":"Violent Showers","85":"Snow Showers","86":"Heavy Snow Showers","95":"Thunderstorm","96":"Thunder + Hail","99":"Thunder + Hail"
+DynamicVariables=1
+
+
+; =================================================================================================
+; METERS (ORDER MATTERS: background first)
+; =================================================================================================
+
+[MeterTitle]
+Meter=String
+Group=OM
+X=#Pad#
+Y=10
+Text=#City# - #Lat#N, #Lon#W
+FontFace=Segoe UI
+FontSize=20
+FontColor=0,0,0,255
+StringStyle=Bold
+AntiAlias=1
+
+[MeterTemp]
+Meter=String
+Group=OM
+X=#Pad#
+Y=37
+Text=[MeasureTempF] F
+FontFace=Segoe UI
+FontSize=20
+FontColor=0,0,0,255
+StringStyle=Bold
+AntiAlias=1
+
+
+
+[MeterDesc]
+Meter=String
+Group=OM
+X=#Pad#
+Y=65
+Text=[MeasureDesc]
+FontFace=Segoe UI
+FontSize=16
+FontColor=0,0,0,230
+AntiAlias=1
+
+
+[MeterDetails]
+Meter=String
+Group=OM
+X=#Pad#
+Y=90
+Text=Feels: [MeasureFeelsF] F   Humidity: [MeasureHumidity]%   Pressure: [MeasurePressureInHg:2] inHg
+FontFace=Segoe UI
+FontSize=12
+FontColor=0,0,0,210
+AntiAlias=1
+
+
+[MeterWind]
+Meter=String
+Group=OM
+X=#Pad#
+Y=110
+Text=Wind: [MeasureWindSpeed] mph  [MeasureWindCardinal] ([MeasureWindDir] deg)    Vis: [MeasureVisibilityMi:1] mi
+FontFace=Segoe UI
+FontSize=12
+FontColor=0,0,0,210
+AntiAlias=1
+
+
+[MeterSun]
+Meter=String
+Group=OM
+X=#Pad#
+Y=130
+Text=Sunrise: [MeasureSunrise]   Sunset: [MeasureSunset]
+FontFace=Segoe UI
+FontSize=12
+FontColor=0,0,0,210
+AntiAlias=1
+
+
+
+
+; =================================================================================================
+; DEBUG METERS (SHOW REALITY ON THE PANEL)
+; =================================================================================================
+
+[MeterDbgCurPath]
+Meter=String
+Group=OM
+X=#Pad#
+Y=190
+W=(#W# - (#Pad#*2))
+ClipString=1
+Text=CURRENTPATH: #CURRENTPATH#
+FontFace=Consolas
+FontSize=8
+FontColor=0,0,0,140
+AntiAlias=1
+DynamicVariables=1
+
+[MeterDbgSlash]
+Meter=String
+Group=OM
+X=#Pad#
+Y=202
+W=(#W# - (#Pad#*2))
+ClipString=1
+Text=CurPathSlash: #CurPathSlash#
+FontFace=Consolas
+FontSize=8
+FontColor=0,0,0,140
+AntiAlias=1
+DynamicVariables=1
+
+
+[MeterDbgFileURLs]
+Meter=String
+Group=OM
+X=#Pad#
+Y=214
+W=(#W# - (#Pad#*2))
+ClipString=1
+Text=MeasureOM_File URL: file:///#CurPathSlash#om.json | MeasureOM_Status URL: file:///#CurPathSlash#om_status.txt
+FontFace=Consolas
+FontSize=8
+FontColor=0,0,0,140
+AntiAlias=1
+DynamicVariables=1
+
+[MeterDbgStatus]
+Meter=String
+Group=OM
+X=#Pad#
+Y=226
+W=(#W# - (#Pad#*2))
+ClipString=1
+Text=MeasureOM_Status: [MeasureOM_Status]
+FontFace=Consolas
+FontSize=8
+FontColor=0,0,0,140
+AntiAlias=1
+DynamicVariables=1
+
+
+[MeterDbgJsonHead]
+Meter=String
+Group=OM
+X=#Pad#
+Y=275
+W=(#W# - (#Pad#*2))
+ClipString=0
+Text=MeasureOM_File: [MeasureOM_File]
+FontFace=Consolas
+FontSize=8
+FontColor=0,0,0,140
+AntiAlias=1
+DynamicVariables=1
+
+
+; =================================================================================================
+; [MeterRefresh]
+; =================================================================================================
+[MeterRefresh]
+Meter=String
+Group=OM
+X=(#W# - #Pad#)
+Y=10
+Text=Version #SkinVersion#
+FontFace=Segoe UI
+FontSize=12
+FontColor=0,0,0,180
+AntiAlias=1
+StringAlign=Right
+LeftMouseUpAction=[!UpdateMeasure MeasureCurPathSlash][!CommandMeasure MeasureOM_FetchPS "Run"]
+
+
+; =================================================================================================
+; DEBUG METERS (SHOW REALITY ON THE PANEL)
+; =================================================================================================
+
+[MeterDbgCurPath]
+Meter=String
+Group=OM
+X=#Pad#
+Y=190
+W=(#W# - (#Pad#*2))
+ClipString=1
+Text=CURRENTPATH: #CURRENTPATH#
+FontFace=Consolas
+FontSize=8
+FontColor=0,0,0,140
+AntiAlias=1
+DynamicVariables=1
+
+[MeterDbgSlash]
+Meter=String
+Group=OM
+X=#Pad#
+Y=202
+W=(#W# - (#Pad#*2))
+ClipString=1
+Text=CurPathSlash: #CurPathSlash#
+FontFace=Consolas
+FontSize=8
+FontColor=0,0,0,140
+AntiAlias=1
+DynamicVariables=1
+
+
+[MeterDbgFileURLs]
+Meter=String
+Group=OM
+X=#Pad#
+Y=214
+W=(#W# - (#Pad#*2))
+ClipString=1
+Text=MeasureOM_File URL: file:///#CurPathSlash#om.json | MeasureOM_Status URL: file:///#CurPathSlash#om_status.txt
+FontFace=Consolas
+FontSize=8
+FontColor=0,0,0,140
+AntiAlias=1
+DynamicVariables=1
+
+[MeterDbgStatus]
+Meter=String
+Group=OM
+X=#Pad#
+Y=226
+W=(#W# - (#Pad#*2))
+ClipString=1
+Text=MeasureOM_Status: [MeasureOM_Status]
+FontFace=Consolas
+FontSize=8
+FontColor=0,0,0,140
+AntiAlias=1
+DynamicVariables=1
+
+
+[MeterDbgJsonHead]
+Meter=String
+Group=OM
+X=#Pad#
+Y=275
+W=(#W# - (#Pad#*2))
+ClipString=0
+Text=MeasureOM_File: [MeasureOM_File]
+FontFace=Consolas
+FontSize=8
+FontColor=0,0,0,140
+AntiAlias=1
+DynamicVariables=1
+
+
+; =================================================================================================
+; [MeterRefresh]
+; =================================================================================================
+[MeterRefresh]
+Meter=String
+Group=OM
+X=(#W# - #Pad#)
+Y=10
+Text=Version #SkinVersion#
+FontFace=Segoe UI
+FontSize=12
+FontColor=0,0,0,180
+AntiAlias=1
+StringAlign=Right
+LeftMouseUpAction=[!UpdateMeasure MeasureCurPathSlash][!CommandMeasure MeasureOM_FetchPS "Run"]
+
+

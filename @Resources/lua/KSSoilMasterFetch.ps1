@@ -13,6 +13,7 @@ Kansas Mesonet (stationdata) daily soil temps at 5cm (~2")
 UTF-8 (no BOM).
 ============================================================
 #>
+Add-Content -LiteralPath "$PSScriptRoot\..\..\ks_soiltemp_ps_ran.txt" ("RAN " + (Get-Date -Format s))
 
 [CmdletBinding()]
 param(

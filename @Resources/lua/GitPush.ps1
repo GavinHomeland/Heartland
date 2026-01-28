@@ -11,6 +11,79 @@ $ProgressPreference = 'SilentlyContinue'
 
 function Write-Line([string]$s) { Write-Output $s }
 
+# =========================
+# HELPERS — INVENTORY
+# =========================
+function Write-TextIfChanged {
+  param(
+    [Parameter(Mandatory=$true)][string]$Path,
+    [Parameter(Mandatory=$true)][string]$Content,
+    [string]$Encoding = "UTF8"
+  )
+
+  if (Test-Path $Path) {
+    $old = Get-Content -Raw -LiteralPath $Path -ErrorAction SilentlyContinue
+    if ($old -eq $Content) { return $false } # no change
+  }
+
+  Set-Content -LiteralPath $Path -Value $Content -Encoding $Encoding
+  return $true
+}
+
+function Write-FileInventory {
+  param(
+    [Parameter(Mandatory=$true)][string]$RepoRoot
+  )
+
+  # NOTE: We intentionally do NOT include timestamps in the manifest to avoid diff churn.
+  # If you ever WANT timestamps, add LastWriteTimeUtc back in.
+
+  $manifestCsvPath = Join-Path $RepoRoot "heartland_tree.csv"
+  $refsTxtPath     = Join-Path $RepoRoot "heartland_refs.txt"
+
+  # 1) Build CSV content in-memory (stable ordering, forward slashes)
+  $items = Get-ChildItem -Path $RepoRoot -Recurse -File -Force |
+    Where-Object {
+      $_.FullName -notmatch '\\\.git\\' -and
+      $_.Name -notmatch '^(heartland_tree\.csv|heartland_refs\.txt)$'
+    } |
+    Select-Object `
+      @{n='Path';e={$_.FullName.Substring($RepoRoot.Length + 1).Replace('\','/')}}, `
+      Length |
+    Sort-Object Path
+
+  # Convert to CSV string with stable header order
+  $csv = $items | ConvertTo-Csv -NoTypeInformation
+  $csvText = ($csv -join "`r`n") + "`r`n"
+
+  # 2) Build refs scan (only INI files)
+  $iniFiles = Get-ChildItem -Path $RepoRoot -Recurse -File -Force -Filter "*.ini" |
+    Where-Object { $_.FullName -notmatch '\\\.git\\' }
+
+  $refMatches = foreach ($f in $iniFiles) {
+    Select-String -LiteralPath $f.FullName -Pattern '^\s*ScriptFile\s*=|^\s*@Include\s*=|#@#|@Resources|^\s*Plugin\s*=|^\s*Measure\s*=' |
+      ForEach-Object {
+        "{0}:{1}: {2}" -f $f.FullName.Substring($RepoRoot.Length + 1).Replace('\','/'), $_.LineNumber, $_.Line.TrimEnd()
+      }
+  }
+
+  $refsText = ""
+  if ($refMatches) {
+    $refsText = ($refMatches | Sort-Object) -join "`r`n"
+    $refsText += "`r`n"
+  }
+
+  $changed = $false
+  if (Write-TextIfChanged -Path $manifestCsvPath -Content $csvText) { $changed = $true }
+  if (Write-TextIfChanged -Path $refsTxtPath     -Content $refsText) { $changed = $true }
+
+  return $changed
+}
+
+# =========================
+# MAIN
+# =========================
+
 # Ensure RepoPath exists
 if (-not (Test-Path $RepoPath)) {
   Write-Line "ERR $(Get-Date -Format s) RepoPath not found: $RepoPath"
@@ -25,6 +98,21 @@ $git = "git"
 if ($LASTEXITCODE -ne 0) {
   Write-Line "ERR $(Get-Date -Format s) Not a git repo: $RepoPath"
   exit 3
+}
+
+# -------------------------
+# PRE-PUSH INVENTORY
+# -------------------------
+try {
+  $invChanged = Write-FileInventory -RepoRoot (Resolve-Path -LiteralPath $RepoPath).Path
+  if ($invChanged) {
+    Write-Line "OK  $(Get-Date -Format s) Inventory updated (heartland_tree.csv, heartland_refs.txt)"
+  } else {
+    Write-Line "OK  $(Get-Date -Format s) Inventory unchanged"
+  }
+} catch {
+  Write-Line "ERR $(Get-Date -Format s) Inventory step failed: $($_.Exception.Message)"
+  exit 8
 }
 
 # Check for any changes (tracked/untracked) respecting .gitignore

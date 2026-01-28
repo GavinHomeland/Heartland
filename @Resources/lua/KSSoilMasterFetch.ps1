@@ -107,23 +107,29 @@ try {
 
     $raw = Import-Csv -LiteralPath $RawCsv
 
-    # ---- Normalize rows -> Date, AvgF, MinF
-    $rows = $raw |
-        Where-Object { $_.TIMESTAMP } |
-        ForEach-Object {
-            $dt   = [datetime]$_.TIMESTAMP
+# ============================
+# FIX: skip bad rows without exiting script
+# ============================
+$rows = $raw |
+  Where-Object { $_.TIMESTAMP } |
+  ForEach-Object {
+    $dt   = [datetime]$_.TIMESTAMP
 
-            $avgC = Parse-InvDoubleOrNull $_.SOILTMP5AVG
-            $minC = Parse-InvDoubleOrNull $_.SOILTMP5MIN
-            if ($null -eq $avgC -or $null -eq $minC) { return }
+    $avgC = Parse-InvDoubleOrNull $_.SOILTMP5AVG
+    $minC = Parse-InvDoubleOrNull $_.SOILTMP5MIN
 
-            [pscustomobject]@{
-                Date = $dt.Date
-                AvgF = Convert-CtoF $avgC
-                MinF = Convert-CtoF $minC
-            }
-        } |
-        Sort-Object Date
+    if ($null -eq $avgC -or $null -eq $minC) {
+      # emit nothing => row is skipped
+    }
+    else {
+      [pscustomobject]@{
+        Date = $dt.Date
+        AvgF = Convert-CtoF $avgC
+        MinF = Convert-CtoF $minC
+      }
+    }
+  } |
+  Sort-Object Date
 
     if (-not $rows -or $rows.Count -lt 10) {
         throw "Not enough parsed rows from CSV."

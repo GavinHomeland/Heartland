@@ -172,31 +172,23 @@ function Run()
 
   local n = #rows
   local graphW = (n > 0) and ((n * barW) + ((n - 1) * barGap)) or 1
+  -- Build shapes in draw order (later shapes draw on top)
+  local idx = 1
 
   -- 1) Frame
   local frame = string.format(
     "Rectangle 0,0,%d,%d,4 | Fill Color 0,0,0,0 | StrokeWidth 1 | Stroke Color 255,255,255,90",
     graphW, graphH
   )
-  setShape(meterName, 1, frame)
-
-  -- 2) Freeze line @ 32°F (red)
-  local freezeF = 32.0
-  local freezeClamped = clamp(freezeF, minF, maxF)
-  local freezeFrac = (freezeClamped - minF) / rangeF
-  local freezeY = math.floor((graphH - (freezeFrac * graphH)) + 0.5)
-  local freezeLine = string.format(
-    "Line 0,%d,%d,%d | StrokeWidth 1 | Stroke Color 255,0,0,170",
-    freezeY, graphW, freezeY
-  )
-  setShape(meterName, 2, freezeLine)
+  setShape(meterName, idx, frame)
+  idx = idx + 1
 
   -- Colors / styles
   local avgAlpha = 110
   local minAlpha = 210
   local minStroke = " | StrokeWidth 1 | Stroke Color 0,0,0,70"
 
-  -- 3) Avg bars (back)
+  -- 2) Avg bars (back)
   for i = 1, n do
     local v = rows[i].avg7
     if v ~= nil then
@@ -217,13 +209,12 @@ function Run()
         "Rectangle %d,%d,%d,%d,0 | Fill Color %s | StrokeWidth 0",
         x, y, barW, h, color
       )
-      setShape(meterName, 2 + i, bar)
-    else
-      setShape(meterName, 2 + i, "")
+      setShape(meterName, idx, bar)
+      idx = idx + 1
     end
   end
 
-  -- 4) Min bars (front)
+  -- 3) Min bars (front)
   for i = 1, n do
     local v = rows[i].min7
     if v ~= nil then
@@ -244,19 +235,29 @@ function Run()
         "Rectangle %d,%d,%d,%d,0 | Fill Color %s%s",
         x, y, barW, h, color, minStroke
       )
-      -- min bars start after avg bars
-      setShape(meterName, 2 + n + i, bar)
-    else
-      setShape(meterName, 2 + n + i, "")
+      setShape(meterName, idx, bar)
+      idx = idx + 1
     end
   end
 
+  -- 4) Freeze line @ 32°F (red) — drawn last so it sits on top
+  local freezeF = 32.0
+  local freezeClamped = clamp(freezeF, minF, maxF)
+  local freezeFrac = (freezeClamped - minF) / rangeF
+  local freezeY = math.floor((graphH - (freezeFrac * graphH)) + 0.5)
+  local freezeLine = string.format(
+    "Line 0,%d,%d,%d | StrokeWidth 1 | Stroke Color 255,0,0,210",
+    freezeY, graphW, freezeY
+  )
+  setShape(meterName, idx, freezeLine)
+  idx = idx + 1
+
   -- Blank any leftover shapes (prevents stale artifacts when row count shrinks)
-  local used = 2 + (2 * n)
-  local maxShapes = (2 * days) + 5
-  for idx = (used + 1), maxShapes do
-    setShape(meterName, idx, "")
+  local maxShapes = (2 * days) + 10
+  for j = idx, maxShapes do
+    setShape(meterName, j, "")
   end
+
 
   -- Tooltip: show latest values
   if n > 0 then

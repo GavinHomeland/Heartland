@@ -2,6 +2,8 @@
 # GitPush.ps1 — commit+push only if there are changes
 # Adds AI-friendly repo navigation artifacts to repo root before push
 # =========================
+"Script started at $(Get-Date)" | Out-File -FilePath "$PSScriptRoot\debug.log" -Append
+
 param(
   [Parameter(Mandatory=$true)][string]$RepoPath,
   [string]$Message = ""

@@ -15,6 +15,7 @@ ks_soiltemp_2in_last_attempt.txt
 # Download/cache dirs
 DownloadFile/
 DownloadedFile/
+Old/
 
 # OS junk
 Thumbs.db

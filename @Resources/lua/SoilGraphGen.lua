@@ -1,24 +1,26 @@
 -- ============================
 -- SoilGraphGen.lua (Rolling CSV -> dual-series Shape bars)
--- Target CSV format: date,min7F,avg7F
+-- CSV format (rolling): date,min7F,avg7F
 --
 -- Draw order (back -> front):
 --   1) Frame
---   2) 32°F freeze line (red)
---   3) Avg7F bars (back, muted)
---   4) Min7F bars (front, stronger + optional cold palette)
+--   2) Avg7F bars (back)
+--   3) Min7F bars (front)
+--   4) Freeze line @ 32°F (red, on top)
 --
 -- Variables read from skin:
---   SoilHistCsv       : rolling CSV path
---   SoilGraphDays     : number of trailing rows to graph
---   SoilGraphBarW     : bar width
---   SoilGraphBarGap   : gap between bars
---   SoilGraphH        : graph height in pixels
---   SoilGraphMinF     : nominal floor (will be forced <= 25)
---   SoilGraphMaxF     : nominal ceiling (will be forced >= 90)
---   SoilGraphMinPalette : "Cold" (default) or "Same"
+--   SoilHistCsv          : rolling CSV path
+--   SoilGraphDays        : number of trailing rows to graph
+--   SoilGraphBarW        : bar width
+--   SoilGraphBarGap      : gap between bars
+--   SoilGraphH           : graph height in pixels
+--   SoilGraphMinF        : nominal floor (forced <= 25)
+--   SoilGraphMaxF        : nominal ceiling (forced >= 90)
+--   SoilGraphMinPalette  : "Heat" (default), "Same", or "ColdClamp"
 --
--- Writes shapes into: [MeterSoilGraph]
+-- Notes:
+-- - Hard clamps for color semantics: <=25°F and >=90°F.
+-- - Height scaling uses SoilGraphMinF/MaxF after enforcing <=25 / >=90 bounds.
 -- ============================
 
 local function trim(s)
@@ -27,7 +29,6 @@ end
 
 local function splitCSV(line)
   local t = {}
-  -- Simple CSV split (no quoted commas needed for our files)
   for chunk in (line .. ","):gmatch("(.-),") do
     t[#t + 1] = trim(chunk)
   end
@@ -47,8 +48,7 @@ local function isHeader(fields)
   -- We expect numeric in col2/col3 (min7F/avg7F). If both aren't numeric, treat as junk/header.
   local v2 = tonumber(fields[2] or "")
   local v3 = tonumber(fields[3] or "")
-  if (v2 == nil) and (v3 == nil) then return true end
-  return false
+  return (v2 == nil) and (v3 == nil)
 end
 
 local function lerp(a, b, t)
@@ -77,20 +77,18 @@ local function interpStops(stops, tempF)
     end
   end
 
-  -- Fallback (should never hit)
   return last.r, last.g, last.b
 end
 
 local function rgba(r, g, b, a)
-  -- clamp channels just in case
   r = clamp(r, 0, 255); g = clamp(g, 0, 255); b = clamp(b, 0, 255); a = clamp(a, 0, 255)
   return string.format("%d,%d,%d,%d", r, g, b, a)
 end
 
--- Avg palette: blue -> white(32F) -> yellow -> green -> red (hot)
+-- Avg palette: blue -> white(32F) -> yellow -> green -> orange -> red
 local AVG_STOPS = {
-  { t=25, r=0,   g=60,  b=180 },
-  { t=29, r=0,   g=130, b=255 },
+ -- { t=25, r=0,   g=0,  b=180 },
+  { t=32, r=0,   g=30, b=255 },
   { t=32, r=255, g=255, b=255 }, -- freezing anchor
   { t=40, r=255, g=220, b=0   },
   { t=62, r=0,   g=200, b=0   },
@@ -99,14 +97,26 @@ local AVG_STOPS = {
   { t=90, r=255, g=40,  b=40  },
 }
 
--- Min palette (default): cold-emphasis, stays green when warm (no "hot red" for minimums)
-local MIN_STOPS_COLD = {
-  { t=25, r=0,   g=60,  b=180 },
-  { t=29, r=0,   g=130, b=255 },
+-- Min palette (Heat): distinct but still reaches orange/red for hot minimums
+local MIN_STOPS_HEAT = {
+--  { t=29, r=0,   g=0,  b=180 },
+  { t=32, r=0,   g=30, b=255 },
+  { t=32, r=255, g=255, b=255 }, -- freezing anchor
+  { t=40, r=255, g=220, b=0   },
+  { t=60, r=0,   g=180, b=0   },  -- slightly darker green than AVG
+  { t=75, r=255, g=165, b=0   },
+  { t=86, r=255, g=90,  b=0   },
+  { t=90, r=255, g=40,  b=40  },
+}
+
+-- Min palette (ColdClamp): emphasizes "cold risk" and keeps warm mins green
+local MIN_STOPS_COLDCLAMP = {
+--  { t=25, r=0,   g=0,  b=180 },
+  { t=32, r=0,   g=30, b=255 },
   { t=32, r=255, g=255, b=255 }, -- freezing anchor
   { t=40, r=255, g=220, b=0   },
   { t=55, r=0,   g=200, b=0   },
-  { t=90, r=0,   g=200, b=0   }, -- clamp warm minimums to green
+  { t=90, r=0,   g=200, b=0   },  -- clamp warm minimums to green
 }
 
 local function setShape(meterName, idx, shapeDef)
@@ -120,16 +130,16 @@ end
 function Run()
   local meterName = "MeterSoilGraph"
 
-  local file       = SKIN:GetVariable("SoilHistCsv", "")
-  local days       = tonumber(SKIN:GetVariable("SoilGraphDays", "45")) or 45
-  local barW       = tonumber(SKIN:GetVariable("SoilGraphBarW", "2")) or 2
-  local barGap     = tonumber(SKIN:GetVariable("SoilGraphBarGap", "0")) or 0
-  local graphH     = tonumber(SKIN:GetVariable("SoilGraphH", "65")) or 65
+  local file     = SKIN:GetVariable("SoilHistCsv", "")
+  local days     = tonumber(SKIN:GetVariable("SoilGraphDays", "45")) or 45
+  local barW     = tonumber(SKIN:GetVariable("SoilGraphBarW", "2")) or 2
+  local barGap   = tonumber(SKIN:GetVariable("SoilGraphBarGap", "0")) or 0
+  local graphH   = tonumber(SKIN:GetVariable("SoilGraphH", "65")) or 65
 
-  local minF_in    = tonumber(SKIN:GetVariable("SoilGraphMinF", "25")) or 25
-  local maxF_in    = tonumber(SKIN:GetVariable("SoilGraphMaxF", "90")) or 90
+  local minF_in  = tonumber(SKIN:GetVariable("SoilGraphMinF", "25")) or 25
+  local maxF_in  = tonumber(SKIN:GetVariable("SoilGraphMaxF", "90")) or 90
 
-  -- Hard floor/ceiling enforcement requested:
+  -- Hard enforcement requested:
   --   floor must be <= 25, ceiling must be >= 90
   local minF = (minF_in > 25) and 25 or minF_in
   local maxF = (maxF_in < 90) and 90 or maxF_in
@@ -137,8 +147,13 @@ function Run()
   local rangeF = maxF - minF
   if rangeF == 0 then rangeF = 1 end
 
-  local minPalette = (SKIN:GetVariable("SoilGraphMinPalette", "Cold") or "Cold"):upper()
-  local MIN_STOPS = (minPalette == "SAME") and AVG_STOPS or MIN_STOPS_COLD
+  local pal = (SKIN:GetVariable("SoilGraphMinPalette", "Heat") or "Heat"):upper()
+  local MIN_STOPS = MIN_STOPS_HEAT
+  if pal == "SAME" then
+    MIN_STOPS = AVG_STOPS
+  elseif pal == "COLDCLAMP" then
+    MIN_STOPS = MIN_STOPS_COLDCLAMP
+  end
 
   -- Read rows: date,min7F,avg7F
   local rows = {}
@@ -150,7 +165,7 @@ function Run()
       if line ~= "" then
         local fields = splitCSV(line)
         if not isHeader(fields) then
-          local d   = fields[1] or ""
+          local d    = fields[1] or ""
           local vMin = tonumber(fields[2] or "")
           local vAvg = tonumber(fields[3] or "")
           if (vMin ~= nil) or (vAvg ~= nil) then
@@ -172,6 +187,7 @@ function Run()
 
   local n = #rows
   local graphW = (n > 0) and ((n * barW) + ((n - 1) * barGap)) or 1
+
   -- Build shapes in draw order (later shapes draw on top)
   local idx = 1
 
@@ -183,16 +199,16 @@ function Run()
   setShape(meterName, idx, frame)
   idx = idx + 1
 
-  -- Colors / styles
+  -- Styles
   local avgAlpha = 110
-  local minAlpha = 210
+  local minAlpha = 200  -- slightly reduced so back layer can still peek through
   local minStroke = " | StrokeWidth 1 | Stroke Color 0,0,0,70"
 
   -- 2) Avg bars (back)
   for i = 1, n do
     local v = rows[i].avg7
     if v ~= nil then
-      v = clamp(v, 25, 90) -- hard clamp for color meaning
+      v = clamp(v, 25, 90)        -- hard clamp for color meaning
       local vv = clamp(v, minF, maxF) -- clamp for height scaling
       local frac = (vv - minF) / rangeF
       local h = math.floor((frac * graphH) + 0.5)
@@ -218,8 +234,8 @@ function Run()
   for i = 1, n do
     local v = rows[i].min7
     if v ~= nil then
-      v = clamp(v, 25, 90) -- hard clamp for color meaning
-      local vv = clamp(v, minF, maxF) -- clamp for height scaling
+      v = clamp(v, 25, 90)
+      local vv = clamp(v, minF, maxF)
       local frac = (vv - minF) / rangeF
       local h = math.floor((frac * graphH) + 0.5)
       if h < 1 then h = 1 end
@@ -240,7 +256,7 @@ function Run()
     end
   end
 
-  -- 4) Freeze line @ 32°F (red) — drawn last so it sits on top
+  -- 4) Freeze line @ 32°F (red, on top)
   local freezeF = 32.0
   local freezeClamped = clamp(freezeF, minF, maxF)
   local freezeFrac = (freezeClamped - minF) / rangeF
@@ -253,29 +269,28 @@ function Run()
   idx = idx + 1
 
   -- Blank any leftover shapes (prevents stale artifacts when row count shrinks)
-  local maxShapes = (2 * days) + 10
+  local maxShapes = (2 * days) + 12
   for j = idx, maxShapes do
     setShape(meterName, j, "")
   end
 
-
-  -- Tooltip: show latest values
+  -- Tooltip
   if n > 0 then
     local last = rows[n]
     local vMin = last.min7
     local vAvg = last.avg7
     local date = last.date or ""
-    local pal = (minPalette == "SAME") and "Same" or "Cold"
+    local palName = (pal == "SAME") and "Same" or ((pal == "COLDCLAMP") and "ColdClamp" or "Heat")
     local tip = string.format(
       "Albert, KS soil (2\") — Freeze line: 32°F\n%s\navg7F: %s°F   min7F: %s°F\nMin palette: %s",
       date,
       (vAvg and string.format("%.1f", vAvg) or "n/a"),
       (vMin and string.format("%.1f", vMin) or "n/a"),
-      pal
+      palName
     )
     SKIN:Bang("!SetOption", meterName, "ToolTipText", tip)
   else
-    SKIN:Bang("!SetOption", meterName, "ToolTipText", "Soil graph: no data parsed (check rolling CSV format: date,min7F,avg7F)")
+    SKIN:Bang("!SetOption", meterName, "ToolTipText", "Soil graph: no data parsed (need rolling CSV: date,min7F,avg7F)")
   end
 
   SKIN:Bang("!UpdateMeter", meterName)

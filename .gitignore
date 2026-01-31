@@ -11,6 +11,7 @@ ks_soiltemp_2in_raw.csv
 ks_soiltemp_2in_master.csv
 ks_soiltemp_2in_rolling7day.csv
 ks_soiltemp_2in_last_attempt.txt
+ks_soiltemp_ps_ran.txt
 
 # Download/cache dirs
 DownloadFile/

@@ -142,174 +142,160 @@ end
 
 function Run()
   local meterName = "MeterSoilGraph"
+  --print("--- SoilGraph: Run Start ---")
 
-  local file     = SKIN:GetVariable("SoilHistCsv", "")
+  -- 1. Load Paths
+  local file             = SKIN:GetVariable("SoilHistCsv", "")
+  local lastAttemptFile  = SKIN:GetVariable("SoilLastAttemptFile", "")
+  --print("CSV Path: " .. file)
+  --print("Log Path: " .. lastAttemptFile)
+
+  -- 2. Variables
   local days     = tonumber(SKIN:GetVariable("SoilGraphDays", "45")) or 45
   local barW     = tonumber(SKIN:GetVariable("SoilGraphBarW", "2")) or 2
   local barGap   = tonumber(SKIN:GetVariable("SoilGraphBarGap", "0")) or 0
   local graphH   = tonumber(SKIN:GetVariable("SoilGraphH", "65")) or 65
-
   local minF_in  = tonumber(SKIN:GetVariable("SoilGraphMinF", "20")) or 20
   local maxF_in  = tonumber(SKIN:GetVariable("SoilGraphMaxF", "90")) or 90
 
-  -- Y-axis: force <=20°F, >=90°F
-  local minF = (minF_in > 20) and 20 or minF_in
-  local maxF = (maxF_in < 90) and 90 or maxF_in
-  local rangeF = maxF - minF
-  if rangeF == 0 then rangeF = 1 end
+  -- 3. Extract Timestamp from Log
+local lastUpdatedStr = "n/a"
+  local frameColor = "255,255,255,90" 
+  
+  local fhLog = io.open(lastAttemptFile, "r")
+  if fhLog then
+    local content = fhLog:read("*all")
+    -- Matches the PowerShell format: OK YYYY-MM-DDTHH:MM:SS
+    local year, month, day, hour, min, sec = content:match("OK%s+(%d%d%d%d)%-(%d%d)%-(%d%d)T(%d%d):(%d%d):(%d%d)")
+    
+    if year then
+      -- Calculate Age for Frame Color logic
+      local lastTime = os.time({year=year, month=month, day=day, hour=hour, min=min, sec=sec})
+      local diffHours = os.difftime(os.time(), lastTime) / 3600
 
-  -- Height clamp threshold (requested): bars never represent below 25°F
-  local heightFloorF = 25
-
-  local pal = (SKIN:GetVariable("SoilGraphMinPalette", "Heat") or "Heat"):upper()
-  local MIN_STOPS = MIN_STOPS_HEAT
-  if pal == "SAME" then
-    MIN_STOPS = AVG_STOPS
-  elseif pal == "COLDCLAMP" then
-    MIN_STOPS = MIN_STOPS_COLDCLAMP
+      -- Jan 31 @ 15:13 format
+      local months = {"Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"}
+      lastUpdatedStr = string.format("%s %d @ %02d:%02d", months[tonumber(month)], tonumber(day), hour, min)
+      
+      -- Alert logic
+      if diffHours >= 26 then frameColor = "255,0,0,200"    -- Red
+      elseif diffHours >= 24 then frameColor = "255,255,0,200"  -- Yellow
+      end
+    end
+    fhLog:close()
   end
-
-  -- Read rows: date,min7F,avg7F
+  -- 4. Read CSV
   local rows = {}
-  local fh = io.open(file, "r")
-  if fh then
-    for line in fh:lines() do
-      line = line:gsub("^\239\187\191", "") -- strip UTF-8 BOM if present
-      line = trim(line)
+  local fhCsv = io.open(file, "r")
+  if fhCsv then
+    local lineCount = 0
+    for line in fhCsv:lines() do
+      lineCount = lineCount + 1
+      line = line:gsub("^\239\187\191", ""):gsub("^%s+", ""):gsub("%s+$", "")
       if line ~= "" then
         local fields = splitCSV(line)
         if not isHeader(fields) then
-          local d    = fields[1] or ""
           local vMin = tonumber(fields[2] or "")
           local vAvg = tonumber(fields[3] or "")
-          if (vMin ~= nil) or (vAvg ~= nil) then
-            rows[#rows + 1] = { date = d, min7 = vMin, avg7 = vAvg }
+          if vMin or vAvg then
+            rows[#rows + 1] = { min7 = vMin, avg7 = vAvg }
           end
         end
       end
     end
-    fh:close()
+    fhCsv:close()
+    --print("CSV Processing: Read " .. lineCount .. " lines, kept " .. #rows .. " data rows.")
+  else
+    --print("Error: Could not open CSV file.")
   end
 
-  -- Keep only last N rows
+  -- 5. Graph Limits
   if #rows > days then
-    local start = #rows - days + 1
     local sliced = {}
-    for i = start, #rows do sliced[#sliced + 1] = rows[i] end
+    for i = (#rows - days + 1), #rows do sliced[#sliced + 1] = rows[i] end
     rows = sliced
   end
-
   local n = #rows
   local graphW = (n > 0) and ((n * barW) + ((n - 1) * barGap)) or 1
+  --print("Graphing " .. n .. " bars. Width: " .. graphW .. "px")
 
-  -- Build shapes in draw order (later shapes draw on top)
+  -- 6. Shapes
   local idx = 1
+  local minF = (minF_in > 20) and 20 or minF_in
+  local maxF = (maxF_in < 90) and 90 or maxF_in
+  local rangeF = (maxF - minF <= 0) and 1 or (maxF - minF)
 
-  -- 1) Frame
-  local frame = string.format(
-    "Rectangle 0,0,%d,%d,4 | Fill Color 0,0,0,0 | StrokeWidth 1 | Stroke Color 255,255,255,90",
-    graphW, graphH
-  )
+  -- Frame
+  local frame = string.format("Rectangle 0,0,%d,%d,4 | Fill Color 0,0,0,0 | StrokeWidth 1 | Stroke Color %s", graphW, graphH, frameColor)
   setShape(meterName, idx, frame)
   idx = idx + 1
 
-  -- Styles
-  local avgAlpha = 110
-  local minAlpha = 200
-  local minStroke = " | StrokeWidth 1 | Stroke Color 0,0,0,70"
-
-  -- 2) Avg bars (back)
+  -- Bars
   for i = 1, n do
-    local v = rows[i].avg7
-    if v ~= nil then
-      local vColor = clamp(v, 25, 90)
-      local vHeight = clamp(v, heightFloorF, maxF)
-
-      local frac = (vHeight - minF) / rangeF
-      local h = math.floor((frac * graphH) + 0.5)
-      if h < 1 then h = 1 end
-      if h > graphH then h = graphH end
-
-      local x = (i - 1) * (barW + barGap)
-      local y = graphH - h
-
-      local r, g, b = interpStops(AVG_STOPS, vColor)
-      local color = rgba(r, g, b, avgAlpha)
-
-      local bar = string.format(
-        "Rectangle %d,%d,%d,%d,0 | Fill Color %s | StrokeWidth 0",
-        x, y, barW, h, color
-      )
-      setShape(meterName, idx, bar)
+    -- Avg Bar
+    if rows[i].avg7 then
+      local h = math.floor(((clamp(rows[i].avg7, 25, maxF) - minF) / rangeF) * graphH + 0.5)
+      local r, g, b = interpStops(AVG_STOPS, clamp(rows[i].avg7, 25, 90))
+      setShape(meterName, idx, string.format("Rectangle %d,%d,%d,%d,0 | Fill Color %s | StrokeWidth 0", (i-1)*(barW+barGap), graphH-h, barW, h, rgba(r,g,b,110)))
+      idx = idx + 1
+    end
+    -- Min Bar
+    if rows[i].min7 then
+      local h = math.floor(((clamp(rows[i].min7, 25, maxF) - minF) / rangeF) * graphH + 0.5)
+      local r, g, b = interpStops(MIN_STOPS_HEAT, clamp(rows[i].min7, 25, 90))
+      setShape(meterName, idx, string.format("Rectangle %d,%d,%d,%d,0 | Fill Color %s | StrokeWidth 1 | Stroke Color 0,0,0,70", (i-1)*(barW+barGap), graphH-h, barW, h, rgba(r,g,b,200)))
       idx = idx + 1
     end
   end
 
-  -- 3) Min bars (front)
-  for i = 1, n do
-    local v = rows[i].min7
-    if v ~= nil then
-      local vColor = clamp(v, 25, 90)
-      local vHeight = clamp(v, heightFloorF, maxF)
+  -- Freeze Line
+  local freezeY = math.floor(graphH - (((32 - minF) / rangeF) * graphH) + 0.5)
+  setShape(meterName, idx, string.format("Line 0,%d,%d,%d | StrokeWidth 1 | Stroke Color 255,0,0,210", freezeY, graphW, freezeY))
+  --print("Final Shape Index: " .. idx)
 
-      local frac = (vHeight - minF) / rangeF
-      local h = math.floor((frac * graphH) + 0.5)
-      if h < 1 then h = 1 end
-      if h > graphH then h = graphH end
+  -- Cleanup
+  local maxShapes = (2 * days) + 15
+  for j = idx + 1, maxShapes do setShape(meterName, j, "") end
 
-      local x = (i - 1) * (barW + barGap)
-      local y = graphH - h
+-- Tooltip
+local last = rows[n] or {}
 
-      local r, g, b = interpStops(MIN_STOPS, vColor)
-      local color = rgba(r, g, b, minAlpha)
-
-      local bar = string.format(
-        "Rectangle %d,%d,%d,%d,0 | Fill Color %s%s",
-        x, y, barW, h, color, minStroke
-      )
-      setShape(meterName, idx, bar)
-      idx = idx + 1
+-- Read current temp from master CSV (last entry)
+local currentTemp = "n/a"
+local masterPath = SKIN:GetVariable("KSSoilMasterCsv", "")
+if masterPath ~= "" then
+  local mf = io.open(masterPath, "r")
+  if mf then
+    local lastLine = nil
+    for line in mf:lines() do
+      line = trim(line)
+      if line ~= "" and not line:match("^date,") then
+        lastLine = line
+      end
+    end
+    mf:close()
+    
+    if lastLine then
+      local fields = splitCSV(lastLine)
+      local avgF = tonumber(fields[2] or "")
+      if avgF then
+        currentTemp = string.format("%.1f", avgF)
+      end
     end
   end
+end
 
-  -- 4) Freeze line @ 32°F (red, on top) — positioned on the 20..max scale
-  local freezeF = 32.0
-  local freezeClamped = clamp(freezeF, minF, maxF)
-  local freezeFrac = (freezeClamped - minF) / rangeF
-  local freezeY = math.floor((graphH - (freezeFrac * graphH)) + 0.5)
-  local freezeLine = string.format(
-    "Line 0,%d,%d,%d | StrokeWidth 1 | Stroke Color 255,0,0,210",
-    freezeY, graphW, freezeY
-  )
-  setShape(meterName, idx, freezeLine)
-  idx = idx + 1
-
-  -- Blank any leftover shapes
-  local maxShapes = (2 * days) + 12
-  for j = idx, maxShapes do
-    setShape(meterName, j, "")
-  end
-
-  -- Tooltip
-  if n > 0 then
-    local last = rows[n]
-    local vMin = last.min7
-    local vAvg = last.avg7
-    local date = last.date or ""
-    local palName = (pal == "SAME") and "Same" or ((pal == "COLDCLAMP") and "ColdClamp" or "Heat")
-    local tip = string.format(
-      "Albert, KS soil (2\") — Freeze line: 32°F\n%s\navg7F: %s°F   min7F: %s°F\nMin palette: %s\nY scale: %d–%d°F (bar floor: %d°F)",
-      date,
-      (vAvg and string.format("%.1f", vAvg) or "n/a"),
-      (vMin and string.format("%.1f", vMin) or "n/a"),
-      palName,
-      minF, maxF, heightFloorF
-    )
-    SKIN:Bang("!SetOption", meterName, "ToolTipText", tip)
-  else
-    SKIN:Bang("!SetOption", meterName, "ToolTipText", "Soil graph: no data parsed (need rolling CSV: date,min7F,avg7F)")
-  end
-
+local tip = string.format(
+  "Albert, KS soil (2\") - 7 day readings\n%s - %s\176F\navg: %s\176F    min: %s\176F",
+  lastUpdatedStr,
+  currentTemp,
+  (last.avg7 and string.format("%.1f", last.avg7) or "n/a"),
+  (last.min7 and string.format("%.1f", last.min7) or "n/a")
+)
+  -- Final update to Rainmeter
+  SKIN:Bang("!SetOption", meterName, "ToolTipText", tip)
   SKIN:Bang("!UpdateMeter", meterName)
   SKIN:Bang("!Redraw")
-end
+
+  print("--- SoilGraphGen: Run Complete ---")
+end -- This closes the function Run()

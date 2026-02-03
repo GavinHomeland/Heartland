@@ -186,8 +186,14 @@ try {
     Write-TextFileUtf8NoBom $RollingCsv ($rollLines -join "`n")
 
     Write-LastAttempt 'OK' ("url={0} raw={1} master={2} rolling={3}" -f $url,$RawCsv,$MasterCsv,$RollingCsv)
-}
-catch {
+# ... (previous rolling csv code) ...
+# ... previous code ...
+    Write-TextFileUtf8NoBom $RollingCsv ($rollLines -join "`n")
+
+    # Update the status file with the completion message
+    # Your Lua script reads this file, so it will see the "Run Complete" status
+    Write-LastAttempt 'OK' "--- KSSoilMasterFetch: Run Complete ---"
+}catch {
     $msg = $_.Exception.Message
     $msg = ($msg -replace '[\r\n]+',' ' -replace '[^\x20-\x7E]','?')
     try { Write-LastAttempt 'ERR' $msg } catch { }

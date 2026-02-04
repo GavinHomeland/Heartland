@@ -225,12 +225,43 @@ local lastUpdatedStr = "n/a"
   local maxF = (maxF_in < 90) and 90 or maxF_in
   local rangeF = (maxF - minF <= 0) and 1 or (maxF - minF)
 
-  -- Frame
+-- Frame
   local frame = string.format("Rectangle 0,0,%d,%d,4 | Fill Color 0,0,0,0 | StrokeWidth 1 | Stroke Color %s", graphW, graphH, frameColor)
   setShape(meterName, idx, frame)
   idx = idx + 1
 
-  -- Bars
+  -- Current Reading Bar (rightmost position, drawn FIRST so it's behind avg/min)
+  local currentTemp = nil
+  local masterPath = SKIN:GetVariable("KSSoilMasterCsv", "")
+  if masterPath ~= "" then
+    local mf = io.open(masterPath, "r")
+    if mf then
+      local lastLine = nil
+      for line in mf:lines() do
+        line = trim(line)
+        if line ~= "" and not line:match("^date,") then
+          lastLine = line
+        end
+      end
+      mf:close()
+      
+      if lastLine then
+        local fields = splitCSV(lastLine)
+        currentTemp = tonumber(fields[2] or "")
+      end
+    end
+  end
+
+  if currentTemp then
+    local h = math.floor(((clamp(currentTemp, 25, maxF) - minF) / rangeF) * graphH + 0.5)
+    local r, g, b = interpStops(AVG_STOPS, clamp(currentTemp, 25, 90))
+    -- Position at the rightmost rolling bar position (n-1)
+    local xPos = (n - 1) * (barW + barGap)
+    setShape(meterName, idx, string.format("Rectangle %d,%d,%d,%d,0 | Fill Color %s | StrokeWidth 1 | Stroke Color 100,100,100,100", xPos, graphH-h, barW, h, rgba(r,g,b,255)))
+    idx = idx + 1
+  end
+
+  -- Bars (avg/min will draw on top of current bar)
   for i = 1, n do
     -- Avg Bar
     if rows[i].avg7 then
@@ -247,7 +278,6 @@ local lastUpdatedStr = "n/a"
       idx = idx + 1
     end
   end
-
   -- Freeze Line
   local freezeY = math.floor(graphH - (((32 - minF) / rangeF) * graphH) + 0.5)
   setShape(meterName, idx, string.format("Line 0,%d,%d,%d | StrokeWidth 1 | Stroke Color 255,0,0,210", freezeY, graphW, freezeY))

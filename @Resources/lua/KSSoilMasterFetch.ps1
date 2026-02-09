@@ -27,6 +27,18 @@ param(
     [string]$LastAttemptTxt
 )
 
+# ==== ADD THIS LOCK AT THE START ====
+$today = Get-Date -Format "yyyy-MM-dd"
+if (Test-Path $LastAttemptTxt) {
+    $lastContent = Get-Content $LastAttemptTxt -Raw
+    # If the file says 'OK' and contains today's date, STOP.
+    if ($lastContent -match "OK" -and $lastContent -match $today) {
+        Write-Output "Already succeeded today ($today). Exiting."
+        exit
+    }
+}
+
+# ====================================
 # ==== RUN START: KSSoilMasterFetch ====
 $ErrorActionPreference = 'Stop'
 $ProgressPreference    = 'SilentlyContinue'

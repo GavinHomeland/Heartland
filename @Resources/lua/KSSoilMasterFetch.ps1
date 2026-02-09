@@ -63,7 +63,8 @@ function Convert-CtoF([double]$C) {
     return ($C * 9.0 / 5.0) + 32.0
 }
 
-function Parse-InvDoubleOrNull([string]$s) {
+# CHANGE: Renamed from Parse-InvDoubleOrNull to Get-DoubleOrNull
+function Get-DoubleOrNull([string]$s) {
     if ([string]::IsNullOrWhiteSpace($s)) { return $null }
     try {
         return [double]::Parse($s, [Globalization.CultureInfo]::InvariantCulture)
@@ -133,24 +134,26 @@ try {
 
     $raw = Import-Csv -LiteralPath $RawCsv
 
-    # ---- Normalize rows -> Date, AvgF, MinF
-    $rows = $raw |
-        Where-Object { $_.TIMESTAMP } |
-        ForEach-Object {
-            $dt   = [datetime]$_.TIMESTAMP
+# ---- Normalize rows -> Date, AvgF, MinF
+$rows = $raw |
+    Where-Object { $_.TIMESTAMP } |
+    ForEach-Object {
+        $dt   = [datetime]$_.TIMESTAMP
 
-            $avgC = Parse-InvDoubleOrNull $_.SOILTMP5AVG
-            $minC = Parse-InvDoubleOrNull $_.SOILTMP5MIN
-            if ($null -eq $avgC -or $null -eq $minC) { return }
+        # CHANGE: Updated function calls below to Get-DoubleOrNull
+        $avgC = Get-DoubleOrNull $_.SOILTMP5AVG
+        $minC = Get-DoubleOrNull $_.SOILTMP5MIN
+        
+        if ($null -eq $avgC -or $null -eq $minC) { return }
 
-            [pscustomobject]@{
-                Date = $dt.Date
-                AvgF = Convert-CtoF $avgC
-                MinF = Convert-CtoF $minC
-            }
-        } |
-        Sort-Object Date
-
+        [pscustomobject]@{
+            Date = $dt.Date
+            AvgF = Convert-CtoF $avgC
+            MinF = Convert-CtoF $minC
+        }
+    } |
+    Sort-Object Date
+    
     if (-not $rows -or $rows.Count -lt 10) {
         throw "Not enough parsed rows from CSV."
     }

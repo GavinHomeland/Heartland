@@ -1,331 +1,349 @@
--- ============================
--- SoilGraphGen.lua (Rolling CSV -> dual-series Shape bars)
--- CSV format (rolling): date,min7F,avg7F
---
--- Draw order (back -> front):
---   1) Frame
---   2) Avg7F bars (back)
---   3) Min7F bars (front)
---   4) Freeze line @ 32°F (red, on top)
---
--- Variables read from skin:
---   SoilHistCsv          : rolling CSV path
---   SoilGraphDays        : number of trailing rows to graph
---   SoilGraphBarW        : bar width
---   SoilGraphBarGap      : gap between bars
---   SoilGraphH           : graph height in pixels
---   SoilGraphMinF        : Y-axis floor (we force <= 20°F for this graph)
---   SoilGraphMaxF        : Y-axis ceiling (we force >= 90°F)
---   SoilGraphMinPalette  : "Heat" (default), "Same", or "ColdClamp"
---
--- Requested behavior:
--- - Y-axis should extend to 20°F, but bar *height* clamps at 25°F (no shorter than 25°F).
--- - Color has a hard break at freezing:
---     warm side at 32°F = YELLOW
---     cold side at 32°F = BLUE
---   then BLUE gradients to WHITE as it approaches 25°F.
--- - Hard clamp for colors: <=25°F and >=90°F.
--- ============================
+; =================
+; Heartland Weather.ini 
+; Open-Meteo -> PowerShell fetch -> local files -> Rainmeter WebParser parses local files
+; Debug-first build (shows *actual* paths / file URLs / status / JSON head on the panel)
+; =================
 
-local function trim(s)
-  return (s or ""):gsub("^%s+", ""):gsub("%s+$", "")
-end
+[Rainmeter]
+Update=100
+AccurateText=1
+DynamicWindowSize=0
+Debug=2
+OnRefreshAction=[!UpdateMeasure MeasureCurPathSlash][!CommandMeasure MeasureOM_FetchPS "Run"]
 
-local function splitCSV(line)
-  local t = {}
-  for chunk in (line .. ","):gmatch("(.-),") do
-    t[#t + 1] = trim(chunk)
-  end
-  return t
-end
+; =================
+; [Metadata]
+; NOTE: Rainmeter does NOT expand variables inside [Metadata]. Keep this static.
+; =================
+[Metadata]
+Name=Heartland Weather
+Author=Chauncy
+Information=Standalone Open-Meteo weather panel for Kansas.
+Version=See Panel
 
-local function clamp(v, lo, hi)
-  if v < lo then return lo end
-  if v > hi then return hi end
-  return v
-end
+; =================
+; [Variables] ========================
+; =================
+[Variables]
+; -----------------
+; PANEL / LAYOUT
+; -----------------
+W=620
+H=490
+Pad=16
+Round=14
+;Icon Row
+IconRowY=280
+;Baroms, Humidity Dials
+DialRowX=#Pad#
+DialRowY=330
+DialSpacing=65
+; The size of your square PNGs
+DialBaseSize=60
+; Use these to position the whole row easily
+DialStartX=#Pad#
+DialStartY=350
+DialSpacing=65
+SkinVersion=7.2e
 
-local function isHeader(fields)
-  if #fields < 3 then return true end
-  local f1 = (fields[1] or ""):upper()
-  if f1 == "DATE" or f1 == "TIMESTAMP" then return true end
-  local v2 = tonumber(fields[2] or "")
-  local v3 = tonumber(fields[3] or "")
-  return (v2 == nil) and (v3 == nil)
-end
+; -----------------
+; LOCATION (Open-Meteo)
+; -----------------
+City=Albert, KS
+Lat=38.35889
+Lon=-98.40119
+Timezone=auto
 
-local function lerp(a, b, t)
-  return a + (b - a) * t
-end
+; -----------------
+; OPEN-METEO DOT (health indicator)
+; -----------------
+OMDotColor=255,0,0,230
 
-local function interpStops(stops, tempF)
-  if tempF <= stops[1].t then
-    return stops[1].r, stops[1].g, stops[1].b
-  end
-  local last = stops[#stops]
-  if tempF >= last.t then
-    return last.r, last.g, last.b
-  end
+; -----------------
+; WIND ARROW — scaling knobs
+; -----------------
+WindArrowBaseSize=13
+WindArrowScaleFactor=2.0
+WindArrowGlobalScale=0.8
+; ---------------------
 
-  for i = 1, (#stops - 1) do
-    local a = stops[i]
-    local b = stops[i + 1]
-    if tempF >= a.t and tempF <= b.t then
-      local span = (b.t - a.t)
-      local f = (span == 0) and 0 or ((tempF - a.t) / span)
-      local r = lerp(a.r, b.r, f)
-      local g = lerp(a.g, b.g, f)
-      local bb = lerp(a.b, b.b, f)
-      return math.floor(r + 0.5), math.floor(g + 0.5), math.floor(bb + 0.5)
-    end
-  end
+; -----------------
+; OPEN-METEO FILE PATHS
+; -----------------
+OM_JSON=#CURRENTPATH#om.json
+OM_STATUS=#CURRENTPATH#om_status.txt
+OM_QUERY_TXT=#CURRENTPATH#OM_Query.txt
+OM_LastFetch=0
 
-  return last.r, last.g, last.b
-end
+; -----------------
+; OPEN-METEO REQUEST BUILDER (edit these chunks)
+; -----------------
+OM_BASE=https://api.open-meteo.com/v1/forecast
+OM_LOC=latitude=#Lat#&longitude=#Lon#
+OM_MISC=timezone=#Timezone#&temperature_unit=fahrenheit&wind_speed_unit=mph
+OM_HOURLY_PRESS=pressure_msl,surface_pressure
+OM_HOURLY=hourly=#OM_HOURLY_PRESS#
+OM_PAST=past_days=1
+OM_CUR_AIR=temperature_2m,apparent_temperature,relative_humidity_2m,pressure_msl,visibility
+OM_CUR_SKY=weather_code
+OM_CUR_WIND=wind_speed_10m,wind_direction_10m,wind_gusts_10m
+OM_CURRENT=current=#OM_CUR_AIR#,#OM_CUR_SKY#,#OM_CUR_WIND#
+OM_DAILY=daily=sunrise,sunset,temperature_2m_max,temperature_2m_min,weather_code
+OM_QUERY=#OM_LOC#&#OM_MISC#&#OM_CURRENT#&#OM_DAILY#&#OM_HOURLY#&#OM_PAST#
+OM_URL=#OM_BASE#?#OM_QUERY#
 
-local function rgba(r, g, b, a)
-  r = clamp(r, 0, 255); g = clamp(g, 0, 255); b = clamp(b, 0, 255); a = clamp(a, 0, 255)
-  return string.format("%d,%d,%d,%d", r, g, b, a)
-end
+; Runtime variable populated by [MeasureCurPathSlash]
+CurPathSlash=
 
--- FREEZE BREAK DESIGN:
--- 25°F = WHITE
--- 32°F (cold side) = BLUE
--- 32°F (warm side) = YELLOW  (duplicate t=32 makes an abrupt color jump)
+; -----------------
+; KS SOIL TEMP (2") — PS1 PIPELINE
+; -----------------
+KSSoilStation=Larned 6SW
+KSSoilMasterDays=180
+KSSoilRollingDays=45
+KSSoilRunAfterHour=12
 
--- Avg palette: WHITE (25) -> BLUE (32-) | YELLOW (32+) -> GREEN -> ORANGE -> RED
-local AVG_STOPS = {
-  { t=25, r=255, g=255, b=255 },  -- 25°F = white (cold floor for colors)
-  { t=32, r=0,   g=30,  b=255 },  -- cold side at 32°F = blue
-  { t=32, r=255, g=220, b=0   },  -- warm side at 32°F = yellow (abrupt jump)
-  { t=36, r=255, g=220, b=0   },  -- hold yellow briefly
-  { t=45, r=0,   g=200, b=0   },  -- ramp to green by mid-40s
-  { t=62, r=0,   g=200, b=0   },  -- keep green through low 60s
-  { t=75, r=255, g=165, b=0   },
-  { t=86, r=255, g=90,  b=0   },
-  { t=90, r=255, g=40,  b=40  },
-}
+; ===============================
+; KS SOIL TEMP (2") — PS1 PIPELINE + UI
+; ===============================
 
+; PS1 script path
+KSSoilPS1=#@#Lua\KSSoilMasterFetch.ps1
 
--- Min palette (Heat): slightly darker green than AVG, still reaches orange/red
-local MIN_STOPS_HEAT = {
-  { t=25, r=255, g=255, b=255 },
-  { t=32, r=0,   g=30,  b=255 },
-  { t=32, r=255, g=220, b=0   },
-  { t=36, r=255, g=220, b=0   },
-  { t=45, r=0,   g=180, b=0   },  -- slightly darker green than AVG
-  { t=62, r=0,   g=180, b=0   },
-  { t=75, r=255, g=165, b=0   },
-  { t=86, r=255, g=90,  b=0   },
-  { t=90, r=255, g=40,  b=40  },
-}
+; Output files (written by PS1)
+KSSoilMasterCsv=#CURRENTPATH#ks_soiltemp_2in_master.csv
+KSSoilRollingCsv=#CURRENTPATH#ks_soiltemp_2in_rolling7day.csv
+KSSoilLastAttemptTxt=#CURRENTPATH#ks_soiltemp_2in_last_attempt.txt
 
+; Raw download (optional, kept for debugging / archival)
+KSSoilRawName=ks_soiltemp_2in_raw.csv
+KSSoilRawCsv=#CURRENTPATH#DownloadFile\#KSSoilRawName#
 
--- Min palette (ColdClamp): emphasizes cold risk; warm mins stay green
-local MIN_STOPS_COLDCLAMP = {
-  { t=25, r=255, g=255, b=255 },
-  { t=32, r=0,   g=30,  b=255 },
-  { t=32, r=255, g=220, b=0   },
-  { t=36, r=255, g=220, b=0   },
-  { t=45, r=0,   g=200, b=0   },
-  { t=90, r=0,   g=200, b=0   },
-}
+; Scheduler lock (prevents dupes / supports watchdog)
+KSSoilIsRunning=0
+KSSoilLockStartMin=0
+KSSoilLockTimeoutMin=5
 
+; -----------------
+; SOIL DOT (health indicator)
+; -----------------
+SoilDotColor=255,0,0,150
 
-local function setShape(meterName, idx, shapeDef)
-  if idx == 1 then
-    SKIN:Bang("!SetOption", meterName, "Shape", shapeDef)
-  else
-    SKIN:Bang("!SetOption", meterName, "Shape" .. idx, shapeDef)
-  end
-end
+; -----------------
+; SOIL GRAPH (reads rolling CSV: date,min7F,avg7F)
+; -----------------
+SoilHistCsv=#KSSoilRollingCsv#
+SoilLastAttemptFile=#CURRENTPATH#ks_soiltemp_2in_last_attempt.txt
 
-function Run()
-  local meterName = "MeterSoilGraph"
-  --print("--- SoilGraph: Run Start ---")
+; 2 = min7F, 3 = avg7F
+SoilGraphCol=2
 
-  -- 1. Load Paths
-  local file             = SKIN:GetVariable("SoilHistCsv", "")
-  local lastAttemptFile  = SKIN:GetVariable("SoilLastAttemptFile", "")
-  --print("CSV Path: " .. file)
-  --print("Log Path: " .. lastAttemptFile)
+; NOTE: requires KSSoilRollingDays to be defined earlier in [Variables]
+SoilGraphDays=#KSSoilRollingDays#
 
-  -- 2. Variables
-  local days     = tonumber(SKIN:GetVariable("SoilGraphDays", "45")) or 45
-  local barW     = tonumber(SKIN:GetVariable("SoilGraphBarW", "2")) or 2
-  local barGap   = tonumber(SKIN:GetVariable("SoilGraphBarGap", "0")) or 0
-  local graphH   = tonumber(SKIN:GetVariable("SoilGraphH", "65")) or 65
-  local minF_in  = tonumber(SKIN:GetVariable("SoilGraphMinF", "20")) or 20
-  local maxF_in  = tonumber(SKIN:GetVariable("SoilGraphMaxF", "90")) or 90
+SoilGraphBarW=4
+SoilGraphBarGap=0
+SoilGraphH=100
 
-  -- 3. Extract Timestamp from Log
-local lastUpdatedStr = "n/a"
-  local frameColor = "255,255,255,90" 
-  
-  local fhLog = io.open(lastAttemptFile, "r")
-  if fhLog then
-    local content = fhLog:read("*all")
-    -- Matches the PowerShell format: OK YYYY-MM-DDTHH:MM:SS
-    local year, month, day, hour, min, sec = content:match("OK%s+(%d%d%d%d)%-(%d%d)%-(%d%d)T(%d%d):(%d%d):(%d%d)")
-    
-    if year then
-      -- Calculate Age for Frame Color logic
-      local lastTime = os.time({year=year, month=month, day=day, hour=hour, min=min, sec=sec})
-      local diffHours = os.difftime(os.time(), lastTime) / 3600
+SoilGraphMinF=25
+SoilGraphMaxF=100
 
-      -- Jan 31 @ 15:13 format
-      local months = {"Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"}
-      lastUpdatedStr = string.format("%s %d @ %02d:%02d", months[tonumber(month)], tonumber(day), hour, min)
-      
-      -- Alert logic
-      if diffHours >= 26 then frameColor = "255,0,0,200"    -- Red
-      elseif diffHours >= 24 then frameColor = "255,255,0,200"  -- Yellow
-      end
-    end
-    fhLog:close()
-  end
-  -- 4. Read CSV
-  local rows = {}
-  local fhCsv = io.open(file, "r")
-  if fhCsv then
-    local lineCount = 0
-    for line in fhCsv:lines() do
-      lineCount = lineCount + 1
-      line = line:gsub("^\239\187\191", ""):gsub("^%s+", ""):gsub("%s+$", "")
-      if line ~= "" then
-        local fields = splitCSV(line)
-        if not isHeader(fields) then
-          local vMin = tonumber(fields[2] or "")
-          local vAvg = tonumber(fields[3] or "")
-          if vMin or vAvg then
-            rows[#rows + 1] = { min7 = vMin, avg7 = vAvg }
-          end
-        end
-      end
-    end
-    fhCsv:close()
-    --print("CSV Processing: Read " .. lineCount .. " lines, kept " .. #rows .. " data rows.")
-  else
-    --print("Error: Could not open CSV file.")
-  end
+; Right-justified inside background padding
+SoilGraphX=(#W# - #Pad# - ((#SoilGraphDays# * #SoilGraphBarW#) + ((#SoilGraphDays# - 1) * #SoilGraphBarGap#)))
+SoilGraphY=130
 
-  -- 5. Graph Limits
-  if #rows > days then
-    local sliced = {}
-    for i = (#rows - days + 1), #rows do sliced[#sliced + 1] = rows[i] end
-    rows = sliced
-  end
-  local n = #rows
-  local graphW = (n > 0) and ((n * barW) + ((n - 1) * barGap)) or 1
-  --print("Graphing " .. n .. " bars. Width: " .. graphW .. "px")
+GitRepoPath=E:\Documents\Rainmeter\Skins\Heartland
+GitPushPS1=#@#lua\GitPush.ps1
+GitLastStatus=Git: idle
 
-  -- 6. Shapes
-  local idx = 1
-  local minF = (minF_in > 20) and 20 or minF_in
-  local maxF = (maxF_in < 90) and 90 or maxF_in
-  local rangeF = (maxF - minF <= 0) and 1 or (maxF - minF)
+; =================
+; OM DATA
+; =================
+; This section performs initialization and data retrieval.
+; Do not modify this logic.
+[MeasureCurPathSlash]
+Measure=String
+UpdateDivider=-1
+String=#CURRENTPATH#
+Substitute="\\":"/"
+DynamicVariables=1
+OnUpdateAction=[!SetVariable CurPathSlash "[MeasureCurPathSlash]"]
 
--- Frame
-  local frame = string.format("Rectangle 0,0,%d,%d,4 | Fill Color 0,0,0,0 | StrokeWidth 1 | Stroke Color %s", graphW, graphH, frameColor)
-  setShape(meterName, idx, frame)
-  idx = idx + 1
+; =================
+; MeasureOM_FetchPS — uses OM_URL + writes OM_Query.txt + writes om.json in skin folder
+; =================
+[MeasureOM_FetchPS]
+Measure=Plugin
+Plugin=RunCommand
+Program=powershell.exe
+UpdateDivider=-1
+DynamicVariables=1
+State=Hide
+Parameter=-NoProfile -ExecutionPolicy Bypass -Command "$ErrorActionPreference='Stop'; $ProgressPreference='SilentlyContinue'; [Console]::OutputEncoding=[Text.UTF8Encoding]::new($false); $u='#OM_URL#'; $q='#OM_QUERY_TXT#'; $p='#OM_JSON#'; $s='#OM_STATUS#'; $enc=[Text.UTF8Encoding]::new($false); try { [IO.File]::WriteAllText($q,$u,$enc); $resp=Invoke-WebRequest -UseBasicParsing -Uri $u -Headers @{ 'User-Agent'='Mozilla/5.0'; 'Accept'='application/json' }; $j=$resp.Content; [IO.File]::WriteAllText($p,$j,$enc); $head=$j.Substring(0,[Math]::Min(160,$j.Length)); $head=($head -replace '[\r\n]+',' ' -replace '[^\x20-\x7E]','?'); $okJson=$true; try { $null=$j | ConvertFrom-Json } catch { $okJson=$false }; $code=$resp.StatusCode; $ct=$resp.Headers['Content-Type']; $final=''; try { $final=$resp.BaseResponse.ResponseUri.AbsoluteUri } catch { $final='' }; $line=('OK {0} code={1} ct={2} json={3} len={4} jsonPath={5} statusPath={6} finalUrl={7} head={8}' -f (Get-Date -Format s),$code,$ct,$okJson,$j.Length,$p,$s,$final,$head); [IO.File]::WriteAllText($s,$line,$enc); Write-Output $head; } catch { $stamp=(Get-Date -Format s); $msg=$_.Exception.Message; $msg=($msg -replace '[\r\n]+',' ' -replace '[^\x20-\x7E]','?'); $line=('ERR {0} {1} url={2} jsonPath={3} statusPath={4}' -f $stamp,$msg,$u,$p,$s); [IO.File]::WriteAllText($s,$line,$enc); Write-Output ('FETCH ERROR: '+$msg); }"
+FinishAction=[!UpdateMeasure MeasureOM_File][!UpdateMeasure MeasureOM_Status][!UpdateMeasure MeasureOM_OkErr][!UpdateMeasureGroup OMParse][!UpdateMeterGroup OM][!CommandMeasure MeasureKSSoil_BuildPS "Run"][!Log "OM_Fetch triggered" "Notice"]
 
-  -- Current Reading Bar (rightmost position, drawn FIRST so it's behind avg/min)
-  local currentTemp = nil
-  local masterPath = SKIN:GetVariable("KSSoilMasterCsv", "")
-  if masterPath ~= "" then
-    local mf = io.open(masterPath, "r")
-    if mf then
-      local lastLine = nil
-      for line in mf:lines() do
-        line = trim(line)
-        if line ~= "" and not line:match("^date,") then
-          lastLine = line
-        end
-      end
-      mf:close()
-      
-      if lastLine then
-        local fields = splitCSV(lastLine)
-        currentTemp = tonumber(fields[2] or "")
-      end
-    end
-  end
+[MeasureOM_Status]
+Measure=Plugin
+Plugin=WebParser
+Group=OMParent
+DynamicVariables=1
+URL=file:///#CurPathSlash#om_status.txt
+RegExp=(?si)\A(.*)\z
+StringIndex=1
+Download=0
+ForceReload=1
+CodePage=65001
+UpdateDivider=-1
+UpdateRate=1
 
-  if currentTemp then
-    local h = math.floor(((clamp(currentTemp, 25, maxF) - minF) / rangeF) * graphH + 0.5)
-    local r, g, b = interpStops(AVG_STOPS, clamp(currentTemp, 25, 90))
-    -- Position at the rightmost rolling bar position (n-1)
-    local xPos = (n - 1) * (barW + barGap)
-    setShape(meterName, idx, string.format("Rectangle %d,%d,%d,%d,0 | Fill Color %s | StrokeWidth 1 | Stroke Color 100,100,100,100", xPos, graphH-h, barW, h, rgba(r,g,b,255)))
-    idx = idx + 1
-  end
+[MeasureOM_File]
+Measure=Plugin
+Plugin=WebParser
+Group=OMParent
+DynamicVariables=1
+URL=file:///#CurPathSlash#om.json
+RegExp=(?si)\A(.*)\z
+StringIndex=1
+Download=0
+ForceReload=1
+CodePage=65001
+UpdateDivider=-1
+UpdateRate=1
 
-  -- Bars (avg/min will draw on top of current bar)
-  for i = 1, n do
-    -- Avg Bar
-    if rows[i].avg7 then
-      local h = math.floor(((clamp(rows[i].avg7, 25, maxF) - minF) / rangeF) * graphH + 0.5)
-      local r, g, b = interpStops(AVG_STOPS, clamp(rows[i].avg7, 25, 90))
-      setShape(meterName, idx, string.format("Rectangle %d,%d,%d,%d,0 | Fill Color %s | StrokeWidth 0", (i-1)*(barW+barGap), graphH-h, barW, h, rgba(r,g,b,110)))
-      idx = idx + 1
-    end
-    -- Min Bar
-    if rows[i].min7 then
-      local h = math.floor(((clamp(rows[i].min7, 25, maxF) - minF) / rangeF) * graphH + 0.5)
-      local r, g, b = interpStops(MIN_STOPS_HEAT, clamp(rows[i].min7, 25, 90))
-      setShape(meterName, idx, string.format("Rectangle %d,%d,%d,%d,0 | Fill Color %s | StrokeWidth 1 | Stroke Color 0,0,0,70", (i-1)*(barW+barGap), graphH-h, barW, h, rgba(r,g,b,200)))
-      idx = idx + 1
-    end
-  end
-  -- Freeze Line
-  local freezeY = math.floor(graphH - (((32 - minF) / rangeF) * graphH) + 0.5)
-  setShape(meterName, idx, string.format("Line 0,%d,%d,%d | StrokeWidth 1 | Stroke Color 255,0,0,210", freezeY, graphW, freezeY))
-  --print("Final Shape Index: " .. idx)
+[MeasureUptime]
+Measure=Calc
+UpdateDivider=1
+Formula=(MeasureUptime + 1)
+DynamicVariables=1
 
-  -- Cleanup
-  local maxShapes = (2 * days) + 15
-  for j = idx + 1, maxShapes do setShape(meterName, j, "") end
+; [MeasureSecondsOfDay]
+; Measure=Time
+; Format=%H%M%S
+; UpdateDivider=1
+; DynamicVariables=1
 
--- Tooltip
-local last = rows[n] or {}
+[MeasureMinute]
+Measure=Time
+Format=%M
+UpdateDivider=60
 
--- Read current temp from master CSV (last entry)
-local currentTemp = "n/a"
-local masterPath = SKIN:GetVariable("KSSoilMasterCsv", "")
-if masterPath ~= "" then
-  local mf = io.open(masterPath, "r")
-  if mf then
-    local lastLine = nil
-    for line in mf:lines() do
-      line = trim(line)
-      if line ~= "" and not line:match("^date,") then
-        lastLine = line
-      end
-    end
-    mf:close()
-    
-    if lastLine then
-      local fields = splitCSV(lastLine)
-      local avgF = tonumber(fields[2] or "")
-      if avgF then
-        currentTemp = string.format("%.1f", avgF)
-      end
-    end
-  end
-end
+[MeasureAutoFetch]
+Measure=Calc
+Formula=([MeasureMinute] % 10)
+IfCondition=([MeasureAutoFetch] = 0)
+IfTrueAction=[!CommandMeasure MeasureOM_FetchPS "Run"]
+UpdateDivider=1
+DynamicVariables=1
 
-local tip = string.format(
-  "Albert, KS soil (2\") - 7 day readings\n%s - %s\176F\navg: %s\176F    min: %s\176F",
-  lastUpdatedStr,
-  currentTemp,
-  (last.avg7 and string.format("%.1f", last.avg7) or "n/a"),
-  (last.min7 and string.format("%.1f", last.min7) or "n/a")
-)
-  -- Final update to Rainmeter
-  SKIN:Bang("!SetOption", meterName, "ToolTipText", tip)
-  SKIN:Bang("!UpdateMeter", meterName)
-  SKIN:Bang("!Redraw")
+; ============================
+; KS SOIL TEMP DAILY CSV PIPELINE (PS1-driven) — minimal + correct
+; - Gate: once/day after #KSSoilRunAfterHour#
+; - Lock: prevents overlap
+; - Watchdog: clears stuck lock (minutes-based, no %s)
+; ============================
 
-  print("--- SoilGraphGen: Run Complete ---")
-end -- This closes the function Run()
+; Read last attempt date (OK or ERR) from last_attempt.txt -> YYYYMMDD (string)
+[MeasureKSSoilLastAttemptYMD]
+Measure=Plugin
+Plugin=WebParser
+DynamicVariables=1
+URL=file:///#CurPathSlash#ks_soiltemp_2in_last_attempt.txt
+RegExp=(?si)\b(?:OK|ERR)\s+(\d{4}-\d{2}-\d{2})
+StringIndex=1
+Substitute="-":""
+ForceReload=1
+CodePage=65001
+UpdateDivider=300
+
+; Coerce to numeric (blank -> 0)
+[MeasureKSSoilLastAttemptYMDNum]
+Measure=Calc
+DynamicVariables=1
+UpdateDivider=300
+Formula=([MeasureKSSoilLastAttemptYMD] + 0)
+
+; Today as YYYYMMDD
+[MeasureKSSoilTodayYMD]
+Measure=Time
+Format=%Y%m%d
+UpdateDivider=300
+
+; Time as HHMM
+[MeasureKSSoilTimeHM]
+Measure=Time
+Format=%H%M
+UpdateDivider=300
+
+; Lock exposed as numeric (variable -> number)
+[MeasureKSSoilLock]
+Measure=Calc
+DynamicVariables=1
+UpdateDivider=60
+Formula=(#KSSoilIsRunning# + 0)
+
+; Minutes since midnight (0..1439) for watchdog timing (no epoch)
+[MeasureKSSoilHour]
+Measure=Time
+Format=%H
+UpdateDivider=60
+
+[MeasureKSSoilMin]
+Measure=Time
+Format=%M
+UpdateDivider=60
+
+[MeasureKSSoilNowMinOfDay]
+Measure=Calc
+DynamicVariables=1
+UpdateDivider=60
+Formula=(([MeasureKSSoilHour] * 60) + [MeasureKSSoilMin])
+
+; Run the PS1 (writes raw/master/rolling/last_attempt)
+[MeasureKSSoil_BuildPS]
+disabled=0
+Measure=Plugin
+Plugin=RunCommand
+Program=powershell.exe
+DynamicVariables=1
+State=Hide
+Timeout=60000
+UpdateDivider=-1
+Parameter=-NoProfile -ExecutionPolicy Bypass -File "#KSSoilPS1#" -Station "#KSSoilStation#" -MasterDays "#KSSoilMasterDays#" -RollingDays "#KSSoilRollingDays#" -MasterCsv "#KSSoilMasterCsv#" -RollingCsv "#KSSoilRollingCsv#" -RawCsv "#KSSoilRawCsv#" -LastAttemptTxt "#KSSoilLastAttemptTxt#"
+FinishAction=[!CommandMeasure MeasureSoilGraphGen "Run()"]
+
+; Gate: after noon AND not attempted today AND not currently running
+; NOTE: Use = for comparisons inside Calc formulas.
+[MeasureKSSoilGate]
+disable=0
+Measure=Calc
+DynamicVariables=1
+UpdateDivider=300
+Formula=(( [MeasureKSSoilTimeHM] >= (#KSSoilRunAfterHour#*100) ) * ( [MeasureKSSoilTodayYMD] > [MeasureKSSoilLastAttemptYMDNum] ) * ( [MeasureKSSoilLock] = 0 ) * ( [MeasureUptime] > 600 ))
+IfCondition=([MeasureKSSoilGate] = 1)
+IfTrueAction=[!SetVariable KSSoilIsRunning 1][!SetVariable KSSoilLockStartMin "[MeasureKSSoilNowMinOfDay]"][!CommandMeasure MeasureKSSoil_BuildPS "Run"]
+; Watchdog: if lock stuck longer than timeout minutes, clear it
+; Handles midnight rollover safely.
+
+[MeasureKSSoilLockWatchdog]
+Measure=Calc
+DynamicVariables=1
+UpdateDivider=60
+; elapsed minutes since lock set (handles midnight rollover)
+Formula=(([MeasureKSSoilLock]=1) * (#KSSoilLockStartMin#>0) * ((([MeasureKSSoilNowMinOfDay] >= #KSSoilLockStartMin#) ? ([MeasureKSSoilNowMinOfDay] - #KSSoilLockStartMin#) : ([MeasureKSSoilNowMinOfDay] + 1440 - #KSSoilLockStartMin#)) > #KSSoilLockTimeoutMin#))
+IfCondition=([MeasureKSSoilLockWatchdog]=1)
+IfTrueAction=[!SetVariable KSSoilIsRunning 0][!SetVariable KSSoilLockStartMin 0][!UpdateMeasure MeasureKSSoilGate]
+
+; ============================
+; GIT PUSH (only if changes)
+; ============================
+[MeasureGitPush]
+Measure=Plugin
+Plugin=RunCommand
+Program=powershell.exe
+State=Hide
+UpdateDivider=-1
+DynamicVariables=1
+Parameter=-NoProfile -ExecutionPolicy Bypass -File "#GitPushPS1#" -RepoPath "#GitRepoPath#" -Message "Heartland refresh"
+OutputType=ANSI
+FinishAction=[!SetVariable GitLastStatus "[MeasureGitPush]"][!UpdateMeter *][!Redraw]
+

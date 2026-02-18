@@ -9,6 +9,7 @@ end
 
 function Run()
     local csvPath = SKIN:GetVariable('SoilHistCsv')
+    SKIN:Bang('!Log', 'SoilGraphGen Run() called. csvPath=' .. tostring(csvPath), 'Notice')
     local col     = tonumber(SKIN:GetVariable('SoilGraphCol'))  or 2
     local days    = tonumber(SKIN:GetVariable('SoilGraphDays')) or 45
     local barW    = tonumber(SKIN:GetVariable('SoilGraphBarW')) or 4
@@ -102,6 +103,7 @@ function Run()
         SKIN:Bang('!SetOption', METER, 'ToolTipText', tip)
     end
 
+    SKIN:Bang('!Log', 'SoilGraphGen: set ' .. #bars .. ' bars on ' .. METER, 'Notice')
     SKIN:Bang('!UpdateMeter', METER)
     SKIN:Bang('!Redraw')
 end

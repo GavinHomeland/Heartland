@@ -1,163 +1,107 @@
--- =====================================================================
--- PressureGauges.lua
--- LEFT needle (barometery.png): absolute pressure vs baseline
---   0° = baseline, + = higher, - = lower
---
--- RIGHT needle (barometer.png): 3-hour pressure tendency (rate of change)
---   0° = steady, +90° = rapid rise, -90° = rapid fall
---
--- Reads Open-Meteo hourly pressure_msl from om.json (timezone-local)
--- Sets variables for tooltips + the LEFT needle angle:
---   #PressureActualAngle#
---   #PressureNowHpa#
---   #PressureBaselineHpa#
---   #PressureDeltaBaselineHpa#
---   #PressureDelta3hHpa#
---   #PressureRateHpaHr#
--- Returns: Trend angle in degrees (for RIGHT needle)
--- =====================================================================
 
--- =========================
--- TUNABLE CONSTANTS
--- =========================
-local BASELINE_WINDOW_HOURS = 24     -- baseline = mean of last 24 hourly points
-local TREND_WINDOW_HOURS    = 3      -- tendency window
-local MAX_ABS_DELTA_HPA     = 25.0   -- [ESTIMATE] clamp abs needle at +/-25 hPa (≈ "big" swings)
-local MAX_TREND_DP3H_HPA    = 6.0    -- [ESTIMATE] clamp trend at +/-6 hPa per 3h for full +/-90°
-
--- =========================
-local function clamp(x, lo, hi)
-  if x < lo then return lo end
-  if x > hi then return hi end
-  return x
-end
-
-local function readFile(path)
-  local f = io.open(path, "r")
-  if not f then return nil end
-  local s = f:read("*a")
-  f:close()
-  return s
-end
-
-local function findArrayBlock(objText, key)
-  -- finds: "key":[ ... ]
-  local pat = '"' .. key .. '"%s*:%s*%[(.-)%]'
-  return objText:match(pat)
-end
-
-local function parseTimes(block)
-  local t = {}
-  for s in block:gmatch('"(.-)"') do
-    t[#t+1] = s
-  end
-  return t
-end
-
-local function parseNumbers(block)
-  local n = {}
-  for s in block:gmatch("[-%d%.]+") do
-    n[#n+1] = tonumber(s)
-  end
-  return n
-end
-
-local function findIndex(times, target)
-  for i = 1, #times do
-    if times[i] == target then return i end
-  end
-  return nil
-end
-
-local function setVar(name, value)
-  SKIN:Bang('!SetVariable ' .. name .. ' "' .. value .. '"')
-end
+-- SoilGraphGen.lua
+-- Reads the rolling soil-temp CSV and draws a bar chart on MeterSoilGraph
+-- using Rainmeter Shape options (Shape, Shape2, Shape3, ...).
+-- Triggered via: [!CommandMeasure MeasureSoilGraphGen "Run()"]
 
 function Initialize()
-  setVar("PressureActualAngle", "0")
-  setVar("PressureNowHpa", "NA")
-  setVar("PressureBaselineHpa", "NA")
-  setVar("PressureDeltaBaselineHpa", "NA")
-  setVar("PressureDelta3hHpa", "NA")
-  setVar("PressureRateHpaHr", "NA")
 end
 
-function Update()
-  local jsonPath = SKIN:GetVariable("OM_JSON", "")
-  local json = readFile(jsonPath)
-  if not json then
-    return 0
-  end
+function Run()
+    local csvPath = SKIN:GetVariable('SoilHistCsv')
+    local col     = tonumber(SKIN:GetVariable('SoilGraphCol'))  or 2
+    local days    = tonumber(SKIN:GetVariable('SoilGraphDays')) or 45
+    local barW    = tonumber(SKIN:GetVariable('SoilGraphBarW')) or 4
+    local barGap  = tonumber(SKIN:GetVariable('SoilGraphBarGap')) or 0
+    local graphH  = tonumber(SKIN:GetVariable('SoilGraphH'))    or 100
+    local minF    = tonumber(SKIN:GetVariable('SoilGraphMinF')) or 25
+    local maxF    = tonumber(SKIN:GetVariable('SoilGraphMaxF')) or 100
+    local range   = maxF - minF
 
-  -- Extract hourly object text (tolerant of ordering)
-  local hourlyObj = json:match('%"hourly%"%s*:%s*%{(.-)%}%s*[,%}]')
-  if not hourlyObj then
-    return 0
-  end
-
-  local tBlock = findArrayBlock(hourlyObj, "time")
-  local pBlock = findArrayBlock(hourlyObj, "pressure_msl")
-  if not tBlock or not pBlock then
-    return 0
-  end
-
-  local times = parseTimes(tBlock)
-  local pres  = parseNumbers(pBlock)
-  if #times == 0 or #pres == 0 then
-    return 0
-  end
-
-  -- Open-Meteo hourly times are local when timezone=... is used in the request
-  local nowHour  = os.date("%Y-%m-%dT%H:00")
-  local pastHour = os.date("%Y-%m-%dT%H:00", os.time() - TREND_WINDOW_HOURS * 3600)
-
-  local iNow  = findIndex(times, nowHour) or #times
-  local iPast = findIndex(times, pastHour) or (iNow - TREND_WINDOW_HOURS)
-
-  if iNow < 1 or iNow > #pres or iPast < 1 or iPast > #pres then
-    return 0
-  end
-
-  local pNow  = pres[iNow]
-  local pPast = pres[iPast]
-  if not pNow or not pPast then
-    return 0
-  end
-
-  -- Baseline = mean of last BASELINE_WINDOW_HOURS points ending at iNow
-  local nBase = BASELINE_WINDOW_HOURS
-  local start = iNow - (nBase - 1)
-  if start < 1 then start = 1 end
-
-  local sum, cnt = 0, 0
-  for i = start, iNow do
-    if pres[i] then
-      sum = sum + pres[i]
-      cnt = cnt + 1
+    -- Parse CSV (first row = header, skip it)
+    local rows = {}
+    local f = io.open(csvPath, 'r')
+    if f then
+        local isHeader = true
+        for line in f:lines() do
+            if isHeader then
+                isHeader = false
+            else
+                local fields = {}
+                for v in line:gmatch('[^,\r\n]+') do
+                    fields[#fields + 1] = v
+                end
+                if #fields >= col then
+                    rows[#rows + 1] = { date = fields[1], val = tonumber(fields[col]) }
+                end
+            end
+        end
+        f:close()
     end
-  end
 
-  local baseline = (cnt > 0) and (sum / cnt) or 1013.25
+    -- Use the last 'days' rows
+    local startIdx = math.max(1, #rows - days + 1)
+    local bars = {}
+    for i = startIdx, #rows do
+        bars[#bars + 1] = rows[i]
+    end
 
-  local dAbs = pNow - baseline               -- hPa
-  local dp3  = pNow - pPast                  -- hPa over 3h
-  local rate = dp3 / TREND_WINDOW_HOURS      -- hPa/hr
+    -- Color: cold=blue → warm=green → hot=red
+    local function barColor(val)
+        local frac = math.max(0, math.min(1, (val - minF) / range))
+        local r, g, b
+        if frac < 0.5 then
+            local t = frac * 2          -- 0..1 across blue→green
+            r = math.floor(60  + t * 20)
+            g = math.floor(120 + t * 80)
+            b = math.floor(230 - t * 130)
+        else
+            local t = (frac - 0.5) * 2 -- 0..1 across green→red
+            r = math.floor(80  + t * 175)
+            g = math.floor(200 - t * 120)
+            b = math.floor(100 - t * 50)
+        end
+        return r, g, b
+    end
 
-  -- LEFT needle angle: 0° at baseline, +/-90° at +/-MAX_ABS_DELTA_HPA
-  local dAbsClamped = clamp(dAbs, -MAX_ABS_DELTA_HPA, MAX_ABS_DELTA_HPA)
-  local absAngle = (dAbsClamped / MAX_ABS_DELTA_HPA) * 90.0  -- -90..+90
+    local METER = 'MeterSoilGraph'
 
-  -- RIGHT needle angle: 0° steady, +/-90° at +/-MAX_TREND_DP3H_HPA
-  local dp3Clamped = clamp(dp3, -MAX_TREND_DP3H_HPA, MAX_TREND_DP3H_HPA)
-  local trendAngle = (dp3Clamped / MAX_TREND_DP3H_HPA) * 90.0 -- -90..+90
+    -- Set a shape for each bar
+    for i, bar in ipairs(bars) do
+        local key = (i == 1) and 'Shape' or ('Shape' .. i)
+        if bar.val then
+            local frac = math.max(0, math.min(1, (bar.val - minF) / range))
+            local barH = math.max(1, math.floor(frac * graphH))
+            local bx   = (i - 1) * (barW + barGap)
+            local by   = graphH - barH
+            local r, g, b = barColor(bar.val)
+            SKIN:Bang('!SetOption', METER, key,
+                string.format('Rectangle %d,%d,%d,%d | Fill Color %d,%d,%d,210 | StrokeWidth 0',
+                    bx, by, barW, barH, r, g, b))
+        else
+            -- Missing value: invisible placeholder
+            local bx = (i - 1) * (barW + barGap)
+            SKIN:Bang('!SetOption', METER, key,
+                string.format('Rectangle %d,%d,%d,1 | Fill Color 0,0,0,0 | StrokeWidth 0',
+                    bx, graphH - 1, barW))
+        end
+    end
 
-  -- Export variables for meters/tooltips
-  setVar("PressureActualAngle", string.format("%.1f", absAngle))
-  setVar("PressureNowHpa", string.format("%.1f", pNow))
-  setVar("PressureBaselineHpa", string.format("%.1f", baseline))
-  setVar("PressureDeltaBaselineHpa", string.format("%+.1f", dAbs))
-  setVar("PressureDelta3hHpa", string.format("%+.1f", dp3))
-  setVar("PressureRateHpaHr", string.format("%+.2f", rate))
+    -- Erase leftover shape slots from any previous longer render
+    local clearUpTo = days + 5
+    for i = #bars + 1, clearUpTo do
+        local key = (i == 1) and 'Shape' or ('Shape' .. i)
+        SKIN:Bang('!SetOption', METER, key, '')
+    end
 
-  return trendAngle
+    -- Tooltip: show most-recent date + value
+    if #bars > 0 then
+        local last  = bars[#bars]
+        local label = (col == 2) and 'Min 7-day' or 'Avg 7-day'
+        local tip   = string.format('%s  %s: %.1f°F', last.date or '?', label, last.val or 0)
+        SKIN:Bang('!SetOption', METER, 'ToolTipText', tip)
+    end
+
+    SKIN:Bang('!UpdateMeter', METER)
+    SKIN:Bang('!Redraw')
 end

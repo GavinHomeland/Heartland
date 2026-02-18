@@ -1,3 +1,4 @@
+
 -- SoilGraphGen.lua
 -- Reads the rolling soil-temp CSV and draws a bar chart on MeterSoilGraph
 -- using Rainmeter Shape options (Shape, Shape2, Shape3, ...).

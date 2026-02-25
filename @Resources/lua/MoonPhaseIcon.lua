@@ -51,11 +51,41 @@ local function julianDateUTC(t)
   return jd
 end
 
+-- Convert a Julian Day Number to calendar date string "Mon/DD"
+local MONTH_ABBR = {"Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"}
+
+local function jdToMonDD(jd)
+  local Z = math.floor(jd + 0.5)
+  local A
+  if Z < 2299161 then
+    A = Z
+  else
+    local alpha = math.floor((Z - 1867216.25) / 36524.25)
+    A = Z + 1 + alpha - math.floor(alpha / 4)
+  end
+  local B = A + 1524
+  local C = math.floor((B - 122.1) / 365.25)
+  local D = math.floor(365.25 * C)
+  local E = math.floor((B - D) / 30.6001)
+  local day   = B - D - math.floor(30.6001 * E)
+  local month = (E < 14) and (E - 1) or (E - 13)
+  return MONTH_ABBR[month] .. "/" .. tostring(day)
+end
+
 local function moonPhaseIcon()
-  local t = os.date("!*t") -- UTC
+  local t  = os.date("!*t") -- UTC
   local jd = julianDateUTC(t)
   local f  = ((jd - NEW_MOON_JD) / SYNODIC_MONTH)
   f = f - math.floor(f) -- 0..1
+
+  -- Illumination percentage: 0% at new, 100% at full
+  local illum = math.floor((1 - math.cos(2 * math.pi * f)) / 2 * 100 + 0.5)
+  local desc  = (f < 0.5) and "waxing" or "waning"
+  SKIN:Bang("!SetVariable", "MoonPhasePct", tostring(illum) .. "% " .. desc)
+
+  -- Days to next full moon (full = f=0.5)
+  local daysToFull = ((0.5 - f) % 1) * SYNODIC_MONTH
+  SKIN:Bang("!SetVariable", "MoonNextFull", jdToMonDD(jd + daysToFull))
 
   -- 8-phase buckets
   if (f < 0.0625) or (f >= 0.9375) then return "moon-new.png" end

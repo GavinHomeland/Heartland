@@ -4,7 +4,9 @@
 # - Raw CSV (as downloaded)
 # - Master CSV: date,avgF,minF (last MasterDays)
 # - Rolling CSV: date,min7F,avg7F (last RollingDays; 7-day window)
-# - LastAttemptTxt: OK/ERR timestamp + message
+# - LastAttemptTxt: OK/ERR/PROBE timestamp + message  (overwrites, single line)
+# - FetchLog:       appending per-run log
+# - MasterLog:      appending master Heartland log
 # ============================
 
 [CmdletBinding()]
@@ -24,22 +26,12 @@ param(
     [string]$RawCsv = "",
 
     [Parameter(Mandatory = $true)]
-    [string]$LastAttemptTxt
+    [string]$LastAttemptTxt,
+
+    [string]$FetchLog  = "",   # appending per-file log
+    [string]$MasterLog = ""    # appending master Heartland log
 )
 
-# ==== ADD THIS LOCK AT THE START ====
-$today = Get-Date -Format "yyyy-MM-dd"
-if (Test-Path $LastAttemptTxt) {
-    $lastContent = Get-Content $LastAttemptTxt -Raw
-    # If the file says 'OK' and contains today's date, STOP.
-    if ($lastContent -match "OK" -and $lastContent -match $today) {
-        Write-Output "Already succeeded today ($today). Exiting."
-        exit
-    }
-}
-
-# ====================================
-# ==== RUN START: KSSoilMasterFetch ====
 $ErrorActionPreference = 'Stop'
 $ProgressPreference    = 'SilentlyContinue'
 
@@ -54,16 +46,19 @@ function Write-TextFileUtf8NoBom([string]$Path, [string]$Text) {
     [System.IO.File]::WriteAllText($Path, $Text, $enc)
 }
 
-function Write-LastAttempt([string]$Status, [string]$Message) {
+# Write status (overwrites) and append to both logs
+function Write-Status([string]$Status, [string]$Message) {
     $stamp = (Get-Date -Format s)
-    Write-TextFileUtf8NoBom $LastAttemptTxt ("{0} {1} {2}" -f $Status, $stamp, $Message)
+    $line  = "{0} {1} {2}" -f $Status, $stamp, $Message
+    Write-TextFileUtf8NoBom $LastAttemptTxt $line
+    if ($FetchLog)  { Add-Content -LiteralPath $FetchLog  -Value $line -Encoding UTF8 }
+    if ($MasterLog) { Add-Content -LiteralPath $MasterLog -Value $line -Encoding UTF8 }
 }
 
 function Convert-CtoF([double]$C) {
     return ($C * 9.0 / 5.0) + 32.0
 }
 
-# CHANGE: Renamed from Parse-InvDoubleOrNull to Get-DoubleOrNull
 function Get-DoubleOrNull([string]$s) {
     if ([string]::IsNullOrWhiteSpace($s)) { return $null }
     try {
@@ -73,28 +68,35 @@ function Get-DoubleOrNull([string]$s) {
     }
 }
 
-# --- Optional "I ran" marker (writes next to LastAttemptTxt)
+# --- Optional "I ran" marker
 try {
     $ranPath = Join-Path (Split-Path -Parent $LastAttemptTxt) 'ks_soiltemp_ps_ran.txt'
     Add-Content -LiteralPath $ranPath ("RAN " + (Get-Date -Format s))
 } catch { }
 
-
 # --- PAUSE FLAG -----------------------------------------------------------
-# Create this file to pause Mesonet fetch + all output writes (for testing):
-#   <RollingCsv folder>\KSSoil_PAUSE.txt
-# When present, the script exits 0 so Rainmeter FinishAction can still run.
 try {
     $pausePath = Join-Path (Split-Path -Parent $RollingCsv) 'KSSoil_PAUSE.txt'
     if (Test-Path -LiteralPath $pausePath) {
-        Write-LastAttempt 'PAUSED' ("Pause flag present: {0} (no fetch / no writes)" -f $pausePath)
+        Write-Status 'PAUSED' ("Pause flag present: {0}" -f $pausePath)
         exit 0
     }
 } catch { }
-# --------------------------------------------------------------------------
 
+# --- PROBE: already succeeded today? (safety check; gate should prevent this normally)
+$today = Get-Date -Format "yyyy-MM-dd"
+if (Test-Path $LastAttemptTxt) {
+    $lastContent = Get-Content $LastAttemptTxt -Raw
+    if ($lastContent -match "^OK" -and $lastContent -match $today) {
+        Write-Status 'PROBE' "Already succeeded today ($today). Skipping fetch."
+        Write-Output "PROBE: Already succeeded today. Skipping."
+        exit 0
+    }
+}
+
+# --- Main fetch
 try {
-    # ---- Compute fetch window (pad so rolling windows exist)
+    # ---- Compute fetch window
     $needDays  = [Math]::Max($MasterDays, ($RollingDays + 6))
     $fetchDays = $needDays + 7
 
@@ -110,13 +112,12 @@ try {
     $url = $base + '?stn=' + [uri]::EscapeDataString($Station) +
           '&int=day&t_start=' + $t_start + '&t_end=' + $t_end + '&vars=' + $vars
 
-    # ---- Raw file path default (DownloadFile next to master)
+    # ---- Raw file path default
     if ([string]::IsNullOrWhiteSpace($RawCsv)) {
-        $root  = Split-Path -Parent $MasterCsv
+        $root   = Split-Path -Parent $MasterCsv
         $RawCsv = Join-Path $root 'DownloadFile\ks_soiltemp_2in_raw.csv'
     }
 
-    # Ensure RawCsv directory exists
     $rawDir = Split-Path -Parent $RawCsv
     if ($rawDir -and -not (Test-Path -LiteralPath $rawDir)) {
         New-Item -ItemType Directory -Path $rawDir -Force | Out-Null
@@ -134,26 +135,22 @@ try {
 
     $raw = Import-Csv -LiteralPath $RawCsv
 
-# ---- Normalize rows -> Date, AvgF, MinF
-$rows = $raw |
-    Where-Object { $_.TIMESTAMP } |
-    ForEach-Object {
-        $dt   = [datetime]$_.TIMESTAMP
+    # ---- Normalize rows -> Date, AvgF, MinF
+    $rows = $raw |
+        Where-Object { $_.TIMESTAMP } |
+        ForEach-Object {
+            $dt   = [datetime]$_.TIMESTAMP
+            $avgC = Get-DoubleOrNull $_.SOILTMP5AVG
+            $minC = Get-DoubleOrNull $_.SOILTMP5MIN
+            if ($null -eq $avgC -or $null -eq $minC) { return }
+            [pscustomobject]@{
+                Date = $dt.Date
+                AvgF = Convert-CtoF $avgC
+                MinF = Convert-CtoF $minC
+            }
+        } |
+        Sort-Object Date
 
-        # CHANGE: Updated function calls below to Get-DoubleOrNull
-        $avgC = Get-DoubleOrNull $_.SOILTMP5AVG
-        $minC = Get-DoubleOrNull $_.SOILTMP5MIN
-        
-        if ($null -eq $avgC -or $null -eq $minC) { return }
-
-        [pscustomobject]@{
-            Date = $dt.Date
-            AvgF = Convert-CtoF $avgC
-            MinF = Convert-CtoF $minC
-        }
-    } |
-    Sort-Object Date
-    
     if (-not $rows -or $rows.Count -lt 10) {
         throw "Not enough parsed rows from CSV."
     }
@@ -200,17 +197,12 @@ $rows = $raw |
     }
     Write-TextFileUtf8NoBom $RollingCsv ($rollLines -join "`n")
 
-    Write-LastAttempt 'OK' ("url={0} raw={1} master={2} rolling={3}" -f $url,$RawCsv,$MasterCsv,$RollingCsv)
-# ... (previous rolling csv code) ...
-# ... previous code ...
-    Write-TextFileUtf8NoBom $RollingCsv ($rollLines -join "`n")
+    Write-Status 'OK' ("master={0} rolling={1} rows={2}" -f $MasterCsv, $RollingCsv, $rows.Count)
+    Write-Output "OK: KSSoilMasterFetch complete. Rows=$($rows.Count)"
 
-    # Update the status file with the completion message
-    # Your Lua script reads this file, so it will see the "Run Complete" status
-    Write-LastAttempt 'OK' "--- KSSoilMasterFetch: Run Complete ---"
-}catch {
+} catch {
     $msg = $_.Exception.Message
     $msg = ($msg -replace '[\r\n]+',' ' -replace '[^\x20-\x7E]','?')
-    try { Write-LastAttempt 'ERR' $msg } catch { }
+    try { Write-Status 'ERR' $msg } catch { }
     throw
 }

@@ -1,5 +1,6 @@
 -- ============================
 -- SoilGraphGen.lua (Rolling CSV -> dual-series Shape bars)
+-- NOTE: Do not alter graph drawing code or soil data structure without checking first.
 -- CSV format (rolling): date,min7F,avg7F
 --
 -- Draw order (back -> front):
@@ -140,8 +141,20 @@ local function setShape(meterName, idx, shapeDef)
   end
 end
 
+-- Append a line to a log file
+local function appendLog(path, msg)
+  if not path or path == "" then return end
+  local f = io.open(path, "a")
+  if f then f:write(msg .. "\n"); f:close() end
+end
+
 function Run()
   local meterName = "MeterSoilGraph"
+  local logPath    = SKIN:GetVariable("SoilGraphLog", "")
+  local masterLog  = SKIN:GetVariable("HeartlandLog", "")
+  local startMsg   = os.date("%Y-%m-%d %H:%M:%S") .. " | SoilGraphGen | Run Start"
+  appendLog(logPath, startMsg)
+  appendLog(masterLog, startMsg)
   --print("--- SoilGraph: Run Start ---")
 
   -- 1. Load Paths
@@ -316,7 +329,7 @@ if masterPath ~= "" then
 end
 
 local tip = string.format(
-  "Albert, KS soil (2\") - 7 day readings\n%s - %s\176F\navg: %s\176F    min: %s\176F",
+  "Albert, KS soil (2\") - 7 day readings\n%s - Current: %s\176F\navg: %s\176F    min: %s\176F",
   lastUpdatedStr,
   currentTemp,
   (last.avg7 and string.format("%.1f", last.avg7) or "n/a"),
@@ -327,5 +340,8 @@ local tip = string.format(
   SKIN:Bang("!UpdateMeter", meterName)
   SKIN:Bang("!Redraw")
 
-  print("--- SoilGraphGen: Run Complete ---")
+  local endMsg = os.date("%Y-%m-%d %H:%M:%S") .. " | SoilGraphGen | Run Complete"
+  appendLog(logPath, endMsg)
+  appendLog(masterLog, endMsg)
+  SKIN:Bang("!Log", "--- SoilGraphGen: Run Complete ---", "Notice")
 end -- This closes the function Run()

@@ -185,7 +185,7 @@ function Run()
   -- Shape 3 (freeze line, z=back): red horizontal at 32°F
   local freezeY = math.floor(graphH - (((32 - minF) / rangeF) * graphH) + 0.5)
   setShape(meterName, shapeIdx,
-    string.format("Line 0,%d,%d,%d | StrokeWidth 1 | Stroke Color 255,0,0,210",
+    string.format("Line 0,%d,%d,%d | StrokeWidth 1 | Stroke Color 255,0,0,255",
       freezeY, graphW, freezeY))
   shapeIdx = shapeIdx + 1
 
@@ -275,17 +275,18 @@ function Run()
     local v = points[i]
     if v and (not hxMin or v < hxMin) then hxMin = v end
   end
-  local todayLow  = points[pastDays]
   local futureMin = nil
   for i = pastDays + 1, totalBars - 1 do
     local v = points[i]
     if v and (not futureMin or v < futureMin) then futureMin = v end
   end
+  -- currentTemp is the live reading used for the today bar; fall back to today's daily min
+  local currentDisplay = currentTemp or points[pastDays]
   local tip = string.format(
     "Hx Low: %s\176F\nCurrent: %s\176F\nPredicted Low: %s\176F",
-    hxMin     and string.format("%.1f", hxMin)     or "n/a",
-    todayLow  and string.format("%.1f", todayLow)  or "n/a",
-    futureMin and string.format("%.1f", futureMin) or "n/a"
+    hxMin          and string.format("%.1f", hxMin)          or "n/a",
+    currentDisplay and string.format("%.1f", currentDisplay) or "n/a",
+    futureMin      and string.format("%.1f", futureMin)      or "n/a"
   )
   SKIN:Bang("!SetOption", meterName, "ToolTipText", tip)
   SKIN:Bang("!UpdateMeter", meterName)

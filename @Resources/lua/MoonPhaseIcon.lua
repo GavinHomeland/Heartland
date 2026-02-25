@@ -69,69 +69,66 @@ local function jdToMonDD(jd)
   local E = math.floor((B - D) / 30.6001)
   local day   = B - D - math.floor(30.6001 * E)
   local month = (E < 14) and (E - 1) or (E - 13)
-  return MONTH_ABBR[month] .. "/" .. tostring(day)
+  return MONTH_ABBR[month] .. tostring(day)
 end
 
-local function moonPhaseIcon()
-  local t  = os.date("!*t") -- UTC
-  local jd = julianDateUTC(t)
-  local f  = ((jd - NEW_MOON_JD) / SYNODIC_MONTH)
-  f = f - math.floor(f) -- 0..1
-
-  -- Illumination percentage: 0% at new, 100% at full
-  local illum = math.floor((1 - math.cos(2 * math.pi * f)) / 2 * 100 + 0.5)
-  local desc  = (f < 0.5) and "waxing" or "waning"
-  SKIN:Bang("!SetVariable", "MoonPhasePct", tostring(illum) .. "% " .. desc)
-
-  -- Days to next full moon (full = f=0.5)
-  local daysToFull = ((0.5 - f) % 1) * SYNODIC_MONTH
-  SKIN:Bang("!SetVariable", "MoonNextFull", jdToMonDD(jd + daysToFull))
-
-  -- 8-phase buckets
-  if (f < 0.0625) or (f >= 0.9375) then return "moon-new.png" end
-  if (f < 0.1875) then return "moon-waxing-crescent.png" end
-  if (f < 0.3125) then return "moon-first-quarter.png" end
-  if (f < 0.4375) then return "moon-waxing-gibbous.png" end
-  if (f < 0.5625) then return "moon-full.png" end
-  if (f < 0.6875) then return "moon-waning-gibbous.png" end
-  if (f < 0.8125) then return "moon-last-quarter.png" end
-  return "moon-waning-crescent.png"
+-- Returns the 8-phase icon filename; MoonPhasePct and MoonNextFull must be set before calling.
+local function moonPhaseIcon(f)
+  if (f < 0.0625) or (f >= 0.9375) then return “moon-new.png” end
+  if (f < 0.1875) then return “moon-waxing-crescent.png” end
+  if (f < 0.3125) then return “moon-first-quarter.png” end
+  if (f < 0.4375) then return “moon-waxing-gibbous.png” end
+  if (f < 0.5625) then return “moon-full.png” end
+  if (f < 0.6875) then return “moon-waning-gibbous.png” end
+  if (f < 0.8125) then return “moon-last-quarter.png” end
+  return “moon-waning-crescent.png”
 end
 
 function Update()
+  -- Always compute and export moon data (so tooltip works day and night)
+  local utc = os.date(“!*t”)
+  local jd  = julianDateUTC(utc)
+  local f   = ((jd - NEW_MOON_JD) / SYNODIC_MONTH)
+  f = f - math.floor(f) -- 0..1
+  local illum = math.floor((1 - math.cos(2 * math.pi * f)) / 2 * 100 + 0.5)
+  local desc  = (f < 0.5) and “waxing” or “waning”
+  SKIN:Bang(“!SetVariable”, “MoonPhasePct”, tostring(illum) .. “% “ .. desc)
+  local daysToFull = ((0.5 - f) % 1) * SYNODIC_MONTH
+  SKIN:Bang(“!SetVariable”, “MoonNextFull”, jdToMonDD(jd + daysToFull))
+
   -- Local “now”
-  local now = os.date("*t") -- local time
+  local now = os.date(“*t”) -- local time
   local nowMin = (now.hour * 60) + now.min
 
   -- Sunrise/sunset from INI (24-hour)
-  local srH = getMeasureNumber("MeasureSunriseHour", nil)
-  local srM = getMeasureNumber("MeasureSunriseMin",  nil)
-  local ssH = getMeasureNumber("MeasureSunsetHour",  nil)
-  local ssM = getMeasureNumber("MeasureSunsetMin",   nil)
+  local srH = getMeasureNumber(“MeasureSunriseHour”, nil)
+  local srM = getMeasureNumber(“MeasureSunriseMin”,  nil)
+  local ssH = getMeasureNumber(“MeasureSunsetHour”,  nil)
+  local ssM = getMeasureNumber(“MeasureSunsetMin”,   nil)
 
-  -- If we don't have sun times yet, fall back to moon phase (safe)
+  -- If we don't have sun times yet, fall back to moon phase icon (safe)
   if srH == nil or srM == nil or ssH == nil or ssM == nil then
-    return moonPhaseIcon()
+    return moonPhaseIcon(f)
   end
 
   local srMin = (srH * 60) + srM
   local ssMin = (ssH * 60) + ssM
 
-  -- Sunrise window (0..30 min after sunrise)
+  -- Sunrise window (0..TWILIGHT_MINUTES min after sunrise)
   if nowMin >= srMin and nowMin < (srMin + TWILIGHT_MINUTES) then
-    return "sunrise.png"
+    return “sunrise.png”
   end
 
-  -- Sunset window (0..30 min after sunset)
+  -- Sunset window (0..TWILIGHT_MINUTES min after sunset)
   if nowMin >= ssMin and nowMin < (ssMin + TWILIGHT_MINUTES) then
-    return "sunset.png"
+    return “sunset.png”
   end
 
   -- Daytime proper
   if nowMin >= srMin and nowMin < ssMin then
-    return "clear-day.png"
+    return “clear-day.png”
   end
 
   -- Nighttime
-  return moonPhaseIcon()
+  return moonPhaseIcon(f)
 end

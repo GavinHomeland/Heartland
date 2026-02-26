@@ -1,8 +1,8 @@
 # Heartland Weather
 ## Claude instructions for next run. Maintain status indication of this log.
 
-- [ ] Review and test the new chain/logging structure after Rainmeter reload.
-- [ ] The `ks_soiltemp_2in_last_attempt.txt` and `om_status.txt` files still exist in the skin root (old status files). Once the new `soil_fetch_status.txt` and `om_fetch_status.txt` are confirmed working, those old files can be removed.
+- [x] Review and test the new chain/logging structure after Rainmeter reload.
+- [x] Old status files `ks_soiltemp_2in_last_attempt.txt` and `om_status.txt` deleted (new files confirmed active as of 2026-02-25).
 
 ## Claude notes from 2026-02-24 run.
 
@@ -43,18 +43,13 @@ To log at Notice level instead of Debug in Rainmeter Lua:
 - `print("message")` → logs as **Debug** (default)
 - `SKIN:Bang("!Log", "message", "Notice")` → logs as **Notice**
 
-### Status indicator dots
-- `MeterOMDot`: `X=(#W# - #Pad# - 46)` — left dot
-- `MeterSoilDot`: `X=(#W# - #Pad# - 22)` — right dot (24px separation)
-- Both: ToolTipText shows last fetch timestamp (no status text; color conveys it)
-- SoilDot stays red on PROBE (no pull occurred — consider whether green on PROBE is preferred)
-    - Dots are working fine now, I think. Explain how they are supposed to work (red vs green)
-
-
-### Moon tooltip
-MoonPhaseIcon.lua sets `#MoonPhasePct#` (e.g. "41% waxing") and `#MoonNextFull#` (e.g. "Mar/14").
-    - Change format to Mar14, no slash. Next full tooltip should populate even in the day.
-MeterMoon ToolTipText: `% phase \n Next full: mmm/dd \n Sunrise \n Sunset`
+### Status indicator dots — how they work
+- `MeterOMDot`: `X=(#W# - #Pad# - 46)` — left dot; driven by `MeasureOM_OkErr`
+- `MeterSoilDot`: `X=(#W# - #Pad# - 22)` — right dot; driven by `MeasureSoil_OkErr`
+- **Green** (`0,220,0,150`): last fetch returned `OK` — data was successfully fetched and written.
+- **Red** (`255,0,0,150`): last fetch returned `ERR` (network/script failure) **or** `PROBE` (gate passed but soil was already fetched today — no new pull occurred).
+- ToolTipText on each dot shows the ISO timestamp from the last status line.
+- PROBE = safety valve; SoilDot stays red on PROBE by design (no data change occurred).
 
 ### Wind tooltip
 MeterWindArrow ToolTipText now includes gust line between speed and direction.
@@ -75,26 +70,62 @@ Final layout (after refinement pass):
 - barW=8, barGap=1 → 197px wide × 130px tall (1px/degree, -20..110°F)
 - Right-justified: same right edge as soil graph (W-Pad=604)
 - X = W-Pad-(22×8 + 21×1) = W-Pad-197
-- Y = SoilGraphY + SoilGraphH + 35 = 265; title at Y-19=246
-
-Skin expanded: H 490 → 620 (+130px total). Rows shifted +130px from original:
-- IconRowY: 280 → 410
-- DialRowY: 330 → 460
-- DialStartY: 350 → 480
-- Hard-coded MeterWind Y: 420 → 550
+- Y = SoilGraphY + SoilGraphH + 65 = 295; title at Y-22=273
 
 Draw order (shapes, back to front):
 1. Frame — rounded rect border 255,255,255,90
 2. Today indicator — bright vertical line 230,240,255,220 at today's bar center
 3. Freeze line — red horizontal at 32°F
-4–18. Bars — fully opaque fill + black stroke 1px
-19+. Polyline — 2px opaque uniform color = color of dataset minimum
+4. **Freeze-fill patches** — pale blue 140,190,255,130 fill between freeze line and polyline where temp < 32°F
+5. Future day reference lines — grey verticals
+6. Bars — fully opaque fill + black stroke 1px
+7. Polyline — 2px opaque uniform color = color of dataset minimum
 
-Tooltip: `Hx Low / Current / Predicted Low` (absolute mins of past-14, today, future-7)
+Tooltip: `Hx Low / Current (live currentTemp) / Predicted Low`
 Log: `AirTempGraphGen_log.txt` (appending) + master `Heartland_log.txt`
 
-### Still to test after Rainmeter reload
-- Graph renders correctly (bars, line, frame, freeze line, today indicator)
-- Layout: icon row, dials, wind text clear of graph
+### Moon tooltip (fixed 2026-02-25)
+- `MoonPhaseIcon.lua` now always exports `#MoonPhasePct#` and `#MoonNextFull#` at the top of `Update()` — both day and night.
+- `MoonNextFull` format changed from `Mar/14` to `Mar14` (no slash).
+- MeterMoon ToolTipText: `% phase \n Next full: Mmm## \n Sunrise \n Sunset`
+
+### AirTempGraph tooltip fix (2026-02-25)
+- Tooltip `Current:` now correctly shows `currentTemp` (the live reading used for the today bar) instead of today's forecasted daily minimum. Was showing wrong value (~37°F instead of ~64°F).
+
+### Notes file
+- `notes/XY2026-02-25.md` — all meters with computed X/Y/W/H as of this date.
+
+### AirTempGraph blank (2026-02-25 debugging session)
+Root cause identified: `ClosePath` in freeze-fill Path shape was missing the required `1` argument. Rainmeter stops rendering a Shape meter at the first invalid shape — so only Shape1 (frame) displayed. Fix is `ClosePath 1` (already in the file on disk).
+
+**Important**: The log (`AirTempGraphGen_log.txt`) only showed `Run Start / Run Complete` with no freeze-fill entries because Rainmeter had NOT been reloaded after the fix was applied. Rainmeter loads Lua once at skin load; all those log entries were from the old code. After reload, the fix + logging will both take effect.
+
+### Moon blank icon + MoonNextFull blank (2026-02-25 debugging session)
+- **MoonNextFull blank**: `!SetVariable` bangs are queued and fire *after* `!UpdateMeterGroup OM` in FinishAction. So `#MoonNextFull#` is still empty when MeterMoon renders.
+- **Fix applied**: `MoonPhaseIcon.lua` now uses `!SetOption MeterMoon ToolTipText` with fully baked-in tooltip text (computed in Lua from raw measure values). Bypass the variable timing issue entirely. `!UpdateMeter MeterMoon` is called after `!SetOption` so the new text takes effect.
+- **Moon icon blank / "° C"**: Was caused by `!UpdateMeter MeterMoon` being called inside `Update()` before the tooltip approach was restructured. Now properly ordered: `!SetOption` → `!UpdateMeter`.
+- Both `!SetVariable MoonPhasePct` and `!SetVariable MoonNextFull` are still set for backward compatibility.
+
+### All confirmed working (2026-02-25 / continued session)
+- [x] AirTempGraph renders: frame, today indicator, freeze line, bars, polyline — all correct
+- [x] Freeze-fill patches render correctly using named Path keys
+- [x] Moon icon no longer blank
+- [x] Moon tooltip: Next Full populates day and night; format `Mar14`; Sunrise/Sunset correct
+
+### Critical Rainmeter Path shape syntax (learned the hard way)
+Rainmeter `Path` shapes require the path DATA in a **separate named key** on the meter — NOT inlined in the `Shape=` line:
+```ini
+; INI pre-declaration:
+FreezePatch1=0,0
+
+; Shape= line references the name:
+Shape4=Path FreezePatch1 | StrokeWidth 0 | Fill Color 140,190,255,130
+```
+Then from Lua:
+```lua
+SKIN:Bang("!SetOption", meterName, "FreezePatch1", "enterX,Y | LineTo x,y | ClosePath 1")
+setShape(meterName, shapeIdx, "Path FreezePatch1 | StrokeWidth 0 | Fill Color 140,190,255,130")
+```
+`ClosePath 1` and `LineTo` are valid segment keywords. The error "Path shape has invalid parameters" was caused by inlining coordinates directly in the `Shape=` line.
 
 ## Papa notes and instruction for between runs.

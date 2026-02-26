@@ -1,1 +1,1 @@
-OK 2026-02-25T14:21:08 master=E:\Documents\Rainmeter\Skins\Heartland\ks_soiltemp_2in_master.csv rolling=E:\Documents\Rainmeter\Skins\Heartland\ks_soiltemp_2in_rolling7day.csv rows=187
+PROBE 2026-02-25T22:22:48 Already succeeded today (2026-02-25). Skipping fetch.

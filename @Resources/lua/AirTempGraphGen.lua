@@ -189,7 +189,65 @@ function Run()
       freezeY, graphW, freezeY))
   shapeIdx = shapeIdx + 1
 
-  -- Shapes 4-10 (future day reference lines, z=back): grey vertical at each future day center
+  -- Shapes (freeze-fill, z=back): blue fill where polyline < 32°F
+  -- Rainmeter Path shapes require the path data in a SEPARATE named key on the meter.
+  -- FreezePatch1..3 are pre-declared in the INI so Rainmeter recognises them.
+  local patchNum = 0
+  local pts = {}
+  for i = 0, totalBars - 1 do
+    local v = points[i]
+    if v then pts[#pts + 1] = { x = barCenterX(i), y = tempToY(v), v = v }
+    else       pts[#pts + 1] = false
+    end
+  end
+  local j = 1
+  while j <= #pts do
+    local p = pts[j]
+    if p and p.v < 32 then
+      -- Entry: interpolate crossing with freeze line from the previous point
+      local enterX
+      if j > 1 and pts[j-1] and pts[j-1].v >= 32 then
+        local pr = pts[j-1]
+        local t  = (32 - pr.v) / (p.v - pr.v)
+        enterX = math.floor(pr.x + (p.x - pr.x) * t + 0.5)
+      else
+        enterX = p.x
+      end
+      -- Collect consecutive below-freeze points
+      local seg = {}
+      while j <= #pts and pts[j] and pts[j].v < 32 do
+        seg[#seg + 1] = pts[j]; j = j + 1
+      end
+      -- Exit: interpolate crossing back up
+      local exitX
+      if j <= #pts and pts[j] and pts[j].v >= 32 then
+        local pr = seg[#seg]; local cu = pts[j]
+        local t  = (32 - pr.v) / (cu.v - pr.v)
+        exitX = math.floor(pr.x + (cu.x - pr.x) * t + 0.5)
+      else
+        exitX = seg[#seg].x
+      end
+      patchNum = patchNum + 1
+      if patchNum <= 3 then
+        -- Build path definition string for the named key
+        local pathParts = { string.format("%d,%d", enterX, freezeY) }
+        for _, pt in ipairs(seg) do
+          pathParts[#pathParts + 1] = string.format("LineTo %d,%d", pt.x, pt.y)
+        end
+        pathParts[#pathParts + 1] = string.format("LineTo %d,%d", exitX, freezeY)
+        pathParts[#pathParts + 1] = "ClosePath 1"
+        local pathName = "FreezePatch" .. patchNum
+        SKIN:Bang("!SetOption", meterName, pathName, table.concat(pathParts, " | "))
+        setShape(meterName, shapeIdx,
+          string.format("Path %s | StrokeWidth 0 | Fill Color 140,190,255,130", pathName))
+        shapeIdx = shapeIdx + 1
+      end
+    else
+      j = j + 1
+    end
+  end
+
+  -- Shapes (future day reference lines, z=back): grey vertical at each future day center
   for i = pastDays + 1, totalBars - 1 do
     local cx = barCenterX(i)
     setShape(meterName, shapeIdx,
@@ -246,9 +304,10 @@ function Run()
     end
   end
 
-  -- Cleanup leftover shapes
-  local maxShapes = totalBars * 3 + 20
-  for j = shapeIdx, maxShapes do setShape(meterName, j, "") end
+  -- Cleanup leftover shapes (use invisible placeholder; pre-declared up to 90 in INI)
+  local maxShapes = 90
+  local blank = "Line 0,0,0,0 | StrokeWidth 0"
+  for j = shapeIdx, maxShapes do setShape(meterName, j, blank) end
 
   -- ===== Day-label meters: today + every-other future day =====
   -- Each meter is individually positioned at the bar center X in the ini.

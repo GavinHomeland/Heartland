@@ -423,3 +423,199 @@ OK 2026-02-25T17:10:58 code=200 json=True len=19363
 OK 2026-02-25T17:20:56 code=200 json=True len=19363
 2026-02-25 17:20:56 | AirTempGraphGen | Run Start
 2026-02-25 17:20:56 | AirTempGraphGen | Run Complete
+OK 2026-02-25T17:30:48 code=200 json=True len=19363
+2026-02-25 17:30:48 | AirTempGraphGen | Run Start
+2026-02-25 17:30:48 | AirTempGraphGen | Run Complete
+2026-02-25 17:31:35 | SoilGraphGen | Run Start
+2026-02-25 17:31:35 | SoilGraphGen | Run Complete
+2026-02-25 17:31:35 | AirTempGraphGen | Run Start
+2026-02-25 17:31:35 | AirTempGraphGen | Run Complete
+PROBE 2026-02-25T17:31:36 Already succeeded today (2026-02-25). Skipping fetch.
+2026-02-25 17:31:36 | SoilGraphGen | Run Start
+2026-02-25 17:31:36 | SoilGraphGen | Run Complete
+OK 2026-02-25T17:31:36 code=200 json=True len=19364
+2026-02-25 17:31:36 | AirTempGraphGen | Run Start
+2026-02-25 17:31:36 | AirTempGraphGen | Run Complete
+2026-02-25 17:31:39 | SoilGraphGen | Run Start
+2026-02-25 17:31:39 | SoilGraphGen | Run Complete
+2026-02-25 17:31:39 | AirTempGraphGen | Run Start
+2026-02-25 17:31:39 | AirTempGraphGen | Run Complete
+OK 2026-02-25T17:31:40 master=E:\Documents\Rainmeter\Skins\Heartland\ks_soiltemp_2in_master.csv rolling=E:\Documents\Rainmeter\Skins\Heartland\ks_soiltemp_2in_rolling7day.csv rows=187
+OK 2026-02-25T17:31:40 code=200 json=True len=19363
+2026-02-25 17:31:40 | SoilGraphGen | Run Start
+2026-02-25 17:31:40 | SoilGraphGen | Run Complete
+2026-02-25 17:31:40 | AirTempGraphGen | Run Start
+2026-02-25 17:31:40 | AirTempGraphGen | Run Complete
+2026-02-25 17:33:23 | SoilGraphGen | Run Start
+2026-02-25 17:33:23 | SoilGraphGen | Run Complete
+2026-02-25 17:33:23 | AirTempGraphGen | Run Start
+2026-02-25 17:33:23 | AirTempGraphGen | Run Complete
+PROBE 2026-02-25T17:33:23 Already succeeded today (2026-02-25). Skipping fetch.
+2026-02-25 17:33:23 | SoilGraphGen | Run Start
+2026-02-25 17:33:23 | SoilGraphGen | Run Complete
+OK 2026-02-25T17:33:24 code=200 json=True len=19364
+2026-02-25 17:33:24 | AirTempGraphGen | Run Start
+2026-02-25 17:33:24 | AirTempGraphGen | Run Complete
+OK 2026-02-25T17:41:04 code=200 json=True len=19363
+2026-02-25 17:41:04 | AirTempGraphGen | Run Start
+2026-02-25 17:41:04 | AirTempGraphGen | Run Complete
+OK 2026-02-25T17:50:56 code=200 json=True len=19362
+2026-02-25 17:50:56 | AirTempGraphGen | Run Start
+2026-02-25 17:50:56 | AirTempGraphGen | Run Complete
+OK 2026-02-25T18:00:48 code=200 json=True len=19364
+2026-02-25 18:00:48 | AirTempGraphGen | Run Start
+2026-02-25 18:00:48 | AirTempGraphGen | Run Complete
+OK 2026-02-25T18:10:41 code=200 json=True len=19363
+2026-02-25 18:10:41 | AirTempGraphGen | Run Start
+2026-02-25 18:10:41 | AirTempGraphGen | Run Complete
+OK 2026-02-25T18:20:37 code=200 json=True len=19363
+2026-02-25 18:20:37 | AirTempGraphGen | Run Start
+2026-02-25 18:20:37 | AirTempGraphGen | Run Complete
+OK 2026-02-25T18:30:30 code=200 json=True len=19364
+2026-02-25 18:30:30 | AirTempGraphGen | Run Start
+2026-02-25 18:30:30 | AirTempGraphGen | Run Complete
+OK 2026-02-25T18:40:21 code=200 json=True len=19364
+2026-02-25 18:40:22 | AirTempGraphGen | Run Start
+2026-02-25 18:40:22 | AirTempGraphGen | Run Complete
+OK 2026-02-25T18:50:13 code=200 json=True len=19364
+2026-02-25 18:50:13 | AirTempGraphGen | Run Start
+2026-02-25 18:50:13 | AirTempGraphGen | Run Complete
+OK 2026-02-25T19:11:02 code=200 json=True len=19364
+2026-02-25 19:11:02 | AirTempGraphGen | Run Start
+2026-02-25 19:11:02 | AirTempGraphGen | Run Complete
+OK 2026-02-25T19:20:54 code=200 json=True len=19363
+2026-02-25 19:20:54 | AirTempGraphGen | Run Start
+2026-02-25 19:20:54 | AirTempGraphGen | Run Complete
+2026-02-25 19:29:03 | SoilGraphGen | Run Start
+2026-02-25 19:29:03 | SoilGraphGen | Run Complete
+2026-02-25 19:29:03 | AirTempGraphGen | Run Start
+2026-02-25 19:29:03 | AirTempGraphGen | Run Complete
+OK 2026-02-25T19:29:04 master=E:\Documents\Rainmeter\Skins\Heartland\ks_soiltemp_2in_master.csv rolling=E:\Documents\Rainmeter\Skins\Heartland\ks_soiltemp_2in_rolling7day.csv rows=187
+2026-02-25 19:29:04 | SoilGraphGen | Run Start
+2026-02-25 19:29:04 | SoilGraphGen | Run Complete
+OK 2026-02-25T19:29:04 code=200 json=True len=19363
+2026-02-25 19:29:04 | AirTempGraphGen | Run Start
+2026-02-25 19:29:04 | AirTempGraphGen | Run Complete
+2026-02-25 19:39:12 | SoilGraphGen | Run Start
+2026-02-25 19:39:12 | SoilGraphGen | Run Complete
+2026-02-25 19:39:12 | AirTempGraphGen | Run Start
+2026-02-25 19:39:12 | AirTempGraphGen | Run Complete
+PROBE 2026-02-25T19:39:12 Already succeeded today (2026-02-25). Skipping fetch.
+2026-02-25 19:39:12 | SoilGraphGen | Run Start
+2026-02-25 19:39:13 | SoilGraphGen | Run Complete
+OK 2026-02-25T19:39:13 code=200 json=True len=19363
+2026-02-25 19:39:13 | AirTempGraphGen | Run Start
+2026-02-25 19:39:13 | AirTempGraphGen | Run Complete
+OK 2026-02-25T19:50:13 code=200 json=True len=19363
+2026-02-25 19:50:13 | AirTempGraphGen | Run Start
+2026-02-25 19:50:13 | AirTempGraphGen | Run Complete
+OK 2026-02-25T20:11:01 code=200 json=True len=19364
+2026-02-25 20:11:01 | AirTempGraphGen | Run Start
+2026-02-25 20:11:01 | AirTempGraphGen | Run Complete
+OK 2026-02-25T20:20:52 code=200 json=True len=19362
+2026-02-25 20:20:52 | AirTempGraphGen | Run Start
+2026-02-25 20:20:52 | AirTempGraphGen | Run Complete
+OK 2026-02-25T20:30:44 code=200 json=True len=19363
+2026-02-25 20:30:44 | AirTempGraphGen | Run Start
+2026-02-25 20:30:44 | AirTempGraphGen | Run Complete
+2026-02-25 20:42:29 | SoilGraphGen | Run Start
+2026-02-25 20:42:29 | SoilGraphGen | Run Complete
+2026-02-25 20:42:29 | AirTempGraphGen | Run Start
+2026-02-25 20:42:29 | AirTempGraphGen | Run Complete
+OK 2026-02-25T20:42:30 master=E:\Documents\Rainmeter\Skins\Heartland\ks_soiltemp_2in_master.csv rolling=E:\Documents\Rainmeter\Skins\Heartland\ks_soiltemp_2in_rolling7day.csv rows=187
+2026-02-25 20:42:30 | SoilGraphGen | Run Start
+2026-02-25 20:42:30 | SoilGraphGen | Run Complete
+OK 2026-02-25T20:42:30 code=200 json=True len=19362
+2026-02-25 20:42:30 | AirTempGraphGen | Run Start
+2026-02-25 20:42:30 | AirTempGraphGen | Run Complete
+OK 2026-02-25T20:50:12 code=200 json=True len=19364
+2026-02-25 20:50:12 | AirTempGraphGen | Run Start
+2026-02-25 20:50:12 | AirTempGraphGen | Run Complete
+OK 2026-02-25T21:11:00 code=200 json=True len=19363
+2026-02-25 21:11:00 | AirTempGraphGen | Run Start
+2026-02-25 21:11:00 | AirTempGraphGen | Run Complete
+OK 2026-02-25T21:20:51 code=200 json=True len=19363
+2026-02-25 21:20:51 | AirTempGraphGen | Run Start
+2026-02-25 21:20:51 | AirTempGraphGen | Run Complete
+OK 2026-02-25T21:30:43 code=200 json=True len=19363
+2026-02-25 21:30:43 | AirTempGraphGen | Run Start
+2026-02-25 21:30:43 | AirTempGraphGen | Run Complete
+2026-02-25 21:32:31 | SoilGraphGen | Run Start
+2026-02-25 21:32:31 | SoilGraphGen | Run Complete
+2026-02-25 21:32:31 | AirTempGraphGen | Run Start
+2026-02-25 21:32:31 | AirTempGraphGen | Run Complete
+PROBE 2026-02-25T21:32:32 Already succeeded today (2026-02-25). Skipping fetch.
+2026-02-25 21:32:32 | SoilGraphGen | Run Start
+2026-02-25 21:32:32 | SoilGraphGen | Run Complete
+OK 2026-02-25T21:32:32 code=200 json=True len=19363
+2026-02-25 21:32:32 | AirTempGraphGen | Run Start
+2026-02-25 21:32:32 | AirTempGraphGen | Run Complete
+OK 2026-02-25T21:40:13 code=200 json=True len=19363
+2026-02-25 21:40:13 | AirTempGraphGen | Run Start
+2026-02-25 21:40:13 | AirTempGraphGen | Run Complete
+2026-02-25 21:54:15 | SoilGraphGen | Run Start
+2026-02-25 21:54:15 | SoilGraphGen | Run Complete
+2026-02-25 21:54:15 | AirTempGraphGen | Run Start
+2026-02-25 21:54:15 | AirTempGraphGen | Run Complete
+OK 2026-02-25T21:54:16 code=200 json=True len=19362
+OK 2026-02-25T21:54:16 master=E:\Documents\Rainmeter\Skins\Heartland\ks_soiltemp_2in_master.csv rolling=E:\Documents\Rainmeter\Skins\Heartland\ks_soiltemp_2in_rolling7day.csv rows=187
+2026-02-25 21:54:16 | AirTempGraphGen | Run Start
+2026-02-25 21:54:16 | AirTempGraphGen | Run Complete
+2026-02-25 21:54:16 | SoilGraphGen | Run Start
+2026-02-25 21:54:16 | SoilGraphGen | Run Complete
+OK 2026-02-25T22:00:50 code=200 json=True len=19362
+2026-02-25 22:00:50 | AirTempGraphGen | Run Start
+2026-02-25 22:00:50 | AirTempGraphGen | Run Complete
+2026-02-25 22:02:37 | SoilGraphGen | Run Start
+2026-02-25 22:02:37 | SoilGraphGen | Run Complete
+2026-02-25 22:02:37 | AirTempGraphGen | Run Start
+2026-02-25 22:02:37 | AirTempGraphGen | Run Complete
+PROBE 2026-02-25T22:02:37 Already succeeded today (2026-02-25). Skipping fetch.
+2026-02-25 22:02:37 | SoilGraphGen | Run Start
+2026-02-25 22:02:37 | SoilGraphGen | Run Complete
+OK 2026-02-25T22:02:38 code=200 json=True len=19361
+2026-02-25 22:02:38 | AirTempGraphGen | Run Start
+2026-02-25 22:02:38 | AirTempGraphGen | Run Complete
+OK 2026-02-25T22:10:18 code=200 json=True len=19361
+2026-02-25 22:10:18 | AirTempGraphGen | Run Start
+2026-02-25 22:10:18 | AirTempGraphGen | Run Complete
+2026-02-25 22:14:54 | SoilGraphGen | Run Start
+2026-02-25 22:14:54 | SoilGraphGen | Run Complete
+2026-02-25 22:14:54 | AirTempGraphGen | Run Start
+2026-02-25 22:14:54 | AirTempGraphGen | Run Complete
+OK 2026-02-25T22:14:55 master=E:\Documents\Rainmeter\Skins\Heartland\ks_soiltemp_2in_master.csv rolling=E:\Documents\Rainmeter\Skins\Heartland\ks_soiltemp_2in_rolling7day.csv rows=187
+OK 2026-02-25T22:14:55 code=200 json=True len=19362
+2026-02-25 22:14:55 | SoilGraphGen | Run Start
+2026-02-25 22:14:55 | SoilGraphGen | Run Complete
+2026-02-25 22:14:55 | AirTempGraphGen | Run Start
+2026-02-25 22:14:55 | AirTempGraphGen | Run Complete
+2026-02-25 22:19:45 | SoilGraphGen | Run Start
+2026-02-25 22:19:45 | SoilGraphGen | Run Complete
+2026-02-25 22:19:45 | AirTempGraphGen | Run Start
+2026-02-25 22:19:45 | AirTempGraphGen | Run Complete
+PROBE 2026-02-25T22:19:46 Already succeeded today (2026-02-25). Skipping fetch.
+2026-02-25 22:19:46 | SoilGraphGen | Run Start
+2026-02-25 22:19:46 | SoilGraphGen | Run Complete
+OK 2026-02-25T22:19:47 code=200 json=True len=19363
+2026-02-25 22:19:47 | AirTempGraphGen | Run Start
+2026-02-25 22:19:47 | AirTempGraphGen | Run Complete
+2026-02-25 22:22:36 | SoilGraphGen | Run Start
+2026-02-25 22:22:36 | SoilGraphGen | Run Complete
+2026-02-25 22:22:36 | AirTempGraphGen | Run Start
+2026-02-25 22:22:36 | AirTempGraphGen | Run Complete
+OK 2026-02-25T22:22:37 code=200 json=True len=19362
+OK 2026-02-25T22:22:38 master=E:\Documents\Rainmeter\Skins\Heartland\ks_soiltemp_2in_master.csv rolling=E:\Documents\Rainmeter\Skins\Heartland\ks_soiltemp_2in_rolling7day.csv rows=187
+2026-02-25 22:22:38 | AirTempGraphGen | Run Start
+2026-02-25 22:22:38 | AirTempGraphGen | Run Complete
+2026-02-25 22:22:38 | SoilGraphGen | Run Start
+2026-02-25 22:22:38 | SoilGraphGen | Run Complete
+2026-02-25 22:22:48 | SoilGraphGen | Run Start
+2026-02-25 22:22:48 | SoilGraphGen | Run Complete
+2026-02-25 22:22:48 | AirTempGraphGen | Run Start
+2026-02-25 22:22:48 | AirTempGraphGen | Run Complete
+PROBE 2026-02-25T22:22:48 Already succeeded today (2026-02-25). Skipping fetch.
+2026-02-25 22:22:48 | SoilGraphGen | Run Start
+2026-02-25 22:22:48 | SoilGraphGen | Run Complete
+OK 2026-02-25T22:22:49 code=200 json=True len=19363
+2026-02-25 22:22:49 | AirTempGraphGen | Run Start
+2026-02-25 22:22:49 | AirTempGraphGen | Run Complete

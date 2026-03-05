@@ -128,9 +128,6 @@ setShape(meterName, shapeIdx, "Path FreezePatch1 | StrokeWidth 0 | Fill Color 14
 ```
 `ClosePath 1` and `LineTo` are valid segment keywords. The error "Path shape has invalid parameters" was caused by inlining coordinates directly in the `Shape=` line.
 
-## Papa notes and instruction for between runs. <-- For you, Claude>
-
-
 
 ## Instructions for Claude
-- The air temp graph (and everything else), works fine, so let's go slow. Planning mode. I'd like below freezing prediction line to be more pronounced. The easiest way is to color the fill bright red instead of the pale blue. 
+- Add lines similar to the freeze line (just a horizontal line) in the *soil graph* at 50, 55 and 60 degrees. Make them green, but 50 opacity is 150, 55 is 160, 60 is 180. Actually... I changed my mind about the color. Make the 50 degree one yellow and the other two green. 

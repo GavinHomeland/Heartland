@@ -239,7 +239,7 @@ function Run()
         local pathName = "FreezePatch" .. patchNum
         SKIN:Bang("!SetOption", meterName, pathName, table.concat(pathParts, " | "))
         setShape(meterName, shapeIdx,
-          string.format("Path %s | StrokeWidth 0 | Fill Color 140,190,255,130", pathName))
+          string.format("Path %s | StrokeWidth 0 | Fill Color 255,000,000,255", pathName))
         shapeIdx = shapeIdx + 1
       end
     else
@@ -251,7 +251,7 @@ function Run()
   for i = pastDays + 1, totalBars - 1 do
     local cx = barCenterX(i)
     setShape(meterName, shapeIdx,
-      string.format("Line %d,0,%d,%d | StrokeWidth 1 | Stroke Color 120,120,120,150",
+      string.format("Line %d,0,%d,%d | StrokeWidth 1 | Stroke Color 120,120,120,170",
         cx, cx, graphH))
     shapeIdx = shapeIdx + 1
   end

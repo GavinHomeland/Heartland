@@ -3078,3 +3078,860 @@ OK 2026-03-05T12:30:16 code=200 json=True len=19391
 OK 2026-03-05T12:40:11 code=200 json=True len=19391
 2026-03-05 12:40:11 | AirTempGraphGen | Run Start
 2026-03-05 12:40:11 | AirTempGraphGen | Run Complete
+OK 2026-03-05T13:01:01 code=200 json=True len=19386
+2026-03-05 13:01:01 | AirTempGraphGen | Run Start
+2026-03-05 13:01:01 | AirTempGraphGen | Run Complete
+OK 2026-03-05T13:10:53 code=200 json=True len=19391
+2026-03-05 13:10:53 | AirTempGraphGen | Run Start
+2026-03-05 13:10:53 | AirTempGraphGen | Run Complete
+OK 2026-03-05T13:20:47 code=200 json=True len=19391
+2026-03-05 13:20:47 | AirTempGraphGen | Run Start
+2026-03-05 13:20:47 | AirTempGraphGen | Run Complete
+OK 2026-03-05T13:30:38 code=200 json=True len=19390
+2026-03-05 13:30:38 | AirTempGraphGen | Run Start
+2026-03-05 13:30:38 | AirTempGraphGen | Run Complete
+OK 2026-03-05T13:40:30 code=200 json=True len=19390
+2026-03-05 13:40:30 | AirTempGraphGen | Run Start
+2026-03-05 13:40:30 | AirTempGraphGen | Run Complete
+OK 2026-03-05T13:50:22 code=200 json=True len=19390
+2026-03-05 13:50:22 | AirTempGraphGen | Run Start
+2026-03-05 13:50:22 | AirTempGraphGen | Run Complete
+2026-03-05 13:59:30 | SoilGraphGen | Run Start
+2026-03-05 13:59:30 | SoilGraphGen | Run Complete
+2026-03-05 13:59:30 | AirTempGraphGen | Run Start
+2026-03-05 13:59:30 | AirTempGraphGen | Run Complete
+2026-03-05 13:59:32 | SoilGraphGen | Run Start
+2026-03-05 13:59:32 | SoilGraphGen | Run Complete
+2026-03-05 13:59:32 | AirTempGraphGen | Run Start
+2026-03-05 13:59:32 | AirTempGraphGen | Run Complete
+OK 2026-03-05T13:59:33 code=200 json=True len=19390
+2026-03-05 13:59:33 | AirTempGraphGen | Run Start
+2026-03-05 13:59:33 | AirTempGraphGen | Run Complete
+OK 2026-03-05T13:59:33 master=E:\Documents\Rainmeter\Skins\Heartland\ks_soiltemp_2in_master.csv rolling=E:\Documents\Rainmeter\Skins\Heartland\ks_soiltemp_2in_rolling7day.csv rows=187
+2026-03-05 13:59:33 | SoilGraphGen | Run Start
+2026-03-05 13:59:33 | SoilGraphGen | Run Complete
+OK 2026-03-05T14:10:35 code=200 json=True len=19391
+2026-03-05 14:10:35 | AirTempGraphGen | Run Start
+2026-03-05 14:10:35 | AirTempGraphGen | Run Complete
+OK 2026-03-05T14:20:30 code=200 json=True len=19390
+2026-03-05 14:20:30 | AirTempGraphGen | Run Start
+2026-03-05 14:20:30 | AirTempGraphGen | Run Complete
+OK 2026-03-05T14:30:29 code=200 json=True len=19390
+2026-03-05 14:30:29 | AirTempGraphGen | Run Start
+2026-03-05 14:30:29 | AirTempGraphGen | Run Complete
+OK 2026-03-05T14:40:21 code=200 json=True len=19391
+2026-03-05 14:40:21 | AirTempGraphGen | Run Start
+2026-03-05 14:40:21 | AirTempGraphGen | Run Complete
+OK 2026-03-05T14:50:13 code=200 json=True len=19391
+2026-03-05 14:50:13 | AirTempGraphGen | Run Start
+2026-03-05 14:50:13 | AirTempGraphGen | Run Complete
+OK 2026-03-05T15:11:02 code=200 json=True len=19392
+2026-03-05 15:11:02 | AirTempGraphGen | Run Start
+2026-03-05 15:11:02 | AirTempGraphGen | Run Complete
+OK 2026-03-05T15:20:54 code=200 json=True len=19391
+2026-03-05 15:20:54 | AirTempGraphGen | Run Start
+2026-03-05 15:20:54 | AirTempGraphGen | Run Complete
+OK 2026-03-05T15:30:46 code=200 json=True len=19391
+2026-03-05 15:30:46 | AirTempGraphGen | Run Start
+2026-03-05 15:30:46 | AirTempGraphGen | Run Complete
+OK 2026-03-05T15:40:51 code=200 json=True len=19390
+2026-03-05 15:40:51 | AirTempGraphGen | Run Start
+2026-03-05 15:40:51 | AirTempGraphGen | Run Complete
+OK 2026-03-05T15:50:42 code=200 json=True len=19391
+2026-03-05 15:50:42 | AirTempGraphGen | Run Start
+2026-03-05 15:50:42 | AirTempGraphGen | Run Complete
+OK 2026-03-05T16:00:34 code=200 json=True len=19390
+2026-03-05 16:00:34 | AirTempGraphGen | Run Start
+2026-03-05 16:00:34 | AirTempGraphGen | Run Complete
+OK 2026-03-05T16:10:26 code=200 json=True len=19391
+2026-03-05 16:10:26 | AirTempGraphGen | Run Start
+2026-03-05 16:10:26 | AirTempGraphGen | Run Complete
+OK 2026-03-05T16:20:18 code=200 json=True len=19390
+2026-03-05 16:20:18 | AirTempGraphGen | Run Start
+2026-03-05 16:20:18 | AirTempGraphGen | Run Complete
+OK 2026-03-05T16:30:14 code=200 json=True len=19390
+2026-03-05 16:30:14 | AirTempGraphGen | Run Start
+2026-03-05 16:30:14 | AirTempGraphGen | Run Complete
+OK 2026-03-05T16:51:02 code=200 json=True len=19391
+2026-03-05 16:51:02 | AirTempGraphGen | Run Start
+2026-03-05 16:51:02 | AirTempGraphGen | Run Complete
+OK 2026-03-05T17:00:54 code=200 json=True len=19389
+2026-03-05 17:00:54 | AirTempGraphGen | Run Start
+2026-03-05 17:00:54 | AirTempGraphGen | Run Complete
+OK 2026-03-05T17:10:46 code=200 json=True len=19389
+2026-03-05 17:10:46 | AirTempGraphGen | Run Start
+2026-03-05 17:10:46 | AirTempGraphGen | Run Complete
+OK 2026-03-05T17:20:38 code=200 json=True len=19390
+2026-03-05 17:20:38 | AirTempGraphGen | Run Start
+2026-03-05 17:20:38 | AirTempGraphGen | Run Complete
+OK 2026-03-05T17:30:29 code=200 json=True len=19388
+2026-03-05 17:30:29 | AirTempGraphGen | Run Start
+2026-03-05 17:30:29 | AirTempGraphGen | Run Complete
+OK 2026-03-05T17:40:21 code=200 json=True len=19390
+2026-03-05 17:40:21 | AirTempGraphGen | Run Start
+2026-03-05 17:40:21 | AirTempGraphGen | Run Complete
+OK 2026-03-05T17:50:13 code=200 json=True len=19389
+2026-03-05 17:50:13 | AirTempGraphGen | Run Start
+2026-03-05 17:50:13 | AirTempGraphGen | Run Complete
+OK 2026-03-05T18:10:11 code=200 json=True len=19390
+2026-03-05 18:10:11 | AirTempGraphGen | Run Start
+2026-03-05 18:10:11 | AirTempGraphGen | Run Complete
+OK 2026-03-05T18:21:06 code=200 json=True len=19390
+2026-03-05 18:21:06 | AirTempGraphGen | Run Start
+2026-03-05 18:21:06 | AirTempGraphGen | Run Complete
+OK 2026-03-05T18:30:57 code=200 json=True len=19390
+2026-03-05 18:30:58 | AirTempGraphGen | Run Start
+2026-03-05 18:30:58 | AirTempGraphGen | Run Complete
+OK 2026-03-05T18:40:49 code=200 json=True len=19389
+2026-03-05 18:40:49 | AirTempGraphGen | Run Start
+2026-03-05 18:40:49 | AirTempGraphGen | Run Complete
+OK 2026-03-05T18:50:41 code=200 json=True len=19388
+2026-03-05 18:50:41 | AirTempGraphGen | Run Start
+2026-03-05 18:50:41 | AirTempGraphGen | Run Complete
+OK 2026-03-05T19:00:33 code=200 json=True len=19389
+2026-03-05 19:00:33 | AirTempGraphGen | Run Start
+2026-03-05 19:00:33 | AirTempGraphGen | Run Complete
+OK 2026-03-05T19:10:24 code=200 json=True len=19389
+2026-03-05 19:10:24 | AirTempGraphGen | Run Start
+2026-03-05 19:10:24 | AirTempGraphGen | Run Complete
+OK 2026-03-05T19:20:16 code=200 json=True len=19389
+2026-03-05 19:20:16 | AirTempGraphGen | Run Start
+2026-03-05 19:20:16 | AirTempGraphGen | Run Complete
+OK 2026-03-05T19:41:05 code=200 json=True len=19389
+2026-03-05 19:41:05 | AirTempGraphGen | Run Start
+2026-03-05 19:41:05 | AirTempGraphGen | Run Complete
+OK 2026-03-05T19:50:57 code=200 json=True len=19388
+2026-03-05 19:50:57 | AirTempGraphGen | Run Start
+2026-03-05 19:50:57 | AirTempGraphGen | Run Complete
+OK 2026-03-05T20:00:48 code=200 json=True len=19388
+2026-03-05 20:00:48 | AirTempGraphGen | Run Start
+2026-03-05 20:00:48 | AirTempGraphGen | Run Complete
+OK 2026-03-05T20:10:40 code=200 json=True len=19388
+2026-03-05 20:10:40 | AirTempGraphGen | Run Start
+2026-03-05 20:10:40 | AirTempGraphGen | Run Complete
+OK 2026-03-05T20:20:32 code=200 json=True len=19388
+2026-03-05 20:20:32 | AirTempGraphGen | Run Start
+2026-03-05 20:20:32 | AirTempGraphGen | Run Complete
+OK 2026-03-05T20:30:23 code=200 json=True len=19387
+2026-03-05 20:30:23 | AirTempGraphGen | Run Start
+2026-03-05 20:30:23 | AirTempGraphGen | Run Complete
+OK 2026-03-05T20:40:14 code=200 json=True len=19387
+2026-03-05 20:40:14 | AirTempGraphGen | Run Start
+2026-03-05 20:40:14 | AirTempGraphGen | Run Complete
+OK 2026-03-05T21:01:03 code=200 json=True len=19387
+2026-03-05 21:01:03 | AirTempGraphGen | Run Start
+2026-03-05 21:01:03 | AirTempGraphGen | Run Complete
+OK 2026-03-05T21:10:55 code=200 json=True len=19387
+2026-03-05 21:10:55 | AirTempGraphGen | Run Start
+2026-03-05 21:10:55 | AirTempGraphGen | Run Complete
+OK 2026-03-05T21:20:47 code=200 json=True len=19387
+2026-03-05 21:20:47 | AirTempGraphGen | Run Start
+2026-03-05 21:20:47 | AirTempGraphGen | Run Complete
+OK 2026-03-05T21:30:38 code=200 json=True len=19387
+2026-03-05 21:30:38 | AirTempGraphGen | Run Start
+2026-03-05 21:30:38 | AirTempGraphGen | Run Complete
+OK 2026-03-05T21:40:30 code=200 json=True len=19389
+2026-03-05 21:40:30 | AirTempGraphGen | Run Start
+2026-03-05 21:40:30 | AirTempGraphGen | Run Complete
+OK 2026-03-05T21:50:22 code=200 json=True len=19388
+2026-03-05 21:50:22 | AirTempGraphGen | Run Start
+2026-03-05 21:50:22 | AirTempGraphGen | Run Complete
+OK 2026-03-05T22:00:20 code=200 json=True len=19389
+2026-03-05 22:00:20 | AirTempGraphGen | Run Start
+2026-03-05 22:00:20 | AirTempGraphGen | Run Complete
+OK 2026-03-05T22:21:02 code=200 json=True len=19389
+2026-03-05 22:21:03 | AirTempGraphGen | Run Start
+2026-03-05 22:21:03 | AirTempGraphGen | Run Complete
+OK 2026-03-05T22:30:54 code=200 json=True len=19388
+2026-03-05 22:30:54 | AirTempGraphGen | Run Start
+2026-03-05 22:30:54 | AirTempGraphGen | Run Complete
+OK 2026-03-05T22:40:46 code=200 json=True len=19388
+2026-03-05 22:40:46 | AirTempGraphGen | Run Start
+2026-03-05 22:40:46 | AirTempGraphGen | Run Complete
+OK 2026-03-05T22:50:38 code=200 json=True len=19389
+2026-03-05 22:50:38 | AirTempGraphGen | Run Start
+2026-03-05 22:50:38 | AirTempGraphGen | Run Complete
+OK 2026-03-05T23:00:30 code=200 json=True len=19389
+2026-03-05 23:00:30 | AirTempGraphGen | Run Start
+2026-03-05 23:00:30 | AirTempGraphGen | Run Complete
+OK 2026-03-05T23:10:21 code=200 json=True len=19389
+2026-03-05 23:10:21 | AirTempGraphGen | Run Start
+2026-03-05 23:10:21 | AirTempGraphGen | Run Complete
+OK 2026-03-05T23:20:14 code=200 json=True len=19388
+2026-03-05 23:20:14 | AirTempGraphGen | Run Start
+2026-03-05 23:20:14 | AirTempGraphGen | Run Complete
+OK 2026-03-05T23:41:02 code=200 json=True len=19390
+2026-03-05 23:41:02 | AirTempGraphGen | Run Start
+2026-03-05 23:41:02 | AirTempGraphGen | Run Complete
+OK 2026-03-05T23:50:53 code=200 json=True len=19389
+2026-03-05 23:50:53 | AirTempGraphGen | Run Start
+2026-03-05 23:50:53 | AirTempGraphGen | Run Complete
+OK 2026-03-06T00:00:45 code=200 json=True len=19399
+2026-03-06 00:00:46 | AirTempGraphGen | Run Start
+2026-03-06 00:00:46 | AirTempGraphGen | Run Complete
+OK 2026-03-06T00:10:37 code=200 json=True len=19399
+2026-03-06 00:10:37 | AirTempGraphGen | Run Start
+2026-03-06 00:10:37 | AirTempGraphGen | Run Complete
+OK 2026-03-06T00:20:28 code=200 json=True len=19399
+2026-03-06 00:20:28 | AirTempGraphGen | Run Start
+2026-03-06 00:20:28 | AirTempGraphGen | Run Complete
+OK 2026-03-06T00:30:20 code=200 json=True len=19400
+2026-03-06 00:30:20 | AirTempGraphGen | Run Start
+2026-03-06 00:30:20 | AirTempGraphGen | Run Complete
+OK 2026-03-06T00:40:13 code=200 json=True len=19400
+2026-03-06 00:40:14 | AirTempGraphGen | Run Start
+2026-03-06 00:40:14 | AirTempGraphGen | Run Complete
+OK 2026-03-06T01:01:00 code=200 json=True len=19400
+2026-03-06 01:01:00 | AirTempGraphGen | Run Start
+2026-03-06 01:01:00 | AirTempGraphGen | Run Complete
+OK 2026-03-06T01:10:51 code=200 json=True len=19399
+2026-03-06 01:10:51 | AirTempGraphGen | Run Start
+2026-03-06 01:10:51 | AirTempGraphGen | Run Complete
+OK 2026-03-06T01:20:43 code=200 json=True len=19399
+2026-03-06 01:20:43 | AirTempGraphGen | Run Start
+2026-03-06 01:20:43 | AirTempGraphGen | Run Complete
+OK 2026-03-06T01:30:34 code=200 json=True len=19398
+2026-03-06 01:30:34 | AirTempGraphGen | Run Start
+2026-03-06 01:30:34 | AirTempGraphGen | Run Complete
+OK 2026-03-06T01:40:26 code=200 json=True len=19400
+2026-03-06 01:40:26 | AirTempGraphGen | Run Start
+2026-03-06 01:40:26 | AirTempGraphGen | Run Complete
+OK 2026-03-06T01:50:17 code=200 json=True len=19400
+2026-03-06 01:50:17 | AirTempGraphGen | Run Start
+2026-03-06 01:50:17 | AirTempGraphGen | Run Complete
+OK 2026-03-06T02:00:17 code=200 json=True len=19400
+2026-03-06 02:00:17 | AirTempGraphGen | Run Start
+2026-03-06 02:00:17 | AirTempGraphGen | Run Complete
+OK 2026-03-06T02:11:06 code=200 json=True len=19400
+2026-03-06 02:11:06 | AirTempGraphGen | Run Start
+2026-03-06 02:11:06 | AirTempGraphGen | Run Complete
+OK 2026-03-06T02:20:57 code=200 json=True len=19401
+2026-03-06 02:20:57 | AirTempGraphGen | Run Start
+2026-03-06 02:20:57 | AirTempGraphGen | Run Complete
+OK 2026-03-06T02:30:49 code=200 json=True len=19401
+2026-03-06 02:30:49 | AirTempGraphGen | Run Start
+2026-03-06 02:30:49 | AirTempGraphGen | Run Complete
+OK 2026-03-06T02:40:40 code=200 json=True len=19400
+2026-03-06 02:40:40 | AirTempGraphGen | Run Start
+2026-03-06 02:40:40 | AirTempGraphGen | Run Complete
+OK 2026-03-06T02:50:32 code=200 json=True len=19401
+2026-03-06 02:50:32 | AirTempGraphGen | Run Start
+2026-03-06 02:50:32 | AirTempGraphGen | Run Complete
+OK 2026-03-06T03:00:23 code=200 json=True len=19401
+2026-03-06 03:00:23 | AirTempGraphGen | Run Start
+2026-03-06 03:00:23 | AirTempGraphGen | Run Complete
+OK 2026-03-06T03:10:15 code=200 json=True len=19400
+2026-03-06 03:10:15 | AirTempGraphGen | Run Start
+2026-03-06 03:10:15 | AirTempGraphGen | Run Complete
+OK 2026-03-06T03:31:03 code=200 json=True len=19400
+2026-03-06 03:31:03 | AirTempGraphGen | Run Start
+2026-03-06 03:31:03 | AirTempGraphGen | Run Complete
+OK 2026-03-06T03:40:54 code=200 json=True len=19399
+2026-03-06 03:40:54 | AirTempGraphGen | Run Start
+2026-03-06 03:40:54 | AirTempGraphGen | Run Complete
+OK 2026-03-06T03:50:46 code=200 json=True len=19401
+2026-03-06 03:50:46 | AirTempGraphGen | Run Start
+2026-03-06 03:50:46 | AirTempGraphGen | Run Complete
+OK 2026-03-06T04:00:37 code=200 json=True len=19400
+2026-03-06 04:00:37 | AirTempGraphGen | Run Start
+2026-03-06 04:00:38 | AirTempGraphGen | Run Complete
+OK 2026-03-06T04:10:29 code=200 json=True len=19400
+2026-03-06 04:10:29 | AirTempGraphGen | Run Start
+2026-03-06 04:10:29 | AirTempGraphGen | Run Complete
+OK 2026-03-06T04:20:20 code=200 json=True len=19400
+2026-03-06 04:20:21 | AirTempGraphGen | Run Start
+2026-03-06 04:20:21 | AirTempGraphGen | Run Complete
+OK 2026-03-06T04:30:15 code=200 json=True len=19401
+2026-03-06 04:30:15 | AirTempGraphGen | Run Start
+2026-03-06 04:30:15 | AirTempGraphGen | Run Complete
+OK 2026-03-06T04:51:01 code=200 json=True len=19401
+2026-03-06 04:51:01 | AirTempGraphGen | Run Start
+2026-03-06 04:51:01 | AirTempGraphGen | Run Complete
+OK 2026-03-06T05:00:52 code=200 json=True len=19400
+2026-03-06 05:00:52 | AirTempGraphGen | Run Start
+2026-03-06 05:00:52 | AirTempGraphGen | Run Complete
+OK 2026-03-06T05:10:44 code=200 json=True len=19400
+2026-03-06 05:10:44 | AirTempGraphGen | Run Start
+2026-03-06 05:10:44 | AirTempGraphGen | Run Complete
+OK 2026-03-06T05:20:35 code=200 json=True len=19401
+2026-03-06 05:20:35 | AirTempGraphGen | Run Start
+2026-03-06 05:20:35 | AirTempGraphGen | Run Complete
+OK 2026-03-06T05:30:27 code=200 json=True len=19399
+2026-03-06 05:30:27 | AirTempGraphGen | Run Start
+2026-03-06 05:30:27 | AirTempGraphGen | Run Complete
+OK 2026-03-06T05:40:18 code=200 json=True len=19400
+2026-03-06 05:40:18 | AirTempGraphGen | Run Start
+2026-03-06 05:40:18 | AirTempGraphGen | Run Complete
+OK 2026-03-06T05:50:12 code=200 json=True len=19400
+2026-03-06 05:50:12 | AirTempGraphGen | Run Start
+2026-03-06 05:50:12 | AirTempGraphGen | Run Complete
+OK 2026-03-06T06:01:07 code=200 json=True len=19399
+2026-03-06 06:01:07 | AirTempGraphGen | Run Start
+2026-03-06 06:01:07 | AirTempGraphGen | Run Complete
+OK 2026-03-06T06:10:58 code=200 json=True len=19399
+2026-03-06 06:10:58 | AirTempGraphGen | Run Start
+2026-03-06 06:10:58 | AirTempGraphGen | Run Complete
+OK 2026-03-06T06:20:50 code=200 json=True len=19399
+2026-03-06 06:20:50 | AirTempGraphGen | Run Start
+2026-03-06 06:20:50 | AirTempGraphGen | Run Complete
+OK 2026-03-06T06:30:41 code=200 json=True len=19399
+2026-03-06 06:30:41 | AirTempGraphGen | Run Start
+2026-03-06 06:30:41 | AirTempGraphGen | Run Complete
+OK 2026-03-06T06:40:33 code=200 json=True len=19399
+2026-03-06 06:40:33 | AirTempGraphGen | Run Start
+2026-03-06 06:40:33 | AirTempGraphGen | Run Complete
+OK 2026-03-06T06:50:24 code=200 json=True len=19399
+2026-03-06 06:50:24 | AirTempGraphGen | Run Start
+2026-03-06 06:50:24 | AirTempGraphGen | Run Complete
+OK 2026-03-06T07:00:20 code=200 json=True len=19400
+2026-03-06 07:00:20 | AirTempGraphGen | Run Start
+2026-03-06 07:00:20 | AirTempGraphGen | Run Complete
+OK 2026-03-06T07:21:05 code=200 json=True len=19400
+2026-03-06 07:21:05 | AirTempGraphGen | Run Start
+2026-03-06 07:21:05 | AirTempGraphGen | Run Complete
+OK 2026-03-06T07:30:56 code=200 json=True len=19401
+2026-03-06 07:30:56 | AirTempGraphGen | Run Start
+2026-03-06 07:30:56 | AirTempGraphGen | Run Complete
+OK 2026-03-06T07:40:48 code=200 json=True len=19400
+2026-03-06 07:40:48 | AirTempGraphGen | Run Start
+2026-03-06 07:40:48 | AirTempGraphGen | Run Complete
+OK 2026-03-06T07:50:39 code=200 json=True len=19400
+2026-03-06 07:50:39 | AirTempGraphGen | Run Start
+2026-03-06 07:50:39 | AirTempGraphGen | Run Complete
+OK 2026-03-06T08:00:30 code=200 json=True len=19401
+2026-03-06 08:00:30 | AirTempGraphGen | Run Start
+2026-03-06 08:00:30 | AirTempGraphGen | Run Complete
+OK 2026-03-06T08:10:22 code=200 json=True len=19401
+2026-03-06 08:10:22 | AirTempGraphGen | Run Start
+2026-03-06 08:10:22 | AirTempGraphGen | Run Complete
+OK 2026-03-06T08:20:16 code=200 json=True len=19400
+2026-03-06 08:20:16 | AirTempGraphGen | Run Start
+2026-03-06 08:20:16 | AirTempGraphGen | Run Complete
+ERR 2026-03-06T08:30:08 The underlying connection was closed: An unexpected error occurred on a send.
+2026-03-06 08:30:08 | AirTempGraphGen | Run Start
+2026-03-06 08:30:08 | AirTempGraphGen | Run Complete
+OK 2026-03-06T08:41:05 code=200 json=True len=19401
+2026-03-06 08:41:05 | AirTempGraphGen | Run Start
+2026-03-06 08:41:05 | AirTempGraphGen | Run Complete
+OK 2026-03-06T08:50:57 code=200 json=True len=19400
+2026-03-06 08:50:57 | AirTempGraphGen | Run Start
+2026-03-06 08:50:57 | AirTempGraphGen | Run Complete
+OK 2026-03-06T09:00:48 code=200 json=True len=19400
+2026-03-06 09:00:48 | AirTempGraphGen | Run Start
+2026-03-06 09:00:48 | AirTempGraphGen | Run Complete
+OK 2026-03-06T09:10:40 code=200 json=True len=19400
+2026-03-06 09:10:40 | AirTempGraphGen | Run Start
+2026-03-06 09:10:40 | AirTempGraphGen | Run Complete
+OK 2026-03-06T09:20:32 code=200 json=True len=19400
+2026-03-06 09:20:32 | AirTempGraphGen | Run Start
+2026-03-06 09:20:32 | AirTempGraphGen | Run Complete
+OK 2026-03-06T09:30:24 code=200 json=True len=19400
+2026-03-06 09:30:24 | AirTempGraphGen | Run Start
+2026-03-06 09:30:24 | AirTempGraphGen | Run Complete
+OK 2026-03-06T09:40:15 code=200 json=True len=19399
+2026-03-06 09:40:15 | AirTempGraphGen | Run Start
+2026-03-06 09:40:15 | AirTempGraphGen | Run Complete
+OK 2026-03-06T10:01:05 code=200 json=True len=19400
+2026-03-06 10:01:05 | AirTempGraphGen | Run Start
+2026-03-06 10:01:05 | AirTempGraphGen | Run Complete
+OK 2026-03-06T10:10:56 code=200 json=True len=19400
+2026-03-06 10:10:56 | AirTempGraphGen | Run Start
+2026-03-06 10:10:56 | AirTempGraphGen | Run Complete
+OK 2026-03-06T10:20:47 code=200 json=True len=19400
+2026-03-06 10:20:48 | AirTempGraphGen | Run Start
+2026-03-06 10:20:48 | AirTempGraphGen | Run Complete
+OK 2026-03-06T10:30:39 code=200 json=True len=19400
+2026-03-06 10:30:39 | AirTempGraphGen | Run Start
+2026-03-06 10:30:39 | AirTempGraphGen | Run Complete
+OK 2026-03-06T10:40:31 code=200 json=True len=19401
+2026-03-06 10:40:31 | AirTempGraphGen | Run Start
+2026-03-06 10:40:31 | AirTempGraphGen | Run Complete
+OK 2026-03-06T10:50:23 code=200 json=True len=19400
+2026-03-06 10:50:23 | AirTempGraphGen | Run Start
+2026-03-06 10:50:23 | AirTempGraphGen | Run Complete
+OK 2026-03-06T11:00:19 code=200 json=True len=19399
+2026-03-06 11:00:19 | AirTempGraphGen | Run Start
+2026-03-06 11:00:19 | AirTempGraphGen | Run Complete
+OK 2026-03-06T11:21:03 code=200 json=True len=19401
+2026-03-06 11:21:03 | AirTempGraphGen | Run Start
+2026-03-06 11:21:03 | AirTempGraphGen | Run Complete
+OK 2026-03-06T11:30:55 code=200 json=True len=19400
+2026-03-06 11:30:55 | AirTempGraphGen | Run Start
+2026-03-06 11:30:55 | AirTempGraphGen | Run Complete
+OK 2026-03-06T11:40:46 code=200 json=True len=19400
+2026-03-06 11:40:47 | AirTempGraphGen | Run Start
+2026-03-06 11:40:47 | AirTempGraphGen | Run Complete
+OK 2026-03-06T11:50:38 code=200 json=True len=19399
+2026-03-06 11:50:38 | AirTempGraphGen | Run Start
+2026-03-06 11:50:38 | AirTempGraphGen | Run Complete
+OK 2026-03-06T12:00:30 code=200 json=True len=19399
+2026-03-06 12:00:30 | AirTempGraphGen | Run Start
+2026-03-06 12:00:30 | AirTempGraphGen | Run Complete
+OK 2026-03-06T12:00:31 master=E:\Documents\Rainmeter\Skins\Heartland\ks_soiltemp_2in_master.csv rolling=E:\Documents\Rainmeter\Skins\Heartland\ks_soiltemp_2in_rolling7day.csv rows=187
+2026-03-06 12:00:31 | SoilGraphGen | Run Start
+2026-03-06 12:00:31 | SoilGraphGen | Run Complete
+OK 2026-03-06T12:10:21 code=200 json=True len=19400
+2026-03-06 12:10:21 | AirTempGraphGen | Run Start
+2026-03-06 12:10:21 | AirTempGraphGen | Run Complete
+OK 2026-03-06T12:20:14 code=200 json=True len=19399
+2026-03-06 12:20:14 | AirTempGraphGen | Run Start
+2026-03-06 12:20:14 | AirTempGraphGen | Run Complete
+OK 2026-03-06T12:30:14 code=200 json=True len=19401
+2026-03-06 12:30:14 | AirTempGraphGen | Run Start
+2026-03-06 12:30:14 | AirTempGraphGen | Run Complete
+OK 2026-03-06T12:51:06 code=200 json=True len=19398
+2026-03-06 12:51:06 | AirTempGraphGen | Run Start
+2026-03-06 12:51:06 | AirTempGraphGen | Run Complete
+OK 2026-03-06T13:00:58 code=200 json=True len=19399
+2026-03-06 13:00:58 | AirTempGraphGen | Run Start
+2026-03-06 13:00:58 | AirTempGraphGen | Run Complete
+OK 2026-03-06T13:10:49 code=200 json=True len=19400
+2026-03-06 13:10:49 | AirTempGraphGen | Run Start
+2026-03-06 13:10:50 | AirTempGraphGen | Run Complete
+OK 2026-03-06T13:20:41 code=200 json=True len=19397
+2026-03-06 13:20:41 | AirTempGraphGen | Run Start
+2026-03-06 13:20:41 | AirTempGraphGen | Run Complete
+OK 2026-03-06T13:30:32 code=200 json=True len=19399
+2026-03-06 13:30:32 | AirTempGraphGen | Run Start
+2026-03-06 13:30:32 | AirTempGraphGen | Run Complete
+OK 2026-03-06T13:40:24 code=200 json=True len=19399
+2026-03-06 13:40:24 | AirTempGraphGen | Run Start
+2026-03-06 13:40:24 | AirTempGraphGen | Run Complete
+OK 2026-03-06T13:50:17 code=200 json=True len=19398
+2026-03-06 13:50:17 | AirTempGraphGen | Run Start
+2026-03-06 13:50:17 | AirTempGraphGen | Run Complete
+OK 2026-03-06T14:00:18 code=200 json=True len=19397
+2026-03-06 14:00:18 | AirTempGraphGen | Run Start
+2026-03-06 14:00:18 | AirTempGraphGen | Run Complete
+OK 2026-03-06T14:21:00 code=200 json=True len=19399
+2026-03-06 14:21:00 | AirTempGraphGen | Run Start
+2026-03-06 14:21:00 | AirTempGraphGen | Run Complete
+OK 2026-03-06T14:30:54 code=200 json=True len=19398
+2026-03-06 14:30:54 | AirTempGraphGen | Run Start
+2026-03-06 14:30:54 | AirTempGraphGen | Run Complete
+OK 2026-03-06T14:40:46 code=200 json=True len=19398
+2026-03-06 14:40:46 | AirTempGraphGen | Run Start
+2026-03-06 14:40:46 | AirTempGraphGen | Run Complete
+OK 2026-03-06T14:50:38 code=200 json=True len=19399
+2026-03-06 14:50:38 | AirTempGraphGen | Run Start
+2026-03-06 14:50:38 | AirTempGraphGen | Run Complete
+OK 2026-03-06T15:00:29 code=200 json=True len=19398
+2026-03-06 15:00:29 | AirTempGraphGen | Run Start
+2026-03-06 15:00:29 | AirTempGraphGen | Run Complete
+OK 2026-03-06T15:10:20 code=200 json=True len=19398
+2026-03-06 15:10:21 | AirTempGraphGen | Run Start
+2026-03-06 15:10:21 | AirTempGraphGen | Run Complete
+OK 2026-03-06T15:20:14 code=200 json=True len=19398
+2026-03-06 15:20:14 | AirTempGraphGen | Run Start
+2026-03-06 15:20:14 | AirTempGraphGen | Run Complete
+OK 2026-03-06T15:41:04 code=200 json=True len=19399
+2026-03-06 15:41:04 | AirTempGraphGen | Run Start
+2026-03-06 15:41:04 | AirTempGraphGen | Run Complete
+OK 2026-03-06T15:50:55 code=200 json=True len=19398
+2026-03-06 15:50:56 | AirTempGraphGen | Run Start
+2026-03-06 15:50:56 | AirTempGraphGen | Run Complete
+OK 2026-03-06T16:00:47 code=200 json=True len=19399
+2026-03-06 16:00:47 | AirTempGraphGen | Run Start
+2026-03-06 16:00:47 | AirTempGraphGen | Run Complete
+OK 2026-03-06T16:10:49 code=200 json=True len=19399
+2026-03-06 16:10:49 | AirTempGraphGen | Run Start
+2026-03-06 16:10:49 | AirTempGraphGen | Run Complete
+OK 2026-03-06T16:20:41 code=200 json=True len=19399
+2026-03-06 16:20:41 | AirTempGraphGen | Run Start
+2026-03-06 16:20:41 | AirTempGraphGen | Run Complete
+OK 2026-03-06T16:30:35 code=200 json=True len=19399
+2026-03-06 16:30:35 | AirTempGraphGen | Run Start
+2026-03-06 16:30:35 | AirTempGraphGen | Run Complete
+OK 2026-03-06T16:40:52 code=200 json=True len=19398
+2026-03-06 16:40:52 | AirTempGraphGen | Run Start
+2026-03-06 16:40:52 | AirTempGraphGen | Run Complete
+OK 2026-03-06T16:50:43 code=200 json=True len=19399
+2026-03-06 16:50:43 | AirTempGraphGen | Run Start
+2026-03-06 16:50:43 | AirTempGraphGen | Run Complete
+OK 2026-03-06T17:00:35 code=200 json=True len=19399
+2026-03-06 17:00:35 | AirTempGraphGen | Run Start
+2026-03-06 17:00:35 | AirTempGraphGen | Run Complete
+OK 2026-03-06T17:10:26 code=200 json=True len=19399
+2026-03-06 17:10:26 | AirTempGraphGen | Run Start
+2026-03-06 17:10:26 | AirTempGraphGen | Run Complete
+OK 2026-03-06T17:20:18 code=200 json=True len=19399
+2026-03-06 17:20:18 | AirTempGraphGen | Run Start
+2026-03-06 17:20:18 | AirTempGraphGen | Run Complete
+OK 2026-03-06T17:30:15 code=200 json=True len=19399
+2026-03-06 17:30:15 | AirTempGraphGen | Run Start
+2026-03-06 17:30:15 | AirTempGraphGen | Run Complete
+OK 2026-03-06T17:51:02 code=200 json=True len=19398
+2026-03-06 17:51:02 | AirTempGraphGen | Run Start
+2026-03-06 17:51:02 | AirTempGraphGen | Run Complete
+OK 2026-03-06T18:00:55 code=200 json=True len=19399
+2026-03-06 18:00:55 | AirTempGraphGen | Run Start
+2026-03-06 18:00:55 | AirTempGraphGen | Run Complete
+OK 2026-03-06T18:10:46 code=200 json=True len=19399
+2026-03-06 18:10:46 | AirTempGraphGen | Run Start
+2026-03-06 18:10:46 | AirTempGraphGen | Run Complete
+OK 2026-03-06T18:20:37 code=200 json=True len=19399
+2026-03-06 18:20:37 | AirTempGraphGen | Run Start
+2026-03-06 18:20:37 | AirTempGraphGen | Run Complete
+OK 2026-03-06T18:30:29 code=200 json=True len=19399
+2026-03-06 18:30:29 | AirTempGraphGen | Run Start
+2026-03-06 18:30:29 | AirTempGraphGen | Run Complete
+OK 2026-03-06T18:40:20 code=200 json=True len=19398
+2026-03-06 18:40:20 | AirTempGraphGen | Run Start
+2026-03-06 18:40:20 | AirTempGraphGen | Run Complete
+OK 2026-03-06T18:50:15 code=200 json=True len=19398
+2026-03-06 18:50:15 | AirTempGraphGen | Run Start
+2026-03-06 18:50:15 | AirTempGraphGen | Run Complete
+OK 2026-03-06T19:10:59 code=200 json=True len=19397
+2026-03-06 19:10:59 | AirTempGraphGen | Run Start
+2026-03-06 19:10:59 | AirTempGraphGen | Run Complete
+OK 2026-03-06T19:20:51 code=200 json=True len=19395
+2026-03-06 19:20:51 | AirTempGraphGen | Run Start
+2026-03-06 19:20:51 | AirTempGraphGen | Run Complete
+OK 2026-03-06T19:30:42 code=200 json=True len=19398
+2026-03-06 19:30:42 | AirTempGraphGen | Run Start
+2026-03-06 19:30:42 | AirTempGraphGen | Run Complete
+OK 2026-03-06T19:40:34 code=200 json=True len=19397
+2026-03-06 19:40:34 | AirTempGraphGen | Run Start
+2026-03-06 19:40:34 | AirTempGraphGen | Run Complete
+OK 2026-03-06T19:50:25 code=200 json=True len=19397
+2026-03-06 19:50:25 | AirTempGraphGen | Run Start
+2026-03-06 19:50:25 | AirTempGraphGen | Run Complete
+OK 2026-03-06T20:00:18 code=200 json=True len=19398
+2026-03-06 20:00:18 | AirTempGraphGen | Run Start
+2026-03-06 20:00:18 | AirTempGraphGen | Run Complete
+OK 2026-03-06T20:10:11 code=200 json=True len=19397
+2026-03-06 20:10:12 | AirTempGraphGen | Run Start
+2026-03-06 20:10:12 | AirTempGraphGen | Run Complete
+OK 2026-03-06T20:21:06 code=200 json=True len=19398
+2026-03-06 20:21:06 | AirTempGraphGen | Run Start
+2026-03-06 20:21:06 | AirTempGraphGen | Run Complete
+OK 2026-03-06T20:30:57 code=200 json=True len=19398
+2026-03-06 20:30:57 | AirTempGraphGen | Run Start
+2026-03-06 20:30:57 | AirTempGraphGen | Run Complete
+OK 2026-03-06T20:40:49 code=200 json=True len=19397
+2026-03-06 20:40:49 | AirTempGraphGen | Run Start
+2026-03-06 20:40:49 | AirTempGraphGen | Run Complete
+OK 2026-03-06T20:50:40 code=200 json=True len=19398
+2026-03-06 20:50:40 | AirTempGraphGen | Run Start
+2026-03-06 20:50:40 | AirTempGraphGen | Run Complete
+OK 2026-03-06T21:00:32 code=200 json=True len=19398
+2026-03-06 21:00:32 | AirTempGraphGen | Run Start
+2026-03-06 21:00:32 | AirTempGraphGen | Run Complete
+OK 2026-03-06T21:10:23 code=200 json=True len=19397
+2026-03-06 21:10:23 | AirTempGraphGen | Run Start
+2026-03-06 21:10:23 | AirTempGraphGen | Run Complete
+OK 2026-03-06T21:20:15 code=200 json=True len=19398
+2026-03-06 21:20:15 | AirTempGraphGen | Run Start
+2026-03-06 21:20:15 | AirTempGraphGen | Run Complete
+OK 2026-03-06T21:41:04 code=200 json=True len=19398
+2026-03-06 21:41:04 | AirTempGraphGen | Run Start
+2026-03-06 21:41:04 | AirTempGraphGen | Run Complete
+OK 2026-03-06T21:50:55 code=200 json=True len=19397
+2026-03-06 21:50:56 | AirTempGraphGen | Run Start
+2026-03-06 21:50:56 | AirTempGraphGen | Run Complete
+OK 2026-03-06T22:00:47 code=200 json=True len=19398
+2026-03-06 22:00:47 | AirTempGraphGen | Run Start
+2026-03-06 22:00:47 | AirTempGraphGen | Run Complete
+OK 2026-03-06T22:10:40 code=200 json=True len=19398
+2026-03-06 22:10:40 | AirTempGraphGen | Run Start
+2026-03-06 22:10:40 | AirTempGraphGen | Run Complete
+OK 2026-03-06T22:31:02 code=200 json=True len=19397
+2026-03-06 22:31:02 | AirTempGraphGen | Run Start
+2026-03-06 22:31:03 | AirTempGraphGen | Run Complete
+OK 2026-03-06T22:40:54 code=200 json=True len=19398
+2026-03-06 22:40:54 | AirTempGraphGen | Run Start
+2026-03-06 22:40:54 | AirTempGraphGen | Run Complete
+OK 2026-03-06T22:50:45 code=200 json=True len=19398
+2026-03-06 22:50:45 | AirTempGraphGen | Run Start
+2026-03-06 22:50:45 | AirTempGraphGen | Run Complete
+OK 2026-03-06T23:00:37 code=200 json=True len=19398
+2026-03-06 23:00:37 | AirTempGraphGen | Run Start
+2026-03-06 23:00:37 | AirTempGraphGen | Run Complete
+OK 2026-03-06T23:10:29 code=200 json=True len=19398
+2026-03-06 23:10:29 | AirTempGraphGen | Run Start
+2026-03-06 23:10:29 | AirTempGraphGen | Run Complete
+OK 2026-03-06T23:20:20 code=200 json=True len=19397
+2026-03-06 23:20:20 | AirTempGraphGen | Run Start
+2026-03-06 23:20:20 | AirTempGraphGen | Run Complete
+OK 2026-03-06T23:30:15 code=200 json=True len=19397
+2026-03-06 23:30:15 | AirTempGraphGen | Run Start
+2026-03-06 23:30:15 | AirTempGraphGen | Run Complete
+OK 2026-03-06T23:51:00 code=200 json=True len=19397
+2026-03-06 23:51:00 | AirTempGraphGen | Run Start
+2026-03-06 23:51:00 | AirTempGraphGen | Run Complete
+OK 2026-03-07T00:00:52 code=200 json=True len=19396
+2026-03-07 00:00:52 | AirTempGraphGen | Run Start
+2026-03-07 00:00:52 | AirTempGraphGen | Run Complete
+OK 2026-03-07T00:10:43 code=200 json=True len=19396
+2026-03-07 00:10:43 | AirTempGraphGen | Run Start
+2026-03-07 00:10:43 | AirTempGraphGen | Run Complete
+OK 2026-03-07T00:20:34 code=200 json=True len=19392
+2026-03-07 00:20:34 | AirTempGraphGen | Run Start
+2026-03-07 00:20:34 | AirTempGraphGen | Run Complete
+OK 2026-03-07T00:30:26 code=200 json=True len=19392
+2026-03-07 00:30:26 | AirTempGraphGen | Run Start
+2026-03-07 00:30:26 | AirTempGraphGen | Run Complete
+OK 2026-03-07T00:40:17 code=200 json=True len=19392
+2026-03-07 00:40:17 | AirTempGraphGen | Run Start
+2026-03-07 00:40:17 | AirTempGraphGen | Run Complete
+OK 2026-03-07T00:50:12 code=200 json=True len=19392
+2026-03-07 00:50:12 | AirTempGraphGen | Run Start
+2026-03-07 00:50:12 | AirTempGraphGen | Run Complete
+OK 2026-03-07T01:01:06 code=200 json=True len=19392
+2026-03-07 01:01:06 | AirTempGraphGen | Run Start
+2026-03-07 01:01:06 | AirTempGraphGen | Run Complete
+OK 2026-03-07T01:10:57 code=200 json=True len=19392
+2026-03-07 01:10:57 | AirTempGraphGen | Run Start
+2026-03-07 01:10:57 | AirTempGraphGen | Run Complete
+OK 2026-03-07T01:20:48 code=200 json=True len=19392
+2026-03-07 01:20:48 | AirTempGraphGen | Run Start
+2026-03-07 01:20:48 | AirTempGraphGen | Run Complete
+OK 2026-03-07T01:30:40 code=200 json=True len=19393
+2026-03-07 01:30:40 | AirTempGraphGen | Run Start
+2026-03-07 01:30:40 | AirTempGraphGen | Run Complete
+OK 2026-03-07T01:40:31 code=200 json=True len=19392
+2026-03-07 01:40:31 | AirTempGraphGen | Run Start
+2026-03-07 01:40:31 | AirTempGraphGen | Run Complete
+OK 2026-03-07T01:50:23 code=200 json=True len=19393
+2026-03-07 01:50:23 | AirTempGraphGen | Run Start
+2026-03-07 01:50:23 | AirTempGraphGen | Run Complete
+OK 2026-03-07T02:00:19 code=200 json=True len=19393
+2026-03-07 02:00:19 | AirTempGraphGen | Run Start
+2026-03-07 02:00:19 | AirTempGraphGen | Run Complete
+OK 2026-03-07T02:21:03 code=200 json=True len=19393
+2026-03-07 02:21:03 | AirTempGraphGen | Run Start
+2026-03-07 02:21:03 | AirTempGraphGen | Run Complete
+OK 2026-03-07T02:30:54 code=200 json=True len=19392
+2026-03-07 02:30:54 | AirTempGraphGen | Run Start
+2026-03-07 02:30:54 | AirTempGraphGen | Run Complete
+OK 2026-03-07T02:40:46 code=200 json=True len=19392
+2026-03-07 02:40:46 | AirTempGraphGen | Run Start
+2026-03-07 02:40:46 | AirTempGraphGen | Run Complete
+OK 2026-03-07T02:50:37 code=200 json=True len=19393
+2026-03-07 02:50:37 | AirTempGraphGen | Run Start
+2026-03-07 02:50:37 | AirTempGraphGen | Run Complete
+OK 2026-03-07T03:00:29 code=200 json=True len=19392
+2026-03-07 03:00:29 | AirTempGraphGen | Run Start
+2026-03-07 03:00:29 | AirTempGraphGen | Run Complete
+OK 2026-03-07T03:10:20 code=200 json=True len=19393
+2026-03-07 03:10:20 | AirTempGraphGen | Run Start
+2026-03-07 03:10:20 | AirTempGraphGen | Run Complete
+OK 2026-03-07T03:20:13 code=200 json=True len=19393
+2026-03-07 03:20:13 | AirTempGraphGen | Run Start
+2026-03-07 03:20:13 | AirTempGraphGen | Run Complete
+OK 2026-03-07T03:41:01 code=200 json=True len=19392
+2026-03-07 03:41:01 | AirTempGraphGen | Run Start
+2026-03-07 03:41:01 | AirTempGraphGen | Run Complete
+OK 2026-03-07T03:50:52 code=200 json=True len=19391
+2026-03-07 03:50:52 | AirTempGraphGen | Run Start
+2026-03-07 03:50:52 | AirTempGraphGen | Run Complete
+OK 2026-03-07T04:00:44 code=200 json=True len=19392
+2026-03-07 04:00:44 | AirTempGraphGen | Run Start
+2026-03-07 04:00:44 | AirTempGraphGen | Run Complete
+OK 2026-03-07T04:10:35 code=200 json=True len=19393
+2026-03-07 04:10:35 | AirTempGraphGen | Run Start
+2026-03-07 04:10:35 | AirTempGraphGen | Run Complete
+OK 2026-03-07T04:20:27 code=200 json=True len=19392
+2026-03-07 04:20:27 | AirTempGraphGen | Run Start
+2026-03-07 04:20:27 | AirTempGraphGen | Run Complete
+OK 2026-03-07T04:30:18 code=200 json=True len=19392
+2026-03-07 04:30:18 | AirTempGraphGen | Run Start
+2026-03-07 04:30:18 | AirTempGraphGen | Run Complete
+OK 2026-03-07T04:40:12 code=200 json=True len=19392
+2026-03-07 04:40:12 | AirTempGraphGen | Run Start
+2026-03-07 04:40:12 | AirTempGraphGen | Run Complete
+OK 2026-03-07T04:51:07 code=200 json=True len=19393
+2026-03-07 04:51:07 | AirTempGraphGen | Run Start
+2026-03-07 04:51:07 | AirTempGraphGen | Run Complete
+OK 2026-03-07T05:00:58 code=200 json=True len=19393
+2026-03-07 05:00:58 | AirTempGraphGen | Run Start
+2026-03-07 05:00:58 | AirTempGraphGen | Run Complete
+OK 2026-03-07T05:10:50 code=200 json=True len=19391
+2026-03-07 05:10:50 | AirTempGraphGen | Run Start
+2026-03-07 05:10:50 | AirTempGraphGen | Run Complete
+OK 2026-03-07T05:20:41 code=200 json=True len=19393
+2026-03-07 05:20:41 | AirTempGraphGen | Run Start
+2026-03-07 05:20:41 | AirTempGraphGen | Run Complete
+OK 2026-03-07T05:30:33 code=200 json=True len=19392
+2026-03-07 05:30:33 | AirTempGraphGen | Run Start
+2026-03-07 05:30:33 | AirTempGraphGen | Run Complete
+OK 2026-03-07T05:40:24 code=200 json=True len=19392
+2026-03-07 05:40:24 | AirTempGraphGen | Run Start
+2026-03-07 05:40:24 | AirTempGraphGen | Run Complete
+OK 2026-03-07T05:50:16 code=200 json=True len=19393
+2026-03-07 05:50:16 | AirTempGraphGen | Run Start
+2026-03-07 05:50:16 | AirTempGraphGen | Run Complete
+OK 2026-03-07T06:11:04 code=200 json=True len=19399
+2026-03-07 06:11:04 | AirTempGraphGen | Run Start
+2026-03-07 06:11:05 | AirTempGraphGen | Run Complete
+OK 2026-03-07T06:20:56 code=200 json=True len=19398
+2026-03-07 06:20:56 | AirTempGraphGen | Run Start
+2026-03-07 06:20:56 | AirTempGraphGen | Run Complete
+OK 2026-03-07T06:30:48 code=200 json=True len=19397
+2026-03-07 06:30:48 | AirTempGraphGen | Run Start
+2026-03-07 06:30:48 | AirTempGraphGen | Run Complete
+OK 2026-03-07T06:40:39 code=200 json=True len=19398
+2026-03-07 06:40:39 | AirTempGraphGen | Run Start
+2026-03-07 06:40:39 | AirTempGraphGen | Run Complete
+OK 2026-03-07T06:50:30 code=200 json=True len=19398
+2026-03-07 06:50:30 | AirTempGraphGen | Run Start
+2026-03-07 06:50:30 | AirTempGraphGen | Run Complete
+OK 2026-03-07T07:00:24 code=200 json=True len=19398
+2026-03-07 07:00:24 | AirTempGraphGen | Run Start
+2026-03-07 07:00:24 | AirTempGraphGen | Run Complete
+OK 2026-03-07T07:10:15 code=200 json=True len=19399
+2026-03-07 07:10:15 | AirTempGraphGen | Run Start
+2026-03-07 07:10:15 | AirTempGraphGen | Run Complete
+OK 2026-03-07T07:31:02 code=200 json=True len=19397
+2026-03-07 07:31:02 | AirTempGraphGen | Run Start
+2026-03-07 07:31:02 | AirTempGraphGen | Run Complete
+OK 2026-03-07T07:40:54 code=200 json=True len=19398
+2026-03-07 07:40:54 | AirTempGraphGen | Run Start
+2026-03-07 07:40:54 | AirTempGraphGen | Run Complete
+OK 2026-03-07T07:50:45 code=200 json=True len=19398
+2026-03-07 07:50:45 | AirTempGraphGen | Run Start
+2026-03-07 07:50:45 | AirTempGraphGen | Run Complete
+OK 2026-03-07T08:00:37 code=200 json=True len=19398
+2026-03-07 08:00:37 | AirTempGraphGen | Run Start
+2026-03-07 08:00:37 | AirTempGraphGen | Run Complete
+OK 2026-03-07T08:10:29 code=200 json=True len=19398
+2026-03-07 08:10:29 | AirTempGraphGen | Run Start
+2026-03-07 08:10:29 | AirTempGraphGen | Run Complete
+OK 2026-03-07T08:20:20 code=200 json=True len=19398
+2026-03-07 08:20:20 | AirTempGraphGen | Run Start
+2026-03-07 08:20:20 | AirTempGraphGen | Run Complete
+OK 2026-03-07T08:30:15 code=200 json=True len=19397
+2026-03-07 08:30:15 | AirTempGraphGen | Run Start
+2026-03-07 08:30:15 | AirTempGraphGen | Run Complete
+OK 2026-03-07T08:51:00 code=200 json=True len=19398
+2026-03-07 08:51:01 | AirTempGraphGen | Run Start
+2026-03-07 08:51:01 | AirTempGraphGen | Run Complete
+OK 2026-03-07T09:00:52 code=200 json=True len=19398
+2026-03-07 09:00:52 | AirTempGraphGen | Run Start
+2026-03-07 09:00:52 | AirTempGraphGen | Run Complete
+OK 2026-03-07T09:10:44 code=200 json=True len=19399
+2026-03-07 09:10:44 | AirTempGraphGen | Run Start
+2026-03-07 09:10:44 | AirTempGraphGen | Run Complete
+OK 2026-03-07T09:20:35 code=200 json=True len=19398
+2026-03-07 09:20:35 | AirTempGraphGen | Run Start
+2026-03-07 09:20:35 | AirTempGraphGen | Run Complete
+OK 2026-03-07T09:30:28 code=200 json=True len=19398
+2026-03-07 09:30:28 | AirTempGraphGen | Run Start
+2026-03-07 09:30:28 | AirTempGraphGen | Run Complete
+OK 2026-03-07T09:40:20 code=200 json=True len=19398
+2026-03-07 09:40:20 | AirTempGraphGen | Run Start
+2026-03-07 09:40:20 | AirTempGraphGen | Run Complete
+OK 2026-03-07T09:50:13 code=200 json=True len=19398
+2026-03-07 09:50:13 | AirTempGraphGen | Run Start
+2026-03-07 09:50:13 | AirTempGraphGen | Run Complete
+OK 2026-03-07T10:11:02 code=200 json=True len=19398
+2026-03-07 10:11:02 | AirTempGraphGen | Run Start
+2026-03-07 10:11:02 | AirTempGraphGen | Run Complete
+OK 2026-03-07T10:20:54 code=200 json=True len=19399
+2026-03-07 10:20:54 | AirTempGraphGen | Run Start
+2026-03-07 10:20:54 | AirTempGraphGen | Run Complete
+OK 2026-03-07T10:30:47 code=200 json=True len=19399
+2026-03-07 10:30:47 | AirTempGraphGen | Run Start
+2026-03-07 10:30:47 | AirTempGraphGen | Run Complete
+OK 2026-03-07T10:40:39 code=200 json=True len=19398
+2026-03-07 10:40:39 | AirTempGraphGen | Run Start
+2026-03-07 10:40:39 | AirTempGraphGen | Run Complete
+OK 2026-03-07T10:50:30 code=200 json=True len=19398
+2026-03-07 10:50:30 | AirTempGraphGen | Run Start
+2026-03-07 10:50:30 | AirTempGraphGen | Run Complete
+OK 2026-03-07T11:00:24 code=200 json=True len=19399
+2026-03-07 11:00:24 | AirTempGraphGen | Run Start
+2026-03-07 11:00:24 | AirTempGraphGen | Run Complete
+OK 2026-03-07T11:10:15 code=200 json=True len=19398
+2026-03-07 11:10:15 | AirTempGraphGen | Run Start
+2026-03-07 11:10:15 | AirTempGraphGen | Run Complete
+OK 2026-03-07T11:31:04 code=200 json=True len=19399
+2026-03-07 11:31:04 | AirTempGraphGen | Run Start
+2026-03-07 11:31:04 | AirTempGraphGen | Run Complete
+OK 2026-03-07T11:40:56 code=200 json=True len=19399
+2026-03-07 11:40:56 | AirTempGraphGen | Run Start
+2026-03-07 11:40:56 | AirTempGraphGen | Run Complete
+OK 2026-03-07T11:50:48 code=200 json=True len=19398
+2026-03-07 11:50:48 | AirTempGraphGen | Run Start
+2026-03-07 11:50:48 | AirTempGraphGen | Run Complete
+OK 2026-03-07T12:00:09 master=E:\Documents\Rainmeter\Skins\Heartland\ks_soiltemp_2in_master.csv rolling=E:\Documents\Rainmeter\Skins\Heartland\ks_soiltemp_2in_rolling7day.csv rows=187
+2026-03-07 12:00:09 | SoilGraphGen | Run Start
+2026-03-07 12:00:09 | SoilGraphGen | Run Complete
+OK 2026-03-07T12:00:40 code=200 json=True len=19397
+2026-03-07 12:00:40 | AirTempGraphGen | Run Start
+2026-03-07 12:00:40 | AirTempGraphGen | Run Complete
+OK 2026-03-07T12:10:31 code=200 json=True len=19398
+2026-03-07 12:10:31 | AirTempGraphGen | Run Start
+2026-03-07 12:10:31 | AirTempGraphGen | Run Complete
+OK 2026-03-07T12:20:23 code=200 json=True len=19397
+2026-03-07 12:20:23 | AirTempGraphGen | Run Start
+2026-03-07 12:20:23 | AirTempGraphGen | Run Complete
+OK 2026-03-07T12:30:16 code=200 json=True len=19399
+2026-03-07 12:30:16 | AirTempGraphGen | Run Start
+2026-03-07 12:30:16 | AirTempGraphGen | Run Complete
+OK 2026-03-07T12:51:04 code=200 json=True len=19396
+2026-03-07 12:51:04 | AirTempGraphGen | Run Start
+2026-03-07 12:51:04 | AirTempGraphGen | Run Complete
+OK 2026-03-07T13:00:58 code=200 json=True len=19397
+2026-03-07 13:00:58 | AirTempGraphGen | Run Start
+2026-03-07 13:00:58 | AirTempGraphGen | Run Complete
+OK 2026-03-07T13:10:51 code=200 json=True len=19396
+2026-03-07 13:10:51 | AirTempGraphGen | Run Start
+2026-03-07 13:10:51 | AirTempGraphGen | Run Complete
+OK 2026-03-07T13:20:42 code=200 json=True len=19396
+2026-03-07 13:20:42 | AirTempGraphGen | Run Start
+2026-03-07 13:20:42 | AirTempGraphGen | Run Complete
+OK 2026-03-07T13:30:34 code=200 json=True len=19397
+2026-03-07 13:30:34 | AirTempGraphGen | Run Start
+2026-03-07 13:30:34 | AirTempGraphGen | Run Complete
+OK 2026-03-07T13:40:25 code=200 json=True len=19397
+2026-03-07 13:40:25 | AirTempGraphGen | Run Start
+2026-03-07 13:40:25 | AirTempGraphGen | Run Complete
+OK 2026-03-07T13:50:17 code=200 json=True len=19396
+2026-03-07 13:50:17 | AirTempGraphGen | Run Start
+2026-03-07 13:50:17 | AirTempGraphGen | Run Complete
+ERR 2026-03-07T14:00:08 The underlying connection was closed: An unexpected error occurred on a send.
+2026-03-07 14:00:08 | AirTempGraphGen | Run Start
+2026-03-07 14:00:08 | AirTempGraphGen | Run Complete
+OK 2026-03-07T14:11:06 code=200 json=True len=19396
+2026-03-07 14:11:06 | AirTempGraphGen | Run Start
+2026-03-07 14:11:06 | AirTempGraphGen | Run Complete
+OK 2026-03-07T14:20:57 code=200 json=True len=19394
+2026-03-07 14:20:57 | AirTempGraphGen | Run Start
+2026-03-07 14:20:57 | AirTempGraphGen | Run Complete
+OK 2026-03-07T14:30:48 code=200 json=True len=19395
+2026-03-07 14:30:49 | AirTempGraphGen | Run Start
+2026-03-07 14:30:49 | AirTempGraphGen | Run Complete
+OK 2026-03-07T14:40:40 code=200 json=True len=19394
+2026-03-07 14:40:40 | AirTempGraphGen | Run Start
+2026-03-07 14:40:40 | AirTempGraphGen | Run Complete
+OK 2026-03-07T14:50:32 code=200 json=True len=19394
+2026-03-07 14:50:32 | AirTempGraphGen | Run Start
+2026-03-07 14:50:32 | AirTempGraphGen | Run Complete
+OK 2026-03-07T15:00:24 code=200 json=True len=19396
+2026-03-07 15:00:24 | AirTempGraphGen | Run Start
+2026-03-07 15:00:24 | AirTempGraphGen | Run Complete
+OK 2026-03-07T15:10:15 code=200 json=True len=19394
+2026-03-07 15:10:15 | AirTempGraphGen | Run Start
+2026-03-07 15:10:15 | AirTempGraphGen | Run Complete
+OK 2026-03-07T15:31:04 code=200 json=True len=19396
+2026-03-07 15:31:04 | AirTempGraphGen | Run Start
+2026-03-07 15:31:04 | AirTempGraphGen | Run Complete
+OK 2026-03-07T15:40:56 code=200 json=True len=19397
+2026-03-07 15:40:56 | AirTempGraphGen | Run Start
+2026-03-07 15:40:56 | AirTempGraphGen | Run Complete
+OK 2026-03-07T15:50:48 code=200 json=True len=19397
+2026-03-07 15:50:48 | AirTempGraphGen | Run Start
+2026-03-07 15:50:48 | AirTempGraphGen | Run Complete
+OK 2026-03-07T16:00:39 code=200 json=True len=19394
+2026-03-07 16:00:39 | AirTempGraphGen | Run Start
+2026-03-07 16:00:39 | AirTempGraphGen | Run Complete
+OK 2026-03-07T16:10:31 code=200 json=True len=19395
+2026-03-07 16:10:31 | AirTempGraphGen | Run Start
+2026-03-07 16:10:31 | AirTempGraphGen | Run Complete
+OK 2026-03-07T16:20:22 code=200 json=True len=19395
+2026-03-07 16:20:22 | AirTempGraphGen | Run Start
+2026-03-07 16:20:22 | AirTempGraphGen | Run Complete
+OK 2026-03-07T16:30:17 code=200 json=True len=19395
+2026-03-07 16:30:17 | AirTempGraphGen | Run Start
+2026-03-07 16:30:17 | AirTempGraphGen | Run Complete

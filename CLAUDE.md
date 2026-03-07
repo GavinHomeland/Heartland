@@ -131,3 +131,4 @@ setShape(meterName, shapeIdx, "Path FreezePatch1 | StrokeWidth 0 | Fill Color 14
 
 ## Instructions for Claude
 - Add lines similar to the freeze line (just a horizontal line) in the *soil graph* at 50, 55 and 60 degrees. Make them green, but 50 opacity is 150, 55 is 160, 60 is 180. Actually... I changed my mind about the color. Make the 50 degree one yellow and the other two green. 
+- Behind the existing history graph in the AIR TEMPERATURE graph, I'd like to put two more bars (at a lower z). From back to front the graph will be: the vertical index bars as they exist, hi temp for that day (including today), average temp for that day (including current temperature), that fancy below freezing fill that you made (don't mess it up!), then the low temp for that day (history, none for today), the blue line that incorporates the predicted low. 

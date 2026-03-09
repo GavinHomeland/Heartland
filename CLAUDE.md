@@ -139,7 +139,7 @@ setShape(meterName, shapeIdx, "Path FreezePatch1 | StrokeWidth 0 | Fill Color 14
 - [x] Analyze heartland_refs.txt — It is a generated grep index (Measure=/Plugin=/ImageName= lines from the INI). No unique info; safe to delete.
 - [x] Soil fetch timing — Multiple runs on 2026-02-24/25 were development session reloads, not a bug. Production: clean single daily run. Changed KSSoilRunAfterHour from 12→8 so it fetches at 8AM (after MESONET posts overnight readings) instead of noon.
 
-### Rainbuckets
+### Rainbuckets (Completed)
 - [x] There is a 1px gap between the 'water' and the left wall of bucket 0. Rather than widen the water, narrow up the bucket so it's 8 px narrower than the bucket 1 and make the water fit inside edge to edge.  Concurrently, make B1 4 px narrower than B2 and fit the water accordingly. You'll have to narrow up the raindrops a bit to match the top of B0. — B0=48px, B1=56px, B2=60px; water fills edge-to-edge within each bucket; drops confined to B0 X range.
 - [x] Raise up extreme.png and lightning-bolt.png by 10 px and the raindrop start accordingly. — Icons: Y=(SoilGraphY-10); DROP_START_Y: 22→12.
 - [x] Drips from B0 to B1 should be twice as often, if present. Don't overthink the drips. They are just a constant rate and the animation looks good now except there should be a splash at the top of water in B1 and B2 as well. — B0→B1 dripInterval=12 (vs 25 for B1→B2); splash added on landing.

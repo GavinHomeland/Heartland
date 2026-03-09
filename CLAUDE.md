@@ -130,5 +130,62 @@ setShape(meterName, shapeIdx, "Path FreezePatch1 | StrokeWidth 0 | Fill Color 14
 
 
 ## Instructions for Claude
-- Add lines similar to the freeze line (just a horizontal line) in the *soil graph* at 50, 55 and 60 degrees. Make them green, but 50 opacity is 150, 55 is 160, 60 is 180. Actually... I changed my mind about the color. Make the 50 degree one yellow and the other two green. 
-- Behind the existing history graph in the AIR TEMPERATURE graph, I'd like to put two more bars (at a lower z). From back to front the graph will be: the vertical index bars as they exist, hi temp for that day (including today), average temp for that day (including current temperature), that fancy below freezing fill that you made (don't mess it up!), then the low temp for that day (history, none for today), the blue line that incorporates the predicted low. 
+
+
+## Completed
+- [x] Add lines similar to the freeze line (just a horizontal line) in the *soil graph* at 50, 55 and 60 degrees. Make them green, but 50 opacity is 150, 55 is 160, 60 is 180. Actually... I changed my mind about the color. Make the 50 degree one yellow and the other two green.
+- [x] Behind the existing history graph in the AIR TEMPERATURE graph, I'd like to put two more bars (at a lower z). From back to front the graph will be: the vertical index bars as they exist, hi temp for that day (including today), average temp for that day (including current temperature), that fancy below freezing fill that you made (don't mess it up!), then the low temp for that day (history, none for today), the blue line that incorporates the predicted low.
+- [x] Limit log files (*log.txt) to 1000 lines 1x per day. — Added rotateLogs() to AirTempGraphGen.lua; fires once/day, trims all 6 log files to 1000 lines.
+- [x] Analyze heartland_refs.txt — It is a generated grep index (Measure=/Plugin=/ImageName= lines from the INI). No unique info; safe to delete.
+- [x] Soil fetch timing — Multiple runs on 2026-02-24/25 were development session reloads, not a bug. Production: clean single daily run. Changed KSSoilRunAfterHour from 12→8 so it fetches at 8AM (after MESONET posts overnight readings) instead of noon.
+
+### Rainbuckets
+- [x] There is a 1px gap between the 'water' and the left wall of bucket 0. Rather than widen the water, narrow up the bucket so it's 8 px narrower than the bucket 1 and make the water fit inside edge to edge.  Concurrently, make B1 4 px narrower than B2 and fit the water accordingly. You'll have to narrow up the raindrops a bit to match the top of B0. — B0=48px, B1=56px, B2=60px; water fills edge-to-edge within each bucket; drops confined to B0 X range.
+- [x] Raise up extreme.png and lightning-bolt.png by 10 px and the raindrop start accordingly. — Icons: Y=(SoilGraphY-10); DROP_START_Y: 22→12.
+- [x] Drips from B0 to B1 should be twice as often, if present. Don't overthink the drips. They are just a constant rate and the animation looks good now except there should be a splash at the top of water in B1 and B2 as well. — B0→B1 dripInterval=12 (vs 25 for B1→B2); splash added on landing.
+- [x] In the following data from the .json (I'm assuming that the 'real' OM data will be identical):
+    -   "current": { "precipitation": 1.1, "weather_code": 95 },
+  "daily": {
+    "time": ["2026-03-02","2026-03-03","2026-03-04","2026-03-05","2026-03-06","2026-03-07","2026-03-08"],
+    "precipitation_sum": [1.52, 0.50, 0.50, 0.55, 0.10, 0.08, 0.20]
+    - The level in B0 is (total rain accumulation for the past hour)-(the amount dripped out into B1)
+        - If the bucket is overfull, then the bucket overflows. The animation triggers, but the level in B1 remains the same calculation (below)
+    - The level in B1 is (total rain accumulation for the past 24 hours)-(amount dripped out into B2). B1 can also overflow into B2. B0 and B1 are clamped at 100% full (top of the chamfer)
+    - The level in B2 is (the total rain accumulation for the past 7 days). It can just step down in level as each day passes... so it's just the last line of the json, summed. 
+- [x] Water turning cyan in B0 when overly full — removed OVERFLOW_C; fill always uses FILL_C (blue); clamped at 100%.
+- [x] Remove the text below B2 — MeterRainToggle and MeterRainRateLabel removed from INI.
+- Reference and take into account the following:
+Is there hourly rain accumulation available from OM?
+
+Gemini said
+Yes, hourly rain accumulation is available from the Open-Meteo (OM) API, but there is a specific way it is calculated that you should keep in mind for your Rainmeter skin.
+
+1. The Variable: rain vs. precipitation
+While OM provides a generic precipitation variable, it also breaks it down into specific types. For your purposes, you likely want one of these two:
+
+rain: Specifically liquid atmospheric water (large-scale precipitation).
+
+precipitation: The total sum of rain + showers + snow.
+
+2. The Logic: "Preceding Hour Sum"
+Unlike temperature, which is an instantaneous measurement (e.g., "it is 70° right now"), hourly rain in the OM API is an accumulation value.
+
+Definition: The value provided for a specific timestamp is the sum of the preceding hour.
+
+Example: If the API returns 0.5mm for 14:00, it means 0.5mm of rain fell between 13:00 and 14:00.
+
+3. Convective Rain (Showers)
+Since you are in Kansas, much of your rain comes from thunderstorms (convective activity).
+
+The showers variable: OM tracks this separately from rain. If you only pull the rain variable, you might miss the "pop-up" storm accumulation.
+
+Recommended Variable: Use precipitation to get the true hourly total, or pull both rain and showers and add them together in your Rainmeter Calc measure.
+
+4. Special Note for the HRRR Model
+Because you are using the HRRR model (the high-resolution model for the US), there is a quirk:
+
+The HRRR is a "convection-allowing" model. It doesn't actually distinguish between "rain" and "showers" in its raw output. In the OM API, when using HRRR, the showers variable will often be 0, and all liquid accumulation will be funneled into the rain variable.
+
+API Call Example
+To get the most accurate hourly accumulation for your area, your request should look something like this:
+&hourly=precipitation,rain,showers&precipitation_unit=inch

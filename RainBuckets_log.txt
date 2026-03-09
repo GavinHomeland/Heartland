@@ -1,0 +1,295 @@
+2026-03-08 15:10:17 | RainBuckets | Initialize
+2026-03-08 15:10:17 | RainBuckets | Run Start
+2026-03-08 15:10:17 | RainBuckets | Run Complete curPrecip=0.150 disp0=0.15 disp1=0.08 disp2=0.34
+2026-03-08 15:10:19 | RainBuckets | Run Start
+2026-03-08 15:10:19 | RainBuckets | Run Complete curPrecip=0.150 disp0=0.15 disp1=0.08 disp2=0.34
+2026-03-08 15:20:13 | RainBuckets | Run Start
+2026-03-08 15:20:13 | RainBuckets | Run Complete curPrecip=0.150 disp0=0.15 disp1=0.08 disp2=0.34
+2026-03-08 15:33:08 | RainBuckets | Initialize
+2026-03-08 15:33:29 | RainBuckets | Initialize
+2026-03-08 15:33:29 | RainBuckets | Run Start
+2026-03-08 15:33:29 | RainBuckets | Run Complete curPrecip=0.150 disp0=0.15 disp1=0.08 disp2=0.34
+2026-03-08 15:33:30 | RainBuckets | Run Start
+2026-03-08 15:33:30 | RainBuckets | Run Complete curPrecip=0.150 disp0=0.15 disp1=0.08 disp2=0.34
+2026-03-08 15:43:58 | RainBuckets | Initialize
+2026-03-08 15:43:59 | RainBuckets | Run Start
+2026-03-08 15:43:59 | RainBuckets | Run Complete curPrecip=0.150 disp0=0.15 disp1=0.08 disp2=0.34
+2026-03-08 15:44:00 | RainBuckets | Run Start
+2026-03-08 15:44:00 | RainBuckets | Run Complete curPrecip=0.150 disp0=0.15 disp1=0.08 disp2=0.34
+2026-03-08 15:50:35 | RainBuckets | Run Start
+2026-03-08 15:50:35 | RainBuckets | Run Complete curPrecip=0.150 disp0=0.15 disp1=0.08 disp2=0.34
+2026-03-08 16:00:27 | RainBuckets | Run Start
+2026-03-08 16:00:27 | RainBuckets | Run Complete curPrecip=0.150 disp0=0.15 disp1=0.08 disp2=0.34
+2026-03-08 16:10:18 | RainBuckets | Run Start
+2026-03-08 16:10:18 | RainBuckets | Run Complete curPrecip=0.150 disp0=0.15 disp1=0.08 disp2=0.34
+2026-03-08 16:18:51 | RainBuckets | Initialize
+2026-03-08 16:18:52 | RainBuckets | Run Start
+2026-03-08 16:18:52 | RainBuckets | Run Complete curPrecip=0.150 disp0=0.15 disp1=0.08 disp2=0.34
+2026-03-08 16:18:53 | RainBuckets | Run Start
+2026-03-08 16:18:53 | RainBuckets | Run Complete curPrecip=0.150 disp0=0.15 disp1=0.08 disp2=0.34
+2026-03-08 16:19:13 | RainBuckets | Initialize
+2026-03-08 16:19:14 | RainBuckets | Run Start
+2026-03-08 16:19:14 | RainBuckets | Run Complete curPrecip=0.150 disp0=0.15 disp1=0.08 disp2=0.34
+2026-03-08 16:19:15 | RainBuckets | Run Start
+2026-03-08 16:19:15 | RainBuckets | Run Complete curPrecip=0.150 disp0=0.15 disp1=0.08 disp2=0.34
+2026-03-08 16:20:04 | RainBuckets | Initialize
+2026-03-08 16:20:04 | RainBuckets | Run Start
+2026-03-08 16:20:04 | RainBuckets | Run Complete curPrecip=0.920 disp0=0.92 disp1=0.08 disp2=0.61
+2026-03-08 16:20:10 | RainBuckets | Run Start
+2026-03-08 16:20:10 | RainBuckets | Run Complete curPrecip=0.920 disp0=0.92 disp1=0.08 disp2=0.61
+2026-03-08 16:20:29 | RainBuckets | Initialize
+2026-03-08 16:20:29 | RainBuckets | Run Start
+2026-03-08 16:20:29 | RainBuckets | Run Complete curPrecip=1.920 disp0=1.92 disp1=0.08 disp2=0.61
+2026-03-08 16:20:30 | RainBuckets | Run Start
+2026-03-08 16:20:30 | RainBuckets | Run Complete curPrecip=1.920 disp0=1.92 disp1=0.08 disp2=0.61
+2026-03-08 16:20:47 | RainBuckets | Initialize
+2026-03-08 16:20:47 | RainBuckets | Run Start
+2026-03-08 16:20:47 | RainBuckets | Run Complete curPrecip=1.010 disp0=1.01 disp1=0.08 disp2=0.61
+2026-03-08 16:20:49 | RainBuckets | Run Start
+2026-03-08 16:20:49 | RainBuckets | Run Complete curPrecip=1.010 disp0=1.01 disp1=0.08 disp2=0.61
+2026-03-08 16:21:46 | RainBuckets | Initialize
+2026-03-08 16:21:46 | RainBuckets | Run Start
+2026-03-08 16:21:46 | RainBuckets | Run Complete curPrecip=1.010 disp0=1.01 disp1=0.08 disp2=0.86
+2026-03-08 16:21:47 | RainBuckets | Run Start
+2026-03-08 16:21:47 | RainBuckets | Run Complete curPrecip=1.010 disp0=1.01 disp1=0.08 disp2=0.86
+2026-03-08 16:22:09 | RainBuckets | Initialize
+2026-03-08 16:22:09 | RainBuckets | Run Start
+2026-03-08 16:22:09 | RainBuckets | Run Complete curPrecip=1.100 disp0=1.10 disp1=0.08 disp2=0.86
+2026-03-08 16:22:10 | RainBuckets | Run Start
+2026-03-08 16:22:10 | RainBuckets | Run Complete curPrecip=1.100 disp0=1.10 disp1=0.08 disp2=0.86
+2026-03-08 16:30:56 | RainBuckets | Run Start
+2026-03-08 16:30:56 | RainBuckets | Run Complete curPrecip=1.100 disp0=1.10 disp1=0.08 disp2=0.86
+2026-03-08 16:40:48 | RainBuckets | Run Start
+2026-03-08 16:40:48 | RainBuckets | Run Complete curPrecip=1.100 disp0=1.10 disp1=0.08 disp2=0.86
+2026-03-08 16:50:39 | RainBuckets | Run Start
+2026-03-08 16:50:39 | RainBuckets | Run Complete curPrecip=1.100 disp0=1.10 disp1=0.08 disp2=0.86
+2026-03-08 16:58:16 | RainBuckets | Initialize
+2026-03-08 16:58:17 | RainBuckets | Run Start
+2026-03-08 16:58:17 | RainBuckets | Run Complete curPrecip=1.100 disp0=1.10 disp1=0.24 disp2=0.96
+2026-03-08 16:58:18 | RainBuckets | Run Start
+2026-03-08 16:58:18 | RainBuckets | Run Complete curPrecip=1.100 disp0=1.10 disp1=0.24 disp2=0.96
+2026-03-08 16:59:01 | RainBuckets | Initialize
+2026-03-08 16:59:02 | RainBuckets | Run Start
+2026-03-08 16:59:02 | RainBuckets | Run Complete curPrecip=0.900 disp0=0.90 disp1=0.24 disp2=0.96
+2026-03-08 16:59:03 | RainBuckets | Run Start
+2026-03-08 16:59:03 | RainBuckets | Run Complete curPrecip=0.900 disp0=0.90 disp1=0.24 disp2=0.96
+2026-03-08 16:59:26 | RainBuckets | Initialize
+2026-03-08 16:59:26 | RainBuckets | Run Start
+2026-03-08 16:59:27 | RainBuckets | Run Complete curPrecip=0.900 disp0=0.90 disp1=0.24 disp2=0.71
+2026-03-08 16:59:28 | RainBuckets | Run Start
+2026-03-08 16:59:28 | RainBuckets | Run Complete curPrecip=0.900 disp0=0.90 disp1=0.24 disp2=0.71
+2026-03-08 17:10:25 | RainBuckets | Run Start
+2026-03-08 17:10:25 | RainBuckets | Run Complete curPrecip=0.900 disp0=0.90 disp1=0.24 disp2=0.71
+2026-03-08 17:20:17 | RainBuckets | Run Start
+2026-03-08 17:20:17 | RainBuckets | Run Complete curPrecip=0.900 disp0=0.90 disp1=0.24 disp2=0.71
+2026-03-08 17:30:14 | RainBuckets | Run Start
+2026-03-08 17:30:14 | RainBuckets | Run Complete curPrecip=0.900 disp0=0.90 disp1=0.24 disp2=0.71
+2026-03-08 17:41:06 | RainBuckets | Run Start
+2026-03-08 17:41:06 | RainBuckets | Run Complete curPrecip=0.900 disp0=0.90 disp1=0.24 disp2=0.71
+2026-03-08 17:50:58 | RainBuckets | Run Start
+2026-03-08 17:50:58 | RainBuckets | Run Complete curPrecip=0.900 disp0=0.90 disp1=0.24 disp2=0.71
+2026-03-08 18:00:49 | RainBuckets | Run Start
+2026-03-08 18:00:49 | RainBuckets | Run Complete curPrecip=0.900 disp0=0.90 disp1=0.24 disp2=0.71
+2026-03-08 18:10:41 | RainBuckets | Run Start
+2026-03-08 18:10:41 | RainBuckets | Run Complete curPrecip=0.900 disp0=0.90 disp1=0.24 disp2=0.71
+2026-03-08 18:20:33 | RainBuckets | Run Start
+2026-03-08 18:20:33 | RainBuckets | Run Complete curPrecip=0.900 disp0=0.90 disp1=0.24 disp2=0.71
+2026-03-08 18:30:02 | RainBuckets | Initialize
+2026-03-08 18:30:02 | RainBuckets | Run Start
+2026-03-08 18:30:02 | RainBuckets | Run Complete precip=1.100 disp0=1.10 disp1=0.08 disp2=0.86
+2026-03-08 18:30:11 | RainBuckets | Run Start
+2026-03-08 18:30:11 | RainBuckets | Run Complete precip=1.100 disp0=1.10 disp1=0.08 disp2=0.86
+2026-03-08 18:30:51 | RainBuckets | Initialize
+2026-03-08 18:30:51 | RainBuckets | Run Start
+2026-03-08 18:30:51 | RainBuckets | Run Complete precip=1.200 disp0=1.20 disp1=0.08 disp2=0.86
+2026-03-08 18:30:52 | RainBuckets | Run Start
+2026-03-08 18:30:52 | RainBuckets | Run Complete precip=1.200 disp0=1.20 disp1=0.08 disp2=0.86
+2026-03-08 18:37:44 | RainBuckets | Initialize
+2026-03-08 18:37:44 | RainBuckets | Run Start
+2026-03-08 18:37:44 | RainBuckets | Run Complete precip=1.200 disp0=1.20 disp1=0.08 disp2=0.86
+2026-03-08 18:37:45 | RainBuckets | Run Start
+2026-03-08 18:37:45 | RainBuckets | Run Complete precip=1.200 disp0=1.20 disp1=0.08 disp2=0.86
+2026-03-08 18:40:45 | RainBuckets | Initialize
+2026-03-08 18:40:45 | RainBuckets | Run Start
+2026-03-08 18:40:45 | RainBuckets | Run Complete precip=1.200 disp0=1.20 disp1=0.08 disp2=0.86
+2026-03-08 18:40:46 | RainBuckets | Run Start
+2026-03-08 18:40:47 | RainBuckets | Run Complete precip=1.200 disp0=1.20 disp1=0.08 disp2=0.86
+2026-03-08 18:41:59 | RainBuckets | Initialize
+2026-03-08 18:41:59 | RainBuckets | Run Start
+2026-03-08 18:41:59 | RainBuckets | Run Complete precip=1.200 disp0=1.20 disp1=0.08 disp2=0.86
+2026-03-08 18:42:01 | RainBuckets | Run Start
+2026-03-08 18:42:01 | RainBuckets | Run Complete precip=1.200 disp0=1.20 disp1=0.08 disp2=0.86
+2026-03-08 18:42:05 | RainBuckets | Initialize
+2026-03-08 18:42:06 | RainBuckets | Run Start
+2026-03-08 18:42:06 | RainBuckets | Run Complete precip=1.200 disp0=1.20 disp1=0.08 disp2=0.86
+2026-03-08 18:42:07 | RainBuckets | Run Start
+2026-03-08 18:42:07 | RainBuckets | Run Complete precip=1.200 disp0=1.20 disp1=0.08 disp2=0.86
+2026-03-08 18:50:58 | RainBuckets | Run Start
+2026-03-08 18:50:58 | RainBuckets | Run Complete precip=1.200 disp0=1.20 disp1=0.08 disp2=0.86
+2026-03-08 19:00:50 | RainBuckets | Run Start
+2026-03-08 19:00:50 | RainBuckets | Run Complete precip=1.200 disp0=1.20 disp1=0.08 disp2=0.86
+2026-03-08 19:10:41 | RainBuckets | Run Start
+2026-03-08 19:10:41 | RainBuckets | Run Complete precip=1.200 disp0=1.20 disp1=0.08 disp2=0.86
+2026-03-08 19:12:10 | RainBuckets | Initialize
+2026-03-08 19:12:10 | RainBuckets | Run Start
+2026-03-08 19:12:10 | RainBuckets | Run Complete precip=1.200 disp0=1.20 disp1=0.08 disp2=0.86
+2026-03-08 19:12:11 | RainBuckets | Run Start
+2026-03-08 19:12:11 | RainBuckets | Run Complete precip=1.200 disp0=1.20 disp1=0.08 disp2=0.86
+2026-03-08 19:19:52 | RainBuckets | Initialize
+2026-03-08 19:19:52 | RainBuckets | Run Start
+2026-03-08 19:19:52 | RainBuckets | Run Complete precip=1.200 disp0=1.20 disp1=0.08 disp2=0.86
+2026-03-08 19:19:53 | RainBuckets | Run Start
+2026-03-08 19:19:53 | RainBuckets | Run Complete precip=1.200 disp0=1.20 disp1=0.08 disp2=0.86
+2026-03-08 19:23:53 | RainBuckets | Initialize
+2026-03-08 19:23:54 | RainBuckets | Run Start
+2026-03-08 19:23:54 | RainBuckets | Run Complete precip=1.200 disp0=1.20 disp1=0.08 disp2=0.86
+2026-03-08 19:23:55 | RainBuckets | Run Start
+2026-03-08 19:23:55 | RainBuckets | Run Complete precip=1.200 disp0=1.20 disp1=0.08 disp2=0.86
+2026-03-08 19:28:31 | RainBuckets | Initialize
+2026-03-08 19:28:31 | RainBuckets | Run Start
+2026-03-08 19:28:31 | RainBuckets | Run Complete precip=1.200 disp0=1.20 disp1=0.08 disp2=0.86
+2026-03-08 19:28:32 | RainBuckets | Run Start
+2026-03-08 19:28:32 | RainBuckets | Run Complete precip=1.200 disp0=1.20 disp1=0.08 disp2=0.86
+2026-03-08 19:30:36 | RainBuckets | Initialize
+2026-03-08 19:30:37 | RainBuckets | Run Start
+2026-03-08 19:30:37 | RainBuckets | Run Complete precip=1.200 disp0=1.20 disp1=0.08 disp2=0.86
+2026-03-08 19:30:38 | RainBuckets | Run Start
+2026-03-08 19:30:38 | RainBuckets | Run Complete precip=1.200 disp0=1.20 disp1=0.08 disp2=0.86
+2026-03-08 19:34:13 | RainBuckets | Initialize
+2026-03-08 19:34:13 | RainBuckets | Run Start
+2026-03-08 19:34:13 | RainBuckets | Run Complete precip=0.000 disp0=0.00 disp1=0.00 disp2=0.16
+2026-03-08 19:34:15 | RainBuckets | Run Start
+2026-03-08 19:34:15 | RainBuckets | Run Complete precip=0.000 disp0=0.00 disp1=0.00 disp2=0.16
+2026-03-08 19:38:05 | RainBuckets | Initialize
+2026-03-08 19:38:05 | RainBuckets | Run Start
+2026-03-08 19:38:05 | RainBuckets | Run Complete precip=0.000 disp0=0.00 disp1=0.00 disp2=0.00
+2026-03-08 19:38:06 | RainBuckets | Run Start
+2026-03-08 19:38:06 | RainBuckets | Run Complete precip=0.000 disp0=0.00 disp1=0.00 disp2=0.00
+2026-03-08 19:40:18 | RainBuckets | Run Start
+2026-03-08 19:40:18 | RainBuckets | Run Complete precip=0.000 disp0=0.00 disp1=0.00 disp2=0.00
+2026-03-08 19:50:12 | RainBuckets | Run Start
+2026-03-08 19:50:12 | RainBuckets | Run Complete precip=0.000 disp0=0.00 disp1=0.00 disp2=0.00
+2026-03-08 19:56:32 | RainBuckets | Initialize
+2026-03-08 19:56:32 | RainBuckets | Run Start
+2026-03-08 19:56:32 | RainBuckets | Run Complete precip=0.000 disp0=0.00 disp1=0.00 disp2=0.00
+2026-03-08 19:56:33 | RainBuckets | Run Start
+2026-03-08 19:56:33 | RainBuckets | Run Complete precip=0.000 disp0=0.00 disp1=0.00 disp2=0.00
+2026-03-08 19:57:48 | RainBuckets | Initialize
+2026-03-08 19:57:49 | RainBuckets | Run Start
+2026-03-08 19:57:49 | RainBuckets | Run Complete precip=0.000 disp0=0.00 disp1=0.00 disp2=0.00
+2026-03-08 19:57:51 | RainBuckets | Run Start
+2026-03-08 19:57:51 | RainBuckets | Run Complete precip=0.000 disp0=0.00 disp1=0.00 disp2=0.00
+2026-03-08 20:01:07 | RainBuckets | Run Start
+2026-03-08 20:01:07 | RainBuckets | Run Complete precip=0.000 disp0=0.00 disp1=0.00 disp2=0.00
+2026-03-08 20:10:58 | RainBuckets | Run Start
+2026-03-08 20:10:58 | RainBuckets | Run Complete precip=0.000 disp0=0.00 disp1=0.00 disp2=0.00
+2026-03-08 20:20:52 | RainBuckets | Run Start
+2026-03-08 20:20:52 | RainBuckets | Run Complete precip=0.000 disp0=0.00 disp1=0.00 disp2=0.00
+2026-03-08 20:30:43 | RainBuckets | Run Start
+2026-03-08 20:30:43 | RainBuckets | Run Complete precip=0.000 disp0=0.00 disp1=0.00 disp2=0.00
+2026-03-08 20:40:37 | RainBuckets | Run Start
+2026-03-08 20:40:37 | RainBuckets | Run Complete precip=0.000 disp0=0.00 disp1=0.00 disp2=0.00
+2026-03-08 20:50:29 | RainBuckets | Run Start
+2026-03-08 20:50:29 | RainBuckets | Run Complete precip=0.000 disp0=0.00 disp1=0.00 disp2=0.00
+2026-03-08 21:00:23 | RainBuckets | Run Start
+2026-03-08 21:00:23 | RainBuckets | Run Complete precip=0.000 disp0=0.00 disp1=0.00 disp2=0.00
+2026-03-08 21:10:13 | RainBuckets | Run Start
+2026-03-08 21:10:13 | RainBuckets | Run Complete precip=0.000 disp0=0.00 disp1=0.00 disp2=0.00
+2026-03-08 21:31:02 | RainBuckets | Run Start
+2026-03-08 21:31:02 | RainBuckets | Run Complete precip=0.000 disp0=0.00 disp1=0.00 disp2=0.00
+2026-03-08 21:40:53 | RainBuckets | Run Start
+2026-03-08 21:40:54 | RainBuckets | Run Complete precip=0.000 disp0=0.00 disp1=0.00 disp2=0.00
+2026-03-08 21:50:45 | RainBuckets | Run Start
+2026-03-08 21:50:45 | RainBuckets | Run Complete precip=0.000 disp0=0.00 disp1=0.00 disp2=0.00
+2026-03-08 22:00:37 | RainBuckets | Run Start
+2026-03-08 22:00:37 | RainBuckets | Run Complete precip=0.000 disp0=0.00 disp1=0.00 disp2=0.00
+2026-03-08 22:10:29 | RainBuckets | Run Start
+2026-03-08 22:10:29 | RainBuckets | Run Complete precip=0.000 disp0=0.00 disp1=0.00 disp2=0.00
+2026-03-08 22:20:20 | RainBuckets | Run Start
+2026-03-08 22:20:20 | RainBuckets | Run Complete precip=0.000 disp0=0.00 disp1=0.00 disp2=0.00
+2026-03-08 22:30:15 | RainBuckets | Run Start
+2026-03-08 22:30:15 | RainBuckets | Run Complete precip=0.000 disp0=0.00 disp1=0.00 disp2=0.00
+2026-03-09 09:00:40 | RainBuckets | Run Start
+2026-03-09 09:00:40 | RainBuckets | Run Complete precip=0.000 disp0=0.00 disp1=0.00 disp2=0.00
+2026-03-09 09:10:32 | RainBuckets | Run Start
+2026-03-09 09:10:32 | RainBuckets | Run Complete precip=0.000 disp0=0.00 disp1=0.00 disp2=0.00
+2026-03-09 09:20:23 | RainBuckets | Run Start
+2026-03-09 09:20:23 | RainBuckets | Run Complete precip=0.000 disp0=0.00 disp1=0.00 disp2=0.00
+2026-03-09 09:30:17 | RainBuckets | Run Start
+2026-03-09 09:30:17 | RainBuckets | Run Complete precip=0.000 disp0=0.00 disp1=0.00 disp2=0.00
+2026-03-09 09:51:04 | RainBuckets | Run Start
+2026-03-09 09:51:04 | RainBuckets | Run Complete precip=0.000 disp0=0.00 disp1=0.00 disp2=0.00
+2026-03-09 10:00:55 | RainBuckets | Run Start
+2026-03-09 10:00:55 | RainBuckets | Run Complete precip=0.000 disp0=0.00 disp1=0.00 disp2=0.00
+2026-03-09 10:10:47 | RainBuckets | Run Start
+2026-03-09 10:10:47 | RainBuckets | Run Complete precip=0.000 disp0=0.00 disp1=0.00 disp2=0.00
+2026-03-09 10:20:38 | RainBuckets | Run Start
+2026-03-09 10:20:38 | RainBuckets | Run Complete precip=0.000 disp0=0.00 disp1=0.00 disp2=0.00
+2026-03-09 10:30:30 | RainBuckets | Run Start
+2026-03-09 10:30:30 | RainBuckets | Run Complete precip=0.000 disp0=0.00 disp1=0.00 disp2=0.00
+2026-03-09 10:40:22 | RainBuckets | Run Start
+2026-03-09 10:40:22 | RainBuckets | Run Complete precip=0.000 disp0=0.00 disp1=0.00 disp2=0.00
+2026-03-09 10:50:13 | RainBuckets | Run Start
+2026-03-09 10:50:14 | RainBuckets | Run Complete precip=0.000 disp0=0.00 disp1=0.00 disp2=0.00
+2026-03-09 11:00:19 | RainBuckets | Run Start
+2026-03-09 11:00:19 | RainBuckets | Run Complete precip=0.000 disp0=0.00 disp1=0.00 disp2=0.00
+2026-03-09 11:21:05 | RainBuckets | Run Start
+2026-03-09 11:21:05 | RainBuckets | Run Complete precip=0.000 disp0=0.00 disp1=0.00 disp2=0.00
+2026-03-09 11:30:56 | RainBuckets | Run Start
+2026-03-09 11:30:56 | RainBuckets | Run Complete precip=0.000 disp0=0.00 disp1=0.00 disp2=0.00
+2026-03-09 11:40:49 | RainBuckets | Run Start
+2026-03-09 11:40:49 | RainBuckets | Run Complete precip=0.000 disp0=0.00 disp1=0.00 disp2=0.00
+2026-03-09 11:50:44 | RainBuckets | Run Start
+2026-03-09 11:50:44 | RainBuckets | Run Complete precip=0.000 disp0=0.00 disp1=0.00 disp2=0.00
+2026-03-09 12:00:35 | RainBuckets | Run Start
+2026-03-09 12:00:35 | RainBuckets | Run Complete precip=0.000 disp0=0.00 disp1=0.00 disp2=0.00
+2026-03-09 12:10:26 | RainBuckets | Run Start
+2026-03-09 12:10:26 | RainBuckets | Run Complete precip=0.000 disp0=0.00 disp1=0.00 disp2=0.00
+2026-03-09 12:20:18 | RainBuckets | Run Start
+2026-03-09 12:20:18 | RainBuckets | Run Complete precip=0.000 disp0=0.00 disp1=0.00 disp2=0.00
+2026-03-09 12:30:09 | RainBuckets | Run Start
+2026-03-09 12:30:09 | RainBuckets | Run Complete precip=0.000 disp0=0.00 disp1=0.00 disp2=0.00
+2026-03-09 12:41:06 | RainBuckets | Run Start
+2026-03-09 12:41:06 | RainBuckets | Run Complete precip=0.000 disp0=0.00 disp1=0.00 disp2=0.00
+2026-03-09 12:50:58 | RainBuckets | Run Start
+2026-03-09 12:50:58 | RainBuckets | Run Complete precip=0.000 disp0=0.00 disp1=0.00 disp2=0.00
+2026-03-09 13:00:50 | RainBuckets | Run Start
+2026-03-09 13:00:50 | RainBuckets | Run Complete precip=0.000 disp0=0.00 disp1=0.00 disp2=0.00
+2026-03-09 13:10:41 | RainBuckets | Run Start
+2026-03-09 13:10:41 | RainBuckets | Run Complete precip=0.000 disp0=0.00 disp1=0.00 disp2=0.00
+2026-03-09 13:20:33 | RainBuckets | Run Start
+2026-03-09 13:20:33 | RainBuckets | Run Complete precip=0.000 disp0=0.00 disp1=0.00 disp2=0.00
+2026-03-09 13:30:25 | RainBuckets | Run Start
+2026-03-09 13:30:25 | RainBuckets | Run Complete precip=0.000 disp0=0.00 disp1=0.00 disp2=0.00
+2026-03-09 13:40:16 | RainBuckets | Run Start
+2026-03-09 13:40:16 | RainBuckets | Run Complete precip=0.000 disp0=0.00 disp1=0.00 disp2=0.00
+2026-03-09 13:50:12 | RainBuckets | Run Start
+2026-03-09 13:50:12 | RainBuckets | Run Complete precip=0.000 disp0=0.00 disp1=0.00 disp2=0.00
+2026-03-09 14:01:05 | RainBuckets | Run Start
+2026-03-09 14:01:05 | RainBuckets | Run Complete precip=0.000 disp0=0.00 disp1=0.00 disp2=0.00
+2026-03-09 14:10:57 | RainBuckets | Run Start
+2026-03-09 14:10:57 | RainBuckets | Run Complete precip=0.000 disp0=0.00 disp1=0.00 disp2=0.00
+2026-03-09 14:20:48 | RainBuckets | Run Start
+2026-03-09 14:20:48 | RainBuckets | Run Complete precip=0.000 disp0=0.00 disp1=0.00 disp2=0.00
+2026-03-09 14:30:40 | RainBuckets | Run Start
+2026-03-09 14:30:40 | RainBuckets | Run Complete precip=0.000 disp0=0.00 disp1=0.00 disp2=0.00
+2026-03-09 14:40:32 | RainBuckets | Run Start
+2026-03-09 14:40:32 | RainBuckets | Run Complete precip=0.000 disp0=0.00 disp1=0.00 disp2=0.00
+2026-03-09 14:50:23 | RainBuckets | Run Start
+2026-03-09 14:50:23 | RainBuckets | Run Complete precip=0.000 disp0=0.00 disp1=0.00 disp2=0.00
+2026-03-09 15:00:20 | RainBuckets | Run Start
+2026-03-09 15:00:20 | RainBuckets | Run Complete precip=0.000 disp0=0.00 disp1=0.00 disp2=0.00
+2026-03-09 15:21:04 | RainBuckets | Run Start
+2026-03-09 15:21:04 | RainBuckets | Run Complete precip=0.000 disp0=0.00 disp1=0.00 disp2=0.00
+2026-03-09 15:30:55 | RainBuckets | Run Start
+2026-03-09 15:30:55 | RainBuckets | Run Complete precip=0.000 disp0=0.00 disp1=0.00 disp2=0.00
+2026-03-09 15:40:46 | RainBuckets | Run Start
+2026-03-09 15:40:46 | RainBuckets | Run Complete precip=0.000 disp0=0.00 disp1=0.00 disp2=0.00
+2026-03-09 15:50:38 | RainBuckets | Run Start
+2026-03-09 15:50:38 | RainBuckets | Run Complete precip=0.000 disp0=0.00 disp1=0.00 disp2=0.00
+2026-03-09 16:00:30 | RainBuckets | Run Start
+2026-03-09 16:00:30 | RainBuckets | Run Complete precip=0.000 disp0=0.00 disp1=0.00 disp2=0.00
+2026-03-09 16:10:21 | RainBuckets | Run Start
+2026-03-09 16:10:21 | RainBuckets | Run Complete precip=0.000 disp0=0.00 disp1=0.00 disp2=0.00
+2026-03-09 16:20:14 | RainBuckets | Run Start
+2026-03-09 16:20:14 | RainBuckets | Run Complete precip=0.000 disp0=0.00 disp1=0.00 disp2=0.00

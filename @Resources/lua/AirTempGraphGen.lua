@@ -3,10 +3,14 @@
 -- Called after OM fetch completes; reads om.json directly.
 --
 -- Layout (22 columns: 14 past + today + 7 future):
---   z=back  : frame border, today indicator (bright), freeze line @ 32°F,
---             grey reference lines for each future day column
---   z=mid   : bars for past 14 days (daily low) + today (current air temp)
---   z=front : smooth 2px polyline connecting all 22 daily-low points
+--   z=back      : frame border, today indicator (bright), freeze line @ 32°F,
+--                 grey reference lines for each future day column
+--   z=back+1    : hi bars (temperature_2m_max) for all 22 columns
+--   z=mid-back  : avg bars ((max+min)/2; today = currentTemp) for all 22 columns
+--   z=mid-back+1: last night's low bar (min hourly temp_2m, 8pm-yesterday..8am-today)
+--   z=mid       : freeze-fill patches (blue fill where polyline < 32°F)
+--   z=mid-front : low bars (past 14 days only, not today)
+--   z=front     : smooth 2px polyline connecting all 22 daily-low points
 --
 -- Also sets MeterAirTempDayLabels.Text with a Bresenham-spaced day-letter string.
 --
@@ -86,7 +90,41 @@ local AIR_STOPS = {
 -- Day-letter abbreviations: wday 1=Sun..7=Sat → "N M T W H F S"
 local DAY_LETTERS = { [1]="N", [2]="M", [3]="T", [4]="W", [5]="H", [6]="F", [7]="S" }
 
+-- ============================================================
+-- LOG ROTATION (once per day; trims all log files to 1000 lines)
+-- ============================================================
+local lastRotateDay = ""
+
+local function rotateLogFile(path, maxLines)
+  if not path or path == "" then return end
+  local f = io.open(path, "r")
+  if not f then return end
+  local lines = {}
+  for line in f:lines() do lines[#lines + 1] = line end
+  f:close()
+  if #lines <= maxLines then return end
+  local f2 = io.open(path, "w")
+  if not f2 then return end
+  for i = #lines - maxLines + 1, #lines do
+    f2:write(lines[i] .. "\n")
+  end
+  f2:close()
+end
+
+local function rotateLogs()
+  local today = os.date("%Y-%m-%d")
+  if lastRotateDay == today then return end
+  lastRotateDay = today
+  rotateLogFile(SKIN:GetVariable("HeartlandLog",       ""), 1000)
+  rotateLogFile(SKIN:GetVariable("AirTempGraphLog",    ""), 1000)
+  rotateLogFile(SKIN:GetVariable("SoilGraphLog",       ""), 1000)
+  rotateLogFile(SKIN:GetVariable("RainBucketsLog",     ""), 1000)
+  rotateLogFile(SKIN:GetVariable("OM_FetchLog",        ""), 1000)
+  rotateLogFile(SKIN:GetVariable("KSSoilFetchLog",     ""), 1000)
+end
+
 function Run()
+  rotateLogs()
   local meterName = "MeterAirTempGraph"
   local logPath   = SKIN:GetVariable("AirTempGraphLog", "")
   local masterLog = SKIN:GetVariable("HeartlandLog", "")
@@ -126,6 +164,53 @@ function Run()
     for v in minsStr:gmatch("(-?%d+%.?%d*)") do allMins[#allMins + 1] = tonumber(v) end
   end
 
+  -- Parse daily.temperature_2m_max
+  local allMaxs = {}
+  local maxsStr = jsonContent:match('"temperature_2m_max"%s*:%s*%[([^%]]+)%]')
+  if maxsStr then
+    for v in maxsStr:gmatch("(-?%d+%.?%d*)") do allMaxs[#allMaxs + 1] = tonumber(v) end
+  end
+
+  -- Parse daily.precipitation_sum (inches, per OM_MISC precipitation_unit=inch)
+  local dailyPrecip = {}
+  local precipStr = jsonContent:match('"precipitation_sum"%s*:%s*%[([^%]]+)%]')
+  if precipStr then
+    for v in precipStr:gmatch("([%d%.]+)") do dailyPrecip[#dailyPrecip + 1] = tonumber(v) or 0 end
+  end
+
+  -- Parse hourly.temperature_2m: find min in 8pm-yesterday .. 8am-today window
+  local lastNightLow = nil
+  do
+    local hStart = jsonContent:find('"hourly"%s*:')
+    if hStart then
+      local hBlock    = jsonContent:sub(hStart)
+      local hTimesStr = hBlock:match('"time"%s*:%s*%[([^%]]+)%]')
+      local hTempsStr = hBlock:match('"temperature_2m"%s*:%s*%[([^%]]+)%]')
+      if hTimesStr and hTempsStr then
+        local hTimes, hTemps = {}, {}
+        for ts   in hTimesStr:gmatch('"([^"]+)"')    do hTimes[#hTimes+1] = ts            end
+        for tv   in hTempsStr:gmatch("(-?%d+%.?%d*)") do hTemps[#hTemps+1] = tonumber(tv) end
+        local nowT = os.date("*t")
+        local t8am = os.time({year=nowT.year, month=nowT.month, day=nowT.day,
+                               hour=8, min=0, sec=0, isdst=nowT.isdst})
+        local t8pm = t8am - 12 * 3600  -- 8pm yesterday
+        for k, ts in ipairs(hTimes) do
+          local temp = hTemps[k]
+          if temp then
+            local yr, mo, dy, hr = ts:match("(%d+)-(%d+)-(%d+)T(%d+):")
+            if yr then
+              local tt = os.time({year=tonumber(yr), month=tonumber(mo), day=tonumber(dy),
+                                   hour=tonumber(hr), min=0, sec=0, isdst=nowT.isdst})
+              if tt >= t8pm and tt <= t8am then
+                if not lastNightLow or temp < lastNightLow then lastNightLow = temp end
+              end
+            end
+          end
+        end
+      end
+    end
+  end
+
   -- Find today's 1-based index in daily.time
   local today      = os.date("%Y-%m-%d")
   local todayIdx   = nil
@@ -159,6 +244,23 @@ function Run()
     points[i] = allMins[(todayIdx - pastDays) + i]
   end
 
+  -- Build hi and avg 22-point arrays (avg = (max+min)/2; today avg = currentTemp)
+  local hiPoints  = {}
+  local avgPoints = {}
+  for i = 0, totalBars - 1 do
+    local offset = (todayIdx - pastDays) + i
+    local lo = points[i]
+    local hi = allMaxs[offset]
+    hiPoints[i] = hi
+    if i == pastDays and currentTemp then
+      avgPoints[i] = currentTemp
+    elseif lo and hi then
+      avgPoints[i] = (lo + hi) / 2
+    else
+      avgPoints[i] = lo or hi
+    end
+  end
+
   -- Helpers
   local function tempToY(t)
     return math.floor(graphH - ((clamp(t, minF, maxF) - minF) / rangeF) * graphH + 0.5)
@@ -175,21 +277,84 @@ function Run()
       graphW, graphH))
   shapeIdx = shapeIdx + 1
 
-  -- Shape 2 (today indicator, z=back): bright vertical line
+  -- Shape 2 (today indicator, z=back): bright vertical line, stops at top of hi bar
   local todayCX = barCenterX(pastDays)
-  setShape(meterName, shapeIdx,
-    string.format("Line %d,0,%d,%d | StrokeWidth 1 | Stroke Color 230,240,255,220",
-      todayCX, todayCX, graphH))
+  do
+    local hiV = hiPoints[pastDays]
+    local lineEnd = graphH
+    if hiV then
+      local h = math.floor(((clamp(hiV, minF, maxF) - minF) / rangeF) * graphH + 0.5)
+      lineEnd = graphH - h
+    end
+    setShape(meterName, shapeIdx,
+      string.format("Line %d,0,%d,%d | StrokeWidth 1 | Stroke Color 230,240,255,220",
+        todayCX, todayCX, lineEnd))
+  end
   shapeIdx = shapeIdx + 1
 
-  -- Shape 3 (freeze line, z=back): red horizontal at 32°F
+  -- freezeY computed here; freeze line drawn at forefront (shape 119) below
   local freezeY = math.floor(graphH - (((32 - minF) / rangeF) * graphH) + 0.5)
-  setShape(meterName, shapeIdx,
-    string.format("Line 0,%d,%d,%d | StrokeWidth 1 | Stroke Color 255,0,0,255",
-      freezeY, graphW, freezeY))
-  shapeIdx = shapeIdx + 1
 
-  -- Shapes (freeze-fill, z=back): blue fill where polyline < 32°F
+  -- Shapes (future day reference lines, z=back): grey vertical, stops at top of hi bar
+  for i = pastDays + 1, totalBars - 1 do
+    local cx = barCenterX(i)
+    local hiV = hiPoints[i]
+    local lineEnd = graphH
+    if hiV then
+      local h = math.floor(((clamp(hiV, minF, maxF) - minF) / rangeF) * graphH + 0.5)
+      lineEnd = graphH - h
+    end
+    setShape(meterName, shapeIdx,
+      string.format("Line %d,0,%d,%d | StrokeWidth 1 | Stroke Color 120,120,120,100",
+        cx, cx, lineEnd))
+    shapeIdx = shapeIdx + 1
+  end
+
+  -- Shapes (hi bars, z=back+1): daily high for all 22 columns
+  for i = 0, totalBars - 1 do
+    local v = hiPoints[i]
+    if v then
+      local h = math.floor(((clamp(v, minF, maxF) - minF) / rangeF) * graphH + 0.5)
+      if h < 1 then h = 1 end
+      local r, g, b = interpStops(AIR_STOPS, v)
+      local alpha = (i > pastDays) and 50 or 100
+      setShape(meterName, shapeIdx,
+        string.format("Rectangle %d,%d,%d,%d,0 | Fill Color %s | StrokeWidth 0",
+          barLeftX(i), graphH - h, barW, h, rgba(r, g, b, alpha)))
+      shapeIdx = shapeIdx + 1
+    end
+  end
+
+  -- Shapes (avg bars, z=mid-back): (max+min)/2; today = currentTemp; all 22 columns
+  for i = 0, totalBars - 1 do
+    local v = avgPoints[i]
+    if v then
+      local h = math.floor(((clamp(v, minF, maxF) - minF) / rangeF) * graphH + 0.5)
+      if h < 1 then h = 1 end
+      local r, g, b = interpStops(AIR_STOPS, v)
+      local alpha = (i == pastDays) and 255 or (i > pastDays and 50 or 100)
+      setShape(meterName, shapeIdx,
+        string.format("Rectangle %d,%d,%d,%d,0 | Fill Color %s | StrokeWidth 0",
+          barLeftX(i), graphH - h, barW, h, rgba(r, g, b, alpha)))
+      shapeIdx = shapeIdx + 1
+    end
+  end
+
+  -- Shape (last night's low, z=mid-back+1): min hourly temp_2m in 8pm-yesterday..8am-today
+  do
+    local v = lastNightLow
+    if v then
+      local h = math.floor(((clamp(v, minF, maxF) - minF) / rangeF) * graphH + 0.5)
+      if h < 1 then h = 1 end
+      local r, g, b = interpStops(AIR_STOPS, v)
+      setShape(meterName, shapeIdx,
+        string.format("Rectangle %d,%d,%d,%d,0 | Fill Color %s | StrokeWidth 1 | Stroke Color 0,0,0,150",
+          barLeftX(pastDays), graphH - h, barW, h, rgba(r, g, b, 200)))
+      shapeIdx = shapeIdx + 1
+    end
+  end
+
+  -- Shapes (freeze-fill, z=mid): blue fill where polyline < 32°F
   -- Rainmeter Path shapes require the path data in a SEPARATE named key on the meter.
   -- FreezePatch1..3 are pre-declared in the INI so Rainmeter recognises them.
   local patchNum = 0
@@ -238,40 +403,23 @@ function Run()
         pathParts[#pathParts + 1] = "ClosePath 1"
         local pathName = "FreezePatch" .. patchNum
         SKIN:Bang("!SetOption", meterName, pathName, table.concat(pathParts, " | "))
-        setShape(meterName, shapeIdx,
-          string.format("Path %s | StrokeWidth 0 | Fill Color 255,000,000,255", pathName))
-        shapeIdx = shapeIdx + 1
+        -- shape drawn at forefront (shapes 120-122) below
       end
     else
       j = j + 1
     end
   end
 
-  -- Shapes (future day reference lines, z=back): grey vertical at each future day center
-  for i = pastDays + 1, totalBars - 1 do
-    local cx = barCenterX(i)
-    setShape(meterName, shapeIdx,
-      string.format("Line %d,0,%d,%d | StrokeWidth 1 | Stroke Color 120,120,120,170",
-        cx, cx, graphH))
-    shapeIdx = shapeIdx + 1
-  end
-
-  -- Shapes (z=mid): bars for positions 0..pastDays (past 14 + today)
-  for i = 0, pastDays do
-    local tempForBar
-    if i == pastDays and currentTemp then
-      tempForBar = currentTemp
-    else
-      tempForBar = points[i]
-    end
-    if tempForBar then
-      local h = math.floor(((clamp(tempForBar, minF, maxF) - minF) / rangeF) * graphH + 0.5)
+  -- Shapes (low bars, z=mid-front): past 14 days daily low only (not today)
+  for i = 0, pastDays - 1 do
+    local v = points[i]
+    if v then
+      local h = math.floor(((clamp(v, minF, maxF) - minF) / rangeF) * graphH + 0.5)
       if h < 1 then h = 1 end
-      local r, g, b = interpStops(AIR_STOPS, tempForBar)
-      local alpha = (i == pastDays) and 255 or 200
+      local r, g, b = interpStops(AIR_STOPS, v)
       setShape(meterName, shapeIdx,
         string.format("Rectangle %d,%d,%d,%d,0 | Fill Color %s | StrokeWidth 1 | Stroke Color 0,0,0,150",
-          barLeftX(i), graphH - h, barW, h, rgba(r, g, b, alpha)))
+          barLeftX(i), graphH - h, barW, h, rgba(r, g, b, 200)))
       shapeIdx = shapeIdx + 1
     end
   end
@@ -304,10 +452,43 @@ function Run()
     end
   end
 
-  -- Cleanup leftover shapes (use invisible placeholder; pre-declared up to 90 in INI)
-  local maxShapes = 90
+  -- Cleanup leftover shapes (pre-declared up to 122 in INI)
+  local maxShapes = 122
   local blank = "Line 0,0,0,0 | StrokeWidth 0"
   for j = shapeIdx, maxShapes do setShape(meterName, j, blank) end
+
+  -- Shapes 111-118: precipitation bars (today + 7 forecast; forefront z)
+  -- Scale: 2.0 in = full height (graphH - freezeY = 52px); clamped at freeze line
+  local maxPrecipH = graphH - freezeY
+  for j = 0, futureDays do
+    local si = 111 + j
+    local dailyIdx = todayIdx + j
+    local precipIn = dailyPrecip[dailyIdx] or 0
+    local h = math.floor(math.min(precipIn / 2.0, 1.0) * maxPrecipH + 0.5)
+    local barI = pastDays + j
+    local bx = barI * (barW + barGap)
+    if h >= 1 then
+      setShape(meterName, si, string.format(
+        "Rectangle %d,%d,%d,%d | Fill Color 80,160,255,255 | StrokeWidth 0",
+        bx, graphH - h, barW, h))
+    else
+      setShape(meterName, si, blank)
+    end
+  end
+
+  -- Shape 119: freeze line (forefront)
+  setShape(meterName, 119, string.format("Line 0,%d,%d,%d | StrokeWidth 1 | Stroke Color 255,0,0,255",
+    freezeY, graphW, freezeY))
+
+  -- Shapes 120-122: freeze-fill patches (forefront)
+  for p = 1, 3 do
+    if p <= patchNum then
+      setShape(meterName, 119 + p, string.format(
+        "Path FreezePatch%d | StrokeWidth 0 | Fill Color 255,0,0,255", p))
+    else
+      setShape(meterName, 119 + p, blank)
+    end
+  end
 
   -- ===== Day-label meters: today + every-other future day =====
   -- Each meter is individually positioned at the bar center X in the ini.
@@ -342,8 +523,10 @@ function Run()
   -- currentTemp is the live reading used for the today bar; fall back to today's daily min
   local currentDisplay = currentTemp or points[pastDays]
   local tip = string.format(
-    "Hx Low: %s\176F\nCurrent: %s\176F\nPredicted Low: %s\176F",
+    "Today High: %s\176F\nHx Low: %s\176F\nLast Night Low: %s\176F\nCurrent: %s\176F\nPredicted Low: %s\176F",
+    hiPoints[pastDays] and string.format("%.1f", hiPoints[pastDays]) or "n/a",
     hxMin          and string.format("%.1f", hxMin)          or "n/a",
+    lastNightLow   and string.format("%.1f", lastNightLow)   or "n/a",
     currentDisplay and string.format("%.1f", currentDisplay) or "n/a",
     futureMin      and string.format("%.1f", futureMin)      or "n/a"
   )

@@ -8,6 +8,7 @@
 --   2) Avg7F bars (back)
 --   3) Min7F bars (front)
 --   4) Freeze line @ 32°F (red, on top)
+--   5) Threshold lines @ 50°F (yellow), 55°F (green), 60°F (green)
 --
 -- Variables read from skin:
 --   SoilHistCsv          : rolling CSV path
@@ -294,6 +295,17 @@ local lastUpdatedStr = "n/a"
   -- Freeze Line
   local freezeY = math.floor(graphH - (((32 - minF) / rangeF) * graphH) + 0.5)
   setShape(meterName, idx, string.format("Line 0,%d,%d,%d | StrokeWidth 1 | Stroke Color 255,0,0,210", freezeY, graphW, freezeY))
+  idx = idx + 1
+
+  -- Warm threshold lines (50°F yellow, 55/60°F green)
+  local y50 = math.floor(graphH - (((50 - minF) / rangeF) * graphH) + 0.5)
+  setShape(meterName, idx, string.format("Line 0,%d,%d,%d | StrokeWidth 1 | Stroke Color 255,255,0,150", y50, graphW, y50))
+  idx = idx + 1
+  local y55 = math.floor(graphH - (((55 - minF) / rangeF) * graphH) + 0.5)
+  setShape(meterName, idx, string.format("Line 0,%d,%d,%d | StrokeWidth 1 | Stroke Color 0,200,0,160", y55, graphW, y55))
+  idx = idx + 1
+  local y60 = math.floor(graphH - (((60 - minF) / rangeF) * graphH) + 0.5)
+  setShape(meterName, idx, string.format("Line 0,%d,%d,%d | StrokeWidth 1 | Stroke Color 0,200,0,180", y60, graphW, y60))
   --print("Final Shape Index: " .. idx)
 
   -- Cleanup

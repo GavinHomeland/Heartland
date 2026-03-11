@@ -1,524 +1,3 @@
-2026-03-08 14:09:30 | SoilGraphGen | Run Complete
-2026-03-08 14:09:30 | AirTempGraphGen | Run Start
-2026-03-08 14:09:30 | AirTempGraphGen | Run Complete
-PROBE 2026-03-08T14:09:30 Already succeeded today (2026-03-08). Skipping fetch.
-2026-03-08 14:09:30 | SoilGraphGen | Run Start
-2026-03-08 14:09:30 | SoilGraphGen | Run Complete
-OK 2026-03-08T14:09:31 code=200 json=True len=27120
-2026-03-08 14:09:31 | AirTempGraphGen | Run Start
-2026-03-08 14:09:31 | AirTempGraphGen | Run Complete
-2026-03-08 14:14:49 | SoilGraphGen | Run Start
-2026-03-08 14:14:49 | SoilGraphGen | Run Complete
-2026-03-08 14:14:49 | AirTempGraphGen | Run Start
-2026-03-08 14:14:49 | AirTempGraphGen | Run Complete
-OK 2026-03-08T14:14:50 master=E:\Documents\Rainmeter\Skins\Heartland\ks_soiltemp_2in_master.csv rolling=E:\Documents\Rainmeter\Skins\Heartland\ks_soiltemp_2in_rolling7day.csv rows=187
-2026-03-08 14:14:50 | SoilGraphGen | Run Start
-2026-03-08 14:14:50 | SoilGraphGen | Run Complete
-OK 2026-03-08T14:14:50 code=200 json=True len=27120
-2026-03-08 14:14:50 | AirTempGraphGen | Run Start
-2026-03-08 14:14:50 | AirTempGraphGen | Run Complete
-OK 2026-03-08T14:20:19 code=200 json=True len=27120
-2026-03-08 14:20:19 | AirTempGraphGen | Run Start
-2026-03-08 14:20:19 | AirTempGraphGen | Run Complete
-OK 2026-03-08T14:30:14 code=200 json=True len=27121
-2026-03-08 14:30:14 | AirTempGraphGen | Run Start
-2026-03-08 14:30:14 | AirTempGraphGen | Run Complete
-2026-03-08 14:33:51 | SoilGraphGen | Run Start
-2026-03-08 14:33:51 | SoilGraphGen | Run Complete
-2026-03-08 14:33:51 | AirTempGraphGen | Run Start
-2026-03-08 14:33:51 | AirTempGraphGen | Run Complete
-PROBE 2026-03-08T14:33:52 Already succeeded today (2026-03-08). Skipping fetch.
-2026-03-08 14:33:52 | SoilGraphGen | Run Start
-2026-03-08 14:33:52 | SoilGraphGen | Run Complete
-OK 2026-03-08T14:33:53 code=200 json=True len=27121
-2026-03-08 14:33:53 | AirTempGraphGen | Run Start
-2026-03-08 14:33:53 | AirTempGraphGen | Run Complete
-2026-03-08 14:39:41 | SoilGraphGen | Run Start
-2026-03-08 14:39:41 | SoilGraphGen | Run Complete
-2026-03-08 14:39:41 | AirTempGraphGen | Run Start
-2026-03-08 14:39:41 | AirTempGraphGen | Run Complete
-OK 2026-03-08T14:39:42 master=E:\Documents\Rainmeter\Skins\Heartland\ks_soiltemp_2in_master.csv rolling=E:\Documents\Rainmeter\Skins\Heartland\ks_soiltemp_2in_rolling7day.csv rows=187
-2026-03-08 14:39:43 | SoilGraphGen | Run Start
-2026-03-08 14:39:43 | SoilGraphGen | Run Complete
-OK 2026-03-08T14:39:43 code=200 json=True len=27120
-2026-03-08 14:39:43 | AirTempGraphGen | Run Start
-2026-03-08 14:39:43 | AirTempGraphGen | Run Complete
-OK 2026-03-08T14:50:40 code=200 json=True len=27120
-2026-03-08 14:50:40 | AirTempGraphGen | Run Start
-2026-03-08 14:50:40 | AirTempGraphGen | Run Complete
-2026-03-08 14:50:45 | SoilGraphGen | Run Start
-2026-03-08 14:50:45 | SoilGraphGen | Run Complete
-2026-03-08 14:50:45 | AirTempGraphGen | Run Start
-2026-03-08 14:50:45 | AirTempGraphGen | Run Complete
-PROBE 2026-03-08T14:50:45 Already succeeded today (2026-03-08). Skipping fetch.
-2026-03-08 14:50:45 | SoilGraphGen | Run Start
-2026-03-08 14:50:45 | SoilGraphGen | Run Complete
-OK 2026-03-08T14:50:46 code=200 json=True len=27121
-2026-03-08 14:50:46 | AirTempGraphGen | Run Start
-2026-03-08 14:50:46 | AirTempGraphGen | Run Complete
-OK 2026-03-08T15:00:38 code=200 json=True len=27120
-2026-03-08 15:00:38 | AirTempGraphGen | Run Start
-2026-03-08 15:00:38 | AirTempGraphGen | Run Complete
-2026-03-08 15:10:17 | RainBuckets | Initialize
-2026-03-08 15:10:17 | SoilGraphGen | Run Start
-2026-03-08 15:10:17 | SoilGraphGen | Run Complete
-2026-03-08 15:10:17 | AirTempGraphGen | Run Start
-2026-03-08 15:10:17 | AirTempGraphGen | Run Complete
-2026-03-08 15:10:17 | RainBuckets | Run Start
-2026-03-08 15:10:17 | RainBuckets | Run Complete curPrecip=0.150 disp0=0.15 disp1=0.08 disp2=0.34
-OK 2026-03-08T15:10:18 master=E:\Documents\Rainmeter\Skins\Heartland\ks_soiltemp_2in_master.csv rolling=E:\Documents\Rainmeter\Skins\Heartland\ks_soiltemp_2in_rolling7day.csv rows=187
-2026-03-08 15:10:19 | SoilGraphGen | Run Start
-2026-03-08 15:10:19 | SoilGraphGen | Run Complete
-OK 2026-03-08T15:10:19 code=200 json=True len=27120
-2026-03-08 15:10:19 | AirTempGraphGen | Run Start
-2026-03-08 15:10:19 | AirTempGraphGen | Run Complete
-2026-03-08 15:10:19 | RainBuckets | Run Start
-2026-03-08 15:10:19 | RainBuckets | Run Complete curPrecip=0.150 disp0=0.15 disp1=0.08 disp2=0.34
-OK 2026-03-08T15:20:13 code=200 json=True len=27120
-2026-03-08 15:20:13 | AirTempGraphGen | Run Start
-2026-03-08 15:20:13 | AirTempGraphGen | Run Complete
-2026-03-08 15:20:13 | RainBuckets | Run Start
-2026-03-08 15:20:13 | RainBuckets | Run Complete curPrecip=0.150 disp0=0.15 disp1=0.08 disp2=0.34
-2026-03-08 15:30:41 | SoilGraphGen | Run Start
-2026-03-08 15:30:41 | SoilGraphGen | Run Complete
-2026-03-08 15:30:41 | AirTempGraphGen | Run Start
-2026-03-08 15:30:41 | AirTempGraphGen | Run Complete
-PROBE 2026-03-08T15:30:42 Already succeeded today (2026-03-08). Skipping fetch.
-2026-03-08 15:30:42 | SoilGraphGen | Run Start
-2026-03-08 15:30:42 | SoilGraphGen | Run Complete
-OK 2026-03-08T15:30:43 code=200 json=True len=27119
-2026-03-08 15:30:43 | AirTempGraphGen | Run Start
-2026-03-08 15:30:43 | AirTempGraphGen | Run Complete
-2026-03-08 15:32:20 | SoilGraphGen | Run Start
-2026-03-08 15:32:20 | SoilGraphGen | Run Complete
-2026-03-08 15:32:20 | AirTempGraphGen | Run Start
-2026-03-08 15:32:20 | AirTempGraphGen | Run Complete
-OK 2026-03-08T15:32:21 master=E:\Documents\Rainmeter\Skins\Heartland\ks_soiltemp_2in_master.csv rolling=E:\Documents\Rainmeter\Skins\Heartland\ks_soiltemp_2in_rolling7day.csv rows=187
-2026-03-08 15:32:21 | SoilGraphGen | Run Start
-2026-03-08 15:32:21 | SoilGraphGen | Run Complete
-OK 2026-03-08T15:32:21 code=200 json=True len=27120
-2026-03-08 15:32:21 | AirTempGraphGen | Run Start
-2026-03-08 15:32:21 | AirTempGraphGen | Run Complete
-2026-03-08 15:32:51 | SoilGraphGen | Run Start
-2026-03-08 15:32:51 | SoilGraphGen | Run Complete
-2026-03-08 15:32:51 | AirTempGraphGen | Run Start
-2026-03-08 15:32:51 | AirTempGraphGen | Run Complete
-PROBE 2026-03-08T15:32:52 Already succeeded today (2026-03-08). Skipping fetch.
-2026-03-08 15:32:52 | SoilGraphGen | Run Start
-2026-03-08 15:32:52 | SoilGraphGen | Run Complete
-OK 2026-03-08T15:32:53 code=200 json=True len=27120
-2026-03-08 15:32:53 | AirTempGraphGen | Run Start
-2026-03-08 15:32:53 | AirTempGraphGen | Run Complete
-2026-03-08 15:33:08 | RainBuckets | Initialize
-2026-03-08 15:33:29 | RainBuckets | Initialize
-2026-03-08 15:33:29 | SoilGraphGen | Run Start
-2026-03-08 15:33:29 | SoilGraphGen | Run Complete
-2026-03-08 15:33:29 | AirTempGraphGen | Run Start
-2026-03-08 15:33:29 | AirTempGraphGen | Run Complete
-2026-03-08 15:33:29 | RainBuckets | Run Start
-2026-03-08 15:33:29 | RainBuckets | Run Complete curPrecip=0.150 disp0=0.15 disp1=0.08 disp2=0.34
-OK 2026-03-08T15:33:30 master=E:\Documents\Rainmeter\Skins\Heartland\ks_soiltemp_2in_master.csv rolling=E:\Documents\Rainmeter\Skins\Heartland\ks_soiltemp_2in_rolling7day.csv rows=187
-2026-03-08 15:33:30 | SoilGraphGen | Run Start
-2026-03-08 15:33:30 | SoilGraphGen | Run Complete
-OK 2026-03-08T15:33:30 code=200 json=True len=27120
-2026-03-08 15:33:30 | AirTempGraphGen | Run Start
-2026-03-08 15:33:30 | AirTempGraphGen | Run Complete
-2026-03-08 15:33:30 | RainBuckets | Run Start
-2026-03-08 15:33:30 | RainBuckets | Run Complete curPrecip=0.150 disp0=0.15 disp1=0.08 disp2=0.34
-2026-03-08 15:43:58 | RainBuckets | Initialize
-2026-03-08 15:43:59 | SoilGraphGen | Run Start
-2026-03-08 15:43:59 | SoilGraphGen | Run Complete
-2026-03-08 15:43:59 | AirTempGraphGen | Run Start
-2026-03-08 15:43:59 | AirTempGraphGen | Run Complete
-2026-03-08 15:43:59 | RainBuckets | Run Start
-2026-03-08 15:43:59 | RainBuckets | Run Complete curPrecip=0.150 disp0=0.15 disp1=0.08 disp2=0.34
-PROBE 2026-03-08T15:43:59 Already succeeded today (2026-03-08). Skipping fetch.
-2026-03-08 15:43:59 | SoilGraphGen | Run Start
-2026-03-08 15:43:59 | SoilGraphGen | Run Complete
-OK 2026-03-08T15:44:00 code=200 json=True len=27118
-2026-03-08 15:44:00 | AirTempGraphGen | Run Start
-2026-03-08 15:44:00 | AirTempGraphGen | Run Complete
-2026-03-08 15:44:00 | RainBuckets | Run Start
-2026-03-08 15:44:00 | RainBuckets | Run Complete curPrecip=0.150 disp0=0.15 disp1=0.08 disp2=0.34
-OK 2026-03-08T15:50:35 code=200 json=True len=27119
-2026-03-08 15:50:35 | AirTempGraphGen | Run Start
-2026-03-08 15:50:35 | AirTempGraphGen | Run Complete
-2026-03-08 15:50:35 | RainBuckets | Run Start
-2026-03-08 15:50:35 | RainBuckets | Run Complete curPrecip=0.150 disp0=0.15 disp1=0.08 disp2=0.34
-OK 2026-03-08T16:00:27 code=200 json=True len=27120
-2026-03-08 16:00:27 | AirTempGraphGen | Run Start
-2026-03-08 16:00:27 | AirTempGraphGen | Run Complete
-2026-03-08 16:00:27 | RainBuckets | Run Start
-2026-03-08 16:00:27 | RainBuckets | Run Complete curPrecip=0.150 disp0=0.15 disp1=0.08 disp2=0.34
-OK 2026-03-08T16:10:18 code=200 json=True len=27120
-2026-03-08 16:10:18 | AirTempGraphGen | Run Start
-2026-03-08 16:10:18 | AirTempGraphGen | Run Complete
-2026-03-08 16:10:18 | RainBuckets | Run Start
-2026-03-08 16:10:18 | RainBuckets | Run Complete curPrecip=0.150 disp0=0.15 disp1=0.08 disp2=0.34
-2026-03-08 16:18:51 | RainBuckets | Initialize
-2026-03-08 16:18:52 | SoilGraphGen | Run Start
-2026-03-08 16:18:52 | SoilGraphGen | Run Complete
-2026-03-08 16:18:52 | AirTempGraphGen | Run Start
-2026-03-08 16:18:52 | AirTempGraphGen | Run Complete
-2026-03-08 16:18:52 | RainBuckets | Run Start
-2026-03-08 16:18:52 | RainBuckets | Run Complete curPrecip=0.150 disp0=0.15 disp1=0.08 disp2=0.34
-OK 2026-03-08T16:18:53 master=E:\Documents\Rainmeter\Skins\Heartland\ks_soiltemp_2in_master.csv rolling=E:\Documents\Rainmeter\Skins\Heartland\ks_soiltemp_2in_rolling7day.csv rows=187
-2026-03-08 16:18:53 | SoilGraphGen | Run Start
-2026-03-08 16:18:53 | SoilGraphGen | Run Complete
-OK 2026-03-08T16:18:53 code=200 json=True len=27119
-2026-03-08 16:18:53 | AirTempGraphGen | Run Start
-2026-03-08 16:18:53 | AirTempGraphGen | Run Complete
-2026-03-08 16:18:53 | RainBuckets | Run Start
-2026-03-08 16:18:53 | RainBuckets | Run Complete curPrecip=0.150 disp0=0.15 disp1=0.08 disp2=0.34
-2026-03-08 16:19:13 | RainBuckets | Initialize
-2026-03-08 16:19:13 | SoilGraphGen | Run Start
-2026-03-08 16:19:13 | SoilGraphGen | Run Complete
-2026-03-08 16:19:14 | AirTempGraphGen | Run Start
-2026-03-08 16:19:14 | AirTempGraphGen | Run Complete
-2026-03-08 16:19:14 | RainBuckets | Run Start
-2026-03-08 16:19:14 | RainBuckets | Run Complete curPrecip=0.150 disp0=0.15 disp1=0.08 disp2=0.34
-PROBE 2026-03-08T16:19:14 Already succeeded today (2026-03-08). Skipping fetch.
-2026-03-08 16:19:14 | SoilGraphGen | Run Start
-2026-03-08 16:19:14 | SoilGraphGen | Run Complete
-OK 2026-03-08T16:19:15 code=200 json=True len=27120
-2026-03-08 16:19:15 | AirTempGraphGen | Run Start
-2026-03-08 16:19:15 | AirTempGraphGen | Run Complete
-2026-03-08 16:19:15 | RainBuckets | Run Start
-2026-03-08 16:19:15 | RainBuckets | Run Complete curPrecip=0.150 disp0=0.15 disp1=0.08 disp2=0.34
-2026-03-08 16:20:04 | RainBuckets | Initialize
-2026-03-08 16:20:04 | SoilGraphGen | Run Start
-2026-03-08 16:20:04 | SoilGraphGen | Run Complete
-2026-03-08 16:20:04 | AirTempGraphGen | Run Start
-2026-03-08 16:20:04 | AirTempGraphGen | Run Complete
-2026-03-08 16:20:04 | RainBuckets | Run Start
-2026-03-08 16:20:04 | RainBuckets | Run Complete curPrecip=0.920 disp0=0.92 disp1=0.08 disp2=0.61
-OK 2026-03-08T16:20:06 master=E:\Documents\Rainmeter\Skins\Heartland\ks_soiltemp_2in_master.csv rolling=E:\Documents\Rainmeter\Skins\Heartland\ks_soiltemp_2in_rolling7day.csv rows=187
-2026-03-08 16:20:06 | SoilGraphGen | Run Start
-2026-03-08 16:20:06 | SoilGraphGen | Run Complete
-OK 2026-03-08T16:20:10 code=200 json=True len=27120
-2026-03-08 16:20:10 | AirTempGraphGen | Run Start
-2026-03-08 16:20:10 | AirTempGraphGen | Run Complete
-2026-03-08 16:20:10 | RainBuckets | Run Start
-2026-03-08 16:20:10 | RainBuckets | Run Complete curPrecip=0.920 disp0=0.92 disp1=0.08 disp2=0.61
-2026-03-08 16:20:29 | RainBuckets | Initialize
-2026-03-08 16:20:29 | SoilGraphGen | Run Start
-2026-03-08 16:20:29 | SoilGraphGen | Run Complete
-2026-03-08 16:20:29 | AirTempGraphGen | Run Start
-2026-03-08 16:20:29 | AirTempGraphGen | Run Complete
-2026-03-08 16:20:29 | RainBuckets | Run Start
-2026-03-08 16:20:29 | RainBuckets | Run Complete curPrecip=1.920 disp0=1.92 disp1=0.08 disp2=0.61
-PROBE 2026-03-08T16:20:29 Already succeeded today (2026-03-08). Skipping fetch.
-2026-03-08 16:20:29 | SoilGraphGen | Run Start
-2026-03-08 16:20:29 | SoilGraphGen | Run Complete
-OK 2026-03-08T16:20:30 code=200 json=True len=27120
-2026-03-08 16:20:30 | AirTempGraphGen | Run Start
-2026-03-08 16:20:30 | AirTempGraphGen | Run Complete
-2026-03-08 16:20:30 | RainBuckets | Run Start
-2026-03-08 16:20:30 | RainBuckets | Run Complete curPrecip=1.920 disp0=1.92 disp1=0.08 disp2=0.61
-2026-03-08 16:20:47 | RainBuckets | Initialize
-2026-03-08 16:20:47 | SoilGraphGen | Run Start
-2026-03-08 16:20:47 | SoilGraphGen | Run Complete
-2026-03-08 16:20:47 | AirTempGraphGen | Run Start
-2026-03-08 16:20:47 | AirTempGraphGen | Run Complete
-2026-03-08 16:20:47 | RainBuckets | Run Start
-2026-03-08 16:20:47 | RainBuckets | Run Complete curPrecip=1.010 disp0=1.01 disp1=0.08 disp2=0.61
-OK 2026-03-08T16:20:48 master=E:\Documents\Rainmeter\Skins\Heartland\ks_soiltemp_2in_master.csv rolling=E:\Documents\Rainmeter\Skins\Heartland\ks_soiltemp_2in_rolling7day.csv rows=187
-2026-03-08 16:20:48 | SoilGraphGen | Run Start
-2026-03-08 16:20:48 | SoilGraphGen | Run Complete
-OK 2026-03-08T16:20:49 code=200 json=True len=27120
-2026-03-08 16:20:49 | AirTempGraphGen | Run Start
-2026-03-08 16:20:49 | AirTempGraphGen | Run Complete
-2026-03-08 16:20:49 | RainBuckets | Run Start
-2026-03-08 16:20:49 | RainBuckets | Run Complete curPrecip=1.010 disp0=1.01 disp1=0.08 disp2=0.61
-2026-03-08 16:21:46 | RainBuckets | Initialize
-2026-03-08 16:21:46 | SoilGraphGen | Run Start
-2026-03-08 16:21:46 | SoilGraphGen | Run Complete
-2026-03-08 16:21:46 | AirTempGraphGen | Run Start
-2026-03-08 16:21:46 | AirTempGraphGen | Run Complete
-2026-03-08 16:21:46 | RainBuckets | Run Start
-2026-03-08 16:21:46 | RainBuckets | Run Complete curPrecip=1.010 disp0=1.01 disp1=0.08 disp2=0.86
-PROBE 2026-03-08T16:21:46 Already succeeded today (2026-03-08). Skipping fetch.
-2026-03-08 16:21:46 | SoilGraphGen | Run Start
-2026-03-08 16:21:46 | SoilGraphGen | Run Complete
-OK 2026-03-08T16:21:47 code=200 json=True len=27119
-2026-03-08 16:21:47 | AirTempGraphGen | Run Start
-2026-03-08 16:21:47 | AirTempGraphGen | Run Complete
-2026-03-08 16:21:47 | RainBuckets | Run Start
-2026-03-08 16:21:47 | RainBuckets | Run Complete curPrecip=1.010 disp0=1.01 disp1=0.08 disp2=0.86
-2026-03-08 16:22:09 | RainBuckets | Initialize
-2026-03-08 16:22:09 | SoilGraphGen | Run Start
-2026-03-08 16:22:09 | SoilGraphGen | Run Complete
-2026-03-08 16:22:09 | AirTempGraphGen | Run Start
-2026-03-08 16:22:09 | AirTempGraphGen | Run Complete
-2026-03-08 16:22:09 | RainBuckets | Run Start
-2026-03-08 16:22:09 | RainBuckets | Run Complete curPrecip=1.100 disp0=1.10 disp1=0.08 disp2=0.86
-OK 2026-03-08T16:22:10 master=E:\Documents\Rainmeter\Skins\Heartland\ks_soiltemp_2in_master.csv rolling=E:\Documents\Rainmeter\Skins\Heartland\ks_soiltemp_2in_rolling7day.csv rows=187
-2026-03-08 16:22:10 | SoilGraphGen | Run Start
-2026-03-08 16:22:10 | SoilGraphGen | Run Complete
-OK 2026-03-08T16:22:10 code=200 json=True len=27120
-2026-03-08 16:22:10 | AirTempGraphGen | Run Start
-2026-03-08 16:22:10 | AirTempGraphGen | Run Complete
-2026-03-08 16:22:10 | RainBuckets | Run Start
-2026-03-08 16:22:10 | RainBuckets | Run Complete curPrecip=1.100 disp0=1.10 disp1=0.08 disp2=0.86
-OK 2026-03-08T16:30:56 code=200 json=True len=27114
-2026-03-08 16:30:56 | AirTempGraphGen | Run Start
-2026-03-08 16:30:56 | AirTempGraphGen | Run Complete
-2026-03-08 16:30:56 | RainBuckets | Run Start
-2026-03-08 16:30:56 | RainBuckets | Run Complete curPrecip=1.100 disp0=1.10 disp1=0.08 disp2=0.86
-OK 2026-03-08T16:40:48 code=200 json=True len=27113
-2026-03-08 16:40:48 | AirTempGraphGen | Run Start
-2026-03-08 16:40:48 | AirTempGraphGen | Run Complete
-2026-03-08 16:40:48 | RainBuckets | Run Start
-2026-03-08 16:40:48 | RainBuckets | Run Complete curPrecip=1.100 disp0=1.10 disp1=0.08 disp2=0.86
-OK 2026-03-08T16:50:39 code=200 json=True len=27113
-2026-03-08 16:50:39 | AirTempGraphGen | Run Start
-2026-03-08 16:50:39 | AirTempGraphGen | Run Complete
-2026-03-08 16:50:39 | RainBuckets | Run Start
-2026-03-08 16:50:39 | RainBuckets | Run Complete curPrecip=1.100 disp0=1.10 disp1=0.08 disp2=0.86
-2026-03-08 16:58:16 | RainBuckets | Initialize
-2026-03-08 16:58:17 | SoilGraphGen | Run Start
-2026-03-08 16:58:17 | SoilGraphGen | Run Complete
-2026-03-08 16:58:17 | AirTempGraphGen | Run Start
-2026-03-08 16:58:17 | AirTempGraphGen | Run Complete
-2026-03-08 16:58:17 | RainBuckets | Run Start
-2026-03-08 16:58:17 | RainBuckets | Run Complete curPrecip=1.100 disp0=1.10 disp1=0.24 disp2=0.96
-PROBE 2026-03-08T16:58:17 Already succeeded today (2026-03-08). Skipping fetch.
-2026-03-08 16:58:17 | SoilGraphGen | Run Start
-2026-03-08 16:58:17 | SoilGraphGen | Run Complete
-OK 2026-03-08T16:58:18 code=200 json=True len=27113
-2026-03-08 16:58:18 | AirTempGraphGen | Run Start
-2026-03-08 16:58:18 | AirTempGraphGen | Run Complete
-2026-03-08 16:58:18 | RainBuckets | Run Start
-2026-03-08 16:58:18 | RainBuckets | Run Complete curPrecip=1.100 disp0=1.10 disp1=0.24 disp2=0.96
-2026-03-08 16:59:01 | RainBuckets | Initialize
-2026-03-08 16:59:02 | SoilGraphGen | Run Start
-2026-03-08 16:59:02 | SoilGraphGen | Run Complete
-2026-03-08 16:59:02 | AirTempGraphGen | Run Start
-2026-03-08 16:59:02 | AirTempGraphGen | Run Complete
-2026-03-08 16:59:02 | RainBuckets | Run Start
-2026-03-08 16:59:02 | RainBuckets | Run Complete curPrecip=0.900 disp0=0.90 disp1=0.24 disp2=0.96
-OK 2026-03-08T16:59:03 master=E:\Documents\Rainmeter\Skins\Heartland\ks_soiltemp_2in_master.csv rolling=E:\Documents\Rainmeter\Skins\Heartland\ks_soiltemp_2in_rolling7day.csv rows=187
-2026-03-08 16:59:03 | SoilGraphGen | Run Start
-2026-03-08 16:59:03 | SoilGraphGen | Run Complete
-OK 2026-03-08T16:59:03 code=200 json=True len=27114
-2026-03-08 16:59:03 | AirTempGraphGen | Run Start
-2026-03-08 16:59:03 | AirTempGraphGen | Run Complete
-2026-03-08 16:59:03 | RainBuckets | Run Start
-2026-03-08 16:59:03 | RainBuckets | Run Complete curPrecip=0.900 disp0=0.90 disp1=0.24 disp2=0.96
-2026-03-08 16:59:26 | RainBuckets | Initialize
-2026-03-08 16:59:26 | SoilGraphGen | Run Start
-2026-03-08 16:59:26 | SoilGraphGen | Run Complete
-2026-03-08 16:59:26 | AirTempGraphGen | Run Start
-2026-03-08 16:59:26 | AirTempGraphGen | Run Complete
-2026-03-08 16:59:26 | RainBuckets | Run Start
-2026-03-08 16:59:27 | RainBuckets | Run Complete curPrecip=0.900 disp0=0.90 disp1=0.24 disp2=0.71
-PROBE 2026-03-08T16:59:27 Already succeeded today (2026-03-08). Skipping fetch.
-2026-03-08 16:59:27 | SoilGraphGen | Run Start
-2026-03-08 16:59:27 | SoilGraphGen | Run Complete
-OK 2026-03-08T16:59:28 code=200 json=True len=27114
-2026-03-08 16:59:28 | AirTempGraphGen | Run Start
-2026-03-08 16:59:28 | AirTempGraphGen | Run Complete
-2026-03-08 16:59:28 | RainBuckets | Run Start
-2026-03-08 16:59:28 | RainBuckets | Run Complete curPrecip=0.900 disp0=0.90 disp1=0.24 disp2=0.71
-OK 2026-03-08T17:10:25 code=200 json=True len=27114
-2026-03-08 17:10:25 | AirTempGraphGen | Run Start
-2026-03-08 17:10:25 | AirTempGraphGen | Run Complete
-2026-03-08 17:10:25 | RainBuckets | Run Start
-2026-03-08 17:10:25 | RainBuckets | Run Complete curPrecip=0.900 disp0=0.90 disp1=0.24 disp2=0.71
-OK 2026-03-08T17:20:17 code=200 json=True len=27114
-2026-03-08 17:20:17 | AirTempGraphGen | Run Start
-2026-03-08 17:20:17 | AirTempGraphGen | Run Complete
-2026-03-08 17:20:17 | RainBuckets | Run Start
-2026-03-08 17:20:17 | RainBuckets | Run Complete curPrecip=0.900 disp0=0.90 disp1=0.24 disp2=0.71
-OK 2026-03-08T17:30:14 code=200 json=True len=27112
-2026-03-08 17:30:14 | AirTempGraphGen | Run Start
-2026-03-08 17:30:14 | AirTempGraphGen | Run Complete
-2026-03-08 17:30:14 | RainBuckets | Run Start
-2026-03-08 17:30:14 | RainBuckets | Run Complete curPrecip=0.900 disp0=0.90 disp1=0.24 disp2=0.71
-OK 2026-03-08T17:41:06 code=200 json=True len=27114
-2026-03-08 17:41:06 | AirTempGraphGen | Run Start
-2026-03-08 17:41:06 | AirTempGraphGen | Run Complete
-2026-03-08 17:41:06 | RainBuckets | Run Start
-2026-03-08 17:41:06 | RainBuckets | Run Complete curPrecip=0.900 disp0=0.90 disp1=0.24 disp2=0.71
-OK 2026-03-08T17:50:57 code=200 json=True len=27115
-2026-03-08 17:50:58 | AirTempGraphGen | Run Start
-2026-03-08 17:50:58 | AirTempGraphGen | Run Complete
-2026-03-08 17:50:58 | RainBuckets | Run Start
-2026-03-08 17:50:58 | RainBuckets | Run Complete curPrecip=0.900 disp0=0.90 disp1=0.24 disp2=0.71
-OK 2026-03-08T18:00:49 code=200 json=True len=27114
-2026-03-08 18:00:49 | AirTempGraphGen | Run Start
-2026-03-08 18:00:49 | AirTempGraphGen | Run Complete
-2026-03-08 18:00:49 | RainBuckets | Run Start
-2026-03-08 18:00:49 | RainBuckets | Run Complete curPrecip=0.900 disp0=0.90 disp1=0.24 disp2=0.71
-OK 2026-03-08T18:10:41 code=200 json=True len=27114
-2026-03-08 18:10:41 | AirTempGraphGen | Run Start
-2026-03-08 18:10:41 | AirTempGraphGen | Run Complete
-2026-03-08 18:10:41 | RainBuckets | Run Start
-2026-03-08 18:10:41 | RainBuckets | Run Complete curPrecip=0.900 disp0=0.90 disp1=0.24 disp2=0.71
-OK 2026-03-08T18:20:32 code=200 json=True len=27113
-2026-03-08 18:20:33 | AirTempGraphGen | Run Start
-2026-03-08 18:20:33 | AirTempGraphGen | Run Complete
-2026-03-08 18:20:33 | RainBuckets | Run Start
-2026-03-08 18:20:33 | RainBuckets | Run Complete curPrecip=0.900 disp0=0.90 disp1=0.24 disp2=0.71
-2026-03-08 18:30:02 | RainBuckets | Initialize
-2026-03-08 18:30:02 | SoilGraphGen | Run Start
-2026-03-08 18:30:02 | SoilGraphGen | Run Complete
-2026-03-08 18:30:02 | AirTempGraphGen | Run Start
-2026-03-08 18:30:02 | AirTempGraphGen | Run Complete
-2026-03-08 18:30:02 | RainBuckets | Run Start
-2026-03-08 18:30:02 | RainBuckets | Run Complete precip=1.100 disp0=1.10 disp1=0.08 disp2=0.86
-OK 2026-03-08T18:30:03 master=E:\Documents\Rainmeter\Skins\Heartland\ks_soiltemp_2in_master.csv rolling=E:\Documents\Rainmeter\Skins\Heartland\ks_soiltemp_2in_rolling7day.csv rows=187
-2026-03-08 18:30:03 | SoilGraphGen | Run Start
-2026-03-08 18:30:03 | SoilGraphGen | Run Complete
-OK 2026-03-08T18:30:11 code=200 json=True len=27113
-2026-03-08 18:30:11 | AirTempGraphGen | Run Start
-2026-03-08 18:30:11 | AirTempGraphGen | Run Complete
-2026-03-08 18:30:11 | RainBuckets | Run Start
-2026-03-08 18:30:11 | RainBuckets | Run Complete precip=1.100 disp0=1.10 disp1=0.08 disp2=0.86
-2026-03-08 18:30:51 | RainBuckets | Initialize
-2026-03-08 18:30:51 | SoilGraphGen | Run Start
-2026-03-08 18:30:51 | SoilGraphGen | Run Complete
-2026-03-08 18:30:51 | AirTempGraphGen | Run Start
-2026-03-08 18:30:51 | AirTempGraphGen | Run Complete
-2026-03-08 18:30:51 | RainBuckets | Run Start
-2026-03-08 18:30:51 | RainBuckets | Run Complete precip=1.200 disp0=1.20 disp1=0.08 disp2=0.86
-PROBE 2026-03-08T18:30:51 Already succeeded today (2026-03-08). Skipping fetch.
-2026-03-08 18:30:51 | SoilGraphGen | Run Start
-2026-03-08 18:30:51 | SoilGraphGen | Run Complete
-OK 2026-03-08T18:30:52 code=200 json=True len=27114
-2026-03-08 18:30:52 | AirTempGraphGen | Run Start
-2026-03-08 18:30:52 | AirTempGraphGen | Run Complete
-2026-03-08 18:30:52 | RainBuckets | Run Start
-2026-03-08 18:30:52 | RainBuckets | Run Complete precip=1.200 disp0=1.20 disp1=0.08 disp2=0.86
-2026-03-08 18:37:44 | RainBuckets | Initialize
-2026-03-08 18:37:44 | SoilGraphGen | Run Start
-2026-03-08 18:37:44 | SoilGraphGen | Run Complete
-2026-03-08 18:37:44 | AirTempGraphGen | Run Start
-2026-03-08 18:37:44 | AirTempGraphGen | Run Complete
-2026-03-08 18:37:44 | RainBuckets | Run Start
-2026-03-08 18:37:44 | RainBuckets | Run Complete precip=1.200 disp0=1.20 disp1=0.08 disp2=0.86
-OK 2026-03-08T18:37:45 master=E:\Documents\Rainmeter\Skins\Heartland\ks_soiltemp_2in_master.csv rolling=E:\Documents\Rainmeter\Skins\Heartland\ks_soiltemp_2in_rolling7day.csv rows=187
-2026-03-08 18:37:45 | SoilGraphGen | Run Start
-2026-03-08 18:37:45 | SoilGraphGen | Run Complete
-OK 2026-03-08T18:37:45 code=200 json=True len=27112
-2026-03-08 18:37:45 | AirTempGraphGen | Run Start
-2026-03-08 18:37:45 | AirTempGraphGen | Run Complete
-2026-03-08 18:37:45 | RainBuckets | Run Start
-2026-03-08 18:37:45 | RainBuckets | Run Complete precip=1.200 disp0=1.20 disp1=0.08 disp2=0.86
-2026-03-08 18:40:45 | RainBuckets | Initialize
-2026-03-08 18:40:45 | SoilGraphGen | Run Start
-2026-03-08 18:40:45 | SoilGraphGen | Run Complete
-2026-03-08 18:40:45 | AirTempGraphGen | Run Start
-2026-03-08 18:40:45 | AirTempGraphGen | Run Complete
-2026-03-08 18:40:45 | RainBuckets | Run Start
-2026-03-08 18:40:45 | RainBuckets | Run Complete precip=1.200 disp0=1.20 disp1=0.08 disp2=0.86
-PROBE 2026-03-08T18:40:46 Already succeeded today (2026-03-08). Skipping fetch.
-2026-03-08 18:40:46 | SoilGraphGen | Run Start
-2026-03-08 18:40:46 | SoilGraphGen | Run Complete
-OK 2026-03-08T18:40:46 code=200 json=True len=27114
-2026-03-08 18:40:46 | AirTempGraphGen | Run Start
-2026-03-08 18:40:46 | AirTempGraphGen | Run Complete
-2026-03-08 18:40:46 | RainBuckets | Run Start
-2026-03-08 18:40:47 | RainBuckets | Run Complete precip=1.200 disp0=1.20 disp1=0.08 disp2=0.86
-2026-03-08 18:41:59 | RainBuckets | Initialize
-2026-03-08 18:41:59 | SoilGraphGen | Run Start
-2026-03-08 18:41:59 | SoilGraphGen | Run Complete
-2026-03-08 18:41:59 | AirTempGraphGen | Run Start
-2026-03-08 18:41:59 | AirTempGraphGen | Run Complete
-2026-03-08 18:41:59 | RainBuckets | Run Start
-2026-03-08 18:41:59 | RainBuckets | Run Complete precip=1.200 disp0=1.20 disp1=0.08 disp2=0.86
-OK 2026-03-08T18:42:00 master=E:\Documents\Rainmeter\Skins\Heartland\ks_soiltemp_2in_master.csv rolling=E:\Documents\Rainmeter\Skins\Heartland\ks_soiltemp_2in_rolling7day.csv rows=187
-2026-03-08 18:42:00 | SoilGraphGen | Run Start
-2026-03-08 18:42:00 | SoilGraphGen | Run Complete
-OK 2026-03-08T18:42:01 code=200 json=True len=27114
-2026-03-08 18:42:01 | AirTempGraphGen | Run Start
-2026-03-08 18:42:01 | AirTempGraphGen | Run Complete
-2026-03-08 18:42:01 | RainBuckets | Run Start
-2026-03-08 18:42:01 | RainBuckets | Run Complete precip=1.200 disp0=1.20 disp1=0.08 disp2=0.86
-2026-03-08 18:42:05 | RainBuckets | Initialize
-2026-03-08 18:42:06 | SoilGraphGen | Run Start
-2026-03-08 18:42:06 | SoilGraphGen | Run Complete
-2026-03-08 18:42:06 | AirTempGraphGen | Run Start
-2026-03-08 18:42:06 | AirTempGraphGen | Run Complete
-2026-03-08 18:42:06 | RainBuckets | Run Start
-2026-03-08 18:42:06 | RainBuckets | Run Complete precip=1.200 disp0=1.20 disp1=0.08 disp2=0.86
-PROBE 2026-03-08T18:42:06 Already succeeded today (2026-03-08). Skipping fetch.
-2026-03-08 18:42:06 | SoilGraphGen | Run Start
-2026-03-08 18:42:06 | SoilGraphGen | Run Complete
-OK 2026-03-08T18:42:07 code=200 json=True len=27114
-2026-03-08 18:42:07 | AirTempGraphGen | Run Start
-2026-03-08 18:42:07 | AirTempGraphGen | Run Complete
-2026-03-08 18:42:07 | RainBuckets | Run Start
-2026-03-08 18:42:07 | RainBuckets | Run Complete precip=1.200 disp0=1.20 disp1=0.08 disp2=0.86
-OK 2026-03-08T18:50:58 code=200 json=True len=27114
-2026-03-08 18:50:58 | AirTempGraphGen | Run Start
-2026-03-08 18:50:58 | AirTempGraphGen | Run Complete
-2026-03-08 18:50:58 | RainBuckets | Run Start
-2026-03-08 18:50:58 | RainBuckets | Run Complete precip=1.200 disp0=1.20 disp1=0.08 disp2=0.86
-OK 2026-03-08T19:00:50 code=200 json=True len=27114
-2026-03-08 19:00:50 | AirTempGraphGen | Run Start
-2026-03-08 19:00:50 | AirTempGraphGen | Run Complete
-2026-03-08 19:00:50 | RainBuckets | Run Start
-2026-03-08 19:00:50 | RainBuckets | Run Complete precip=1.200 disp0=1.20 disp1=0.08 disp2=0.86
-OK 2026-03-08T19:10:41 code=200 json=True len=27114
-2026-03-08 19:10:41 | AirTempGraphGen | Run Start
-2026-03-08 19:10:41 | AirTempGraphGen | Run Complete
-2026-03-08 19:10:41 | RainBuckets | Run Start
-2026-03-08 19:10:41 | RainBuckets | Run Complete precip=1.200 disp0=1.20 disp1=0.08 disp2=0.86
-2026-03-08 19:12:10 | RainBuckets | Initialize
-2026-03-08 19:12:10 | SoilGraphGen | Run Start
-2026-03-08 19:12:10 | SoilGraphGen | Run Complete
-2026-03-08 19:12:10 | AirTempGraphGen | Run Start
-2026-03-08 19:12:10 | AirTempGraphGen | Run Complete
-2026-03-08 19:12:10 | RainBuckets | Run Start
-2026-03-08 19:12:10 | RainBuckets | Run Complete precip=1.200 disp0=1.20 disp1=0.08 disp2=0.86
-OK 2026-03-08T19:12:11 master=E:\Documents\Rainmeter\Skins\Heartland\ks_soiltemp_2in_master.csv rolling=E:\Documents\Rainmeter\Skins\Heartland\ks_soiltemp_2in_rolling7day.csv rows=187
-2026-03-08 19:12:11 | SoilGraphGen | Run Start
-2026-03-08 19:12:11 | SoilGraphGen | Run Complete
-OK 2026-03-08T19:12:11 code=200 json=True len=27114
-2026-03-08 19:12:11 | AirTempGraphGen | Run Start
-2026-03-08 19:12:11 | AirTempGraphGen | Run Complete
-2026-03-08 19:12:11 | RainBuckets | Run Start
-2026-03-08 19:12:11 | RainBuckets | Run Complete precip=1.200 disp0=1.20 disp1=0.08 disp2=0.86
-2026-03-08 19:19:52 | RainBuckets | Initialize
-2026-03-08 19:19:52 | SoilGraphGen | Run Start
-2026-03-08 19:19:52 | SoilGraphGen | Run Complete
-2026-03-08 19:19:52 | AirTempGraphGen | Run Start
-2026-03-08 19:19:52 | AirTempGraphGen | Run Complete
-2026-03-08 19:19:52 | RainBuckets | Run Start
-2026-03-08 19:19:52 | RainBuckets | Run Complete precip=1.200 disp0=1.20 disp1=0.08 disp2=0.86
-PROBE 2026-03-08T19:19:52 Already succeeded today (2026-03-08). Skipping fetch.
-2026-03-08 19:19:52 | SoilGraphGen | Run Start
-2026-03-08 19:19:52 | SoilGraphGen | Run Complete
-OK 2026-03-08T19:19:53 code=200 json=True len=27113
-2026-03-08 19:19:53 | AirTempGraphGen | Run Start
-2026-03-08 19:19:53 | AirTempGraphGen | Run Complete
-2026-03-08 19:19:53 | RainBuckets | Run Start
-2026-03-08 19:19:53 | RainBuckets | Run Complete precip=1.200 disp0=1.20 disp1=0.08 disp2=0.86
-2026-03-08 19:23:53 | RainBuckets | Initialize
-2026-03-08 19:23:54 | SoilGraphGen | Run Start
-2026-03-08 19:23:54 | SoilGraphGen | Run Complete
-2026-03-08 19:23:54 | AirTempGraphGen | Run Start
-2026-03-08 19:23:54 | AirTempGraphGen | Run Complete
-2026-03-08 19:23:54 | RainBuckets | Run Start
-2026-03-08 19:23:54 | RainBuckets | Run Complete precip=1.200 disp0=1.20 disp1=0.08 disp2=0.86
-OK 2026-03-08T19:23:55 master=E:\Documents\Rainmeter\Skins\Heartland\ks_soiltemp_2in_master.csv rolling=E:\Documents\Rainmeter\Skins\Heartland\ks_soiltemp_2in_rolling7day.csv rows=187
-2026-03-08 19:23:55 | SoilGraphGen | Run Start
-2026-03-08 19:23:55 | SoilGraphGen | Run Complete
-OK 2026-03-08T19:23:55 code=200 json=True len=27114
-2026-03-08 19:23:55 | AirTempGraphGen | Run Start
-2026-03-08 19:23:55 | AirTempGraphGen | Run Complete
-2026-03-08 19:23:55 | RainBuckets | Run Start
-2026-03-08 19:23:55 | RainBuckets | Run Complete precip=1.200 disp0=1.20 disp1=0.08 disp2=0.86
-2026-03-08 19:28:31 | RainBuckets | Initialize
-2026-03-08 19:28:31 | SoilGraphGen | Run Start
-2026-03-08 19:28:31 | SoilGraphGen | Run Complete
-2026-03-08 19:28:31 | AirTempGraphGen | Run Start
-2026-03-08 19:28:31 | AirTempGraphGen | Run Complete
-2026-03-08 19:28:31 | RainBuckets | Run Start
-2026-03-08 19:28:31 | RainBuckets | Run Complete precip=1.200 disp0=1.20 disp1=0.08 disp2=0.86
-PROBE 2026-03-08T19:28:31 Already succeeded today (2026-03-08). Skipping fetch.
-2026-03-08 19:28:31 | SoilGraphGen | Run Start
 2026-03-08 19:28:31 | SoilGraphGen | Run Complete
 OK 2026-03-08T19:28:32 code=200 json=True len=27114
 2026-03-08 19:28:32 | AirTempGraphGen | Run Start
@@ -1010,3 +489,709 @@ OK 2026-03-09T18:30:26 code=200 json=True len=19617
 2026-03-09 18:30:27 | AirTempGraphGen | Run Complete
 2026-03-09 18:30:27 | RainBuckets | Run Start
 2026-03-09 18:30:27 | RainBuckets | Run Complete precip=0.000 disp0=0.00 disp1=0.00 disp2=0.00
+OK 2026-03-09T18:40:20 code=200 json=True len=19617
+2026-03-09 18:40:20 | AirTempGraphGen | Run Start
+2026-03-09 18:40:20 | AirTempGraphGen | Run Complete
+2026-03-09 18:40:20 | RainBuckets | Run Start
+2026-03-09 18:40:20 | RainBuckets | Run Complete precip=0.000 disp0=0.00 disp1=0.00 disp2=0.00
+OK 2026-03-09T18:50:13 code=200 json=True len=19615
+2026-03-09 18:50:13 | AirTempGraphGen | Run Start
+2026-03-09 18:50:13 | AirTempGraphGen | Run Complete
+2026-03-09 18:50:13 | RainBuckets | Run Start
+2026-03-09 18:50:13 | RainBuckets | Run Complete precip=0.000 disp0=0.00 disp1=0.00 disp2=0.00
+OK 2026-03-09T19:00:16 code=200 json=True len=19617
+2026-03-09 19:00:16 | AirTempGraphGen | Run Start
+2026-03-09 19:00:16 | AirTempGraphGen | Run Complete
+2026-03-09 19:00:16 | RainBuckets | Run Start
+2026-03-09 19:00:17 | RainBuckets | Run Complete precip=0.000 disp0=0.00 disp1=0.00 disp2=0.00
+OK 2026-03-09T19:10:11 code=200 json=True len=19617
+2026-03-09 19:10:11 | AirTempGraphGen | Run Start
+2026-03-09 19:10:11 | AirTempGraphGen | Run Complete
+2026-03-09 19:10:11 | RainBuckets | Run Start
+2026-03-09 19:10:11 | RainBuckets | Run Complete precip=0.000 disp0=0.00 disp1=0.00 disp2=0.00
+OK 2026-03-09T19:21:05 code=200 json=True len=19616
+2026-03-09 19:21:05 | AirTempGraphGen | Run Start
+2026-03-09 19:21:05 | AirTempGraphGen | Run Complete
+2026-03-09 19:21:05 | RainBuckets | Run Start
+2026-03-09 19:21:05 | RainBuckets | Run Complete precip=0.000 disp0=0.00 disp1=0.00 disp2=0.00
+OK 2026-03-09T19:30:57 code=200 json=True len=19618
+2026-03-09 19:30:57 | AirTempGraphGen | Run Start
+2026-03-09 19:30:57 | AirTempGraphGen | Run Complete
+2026-03-09 19:30:57 | RainBuckets | Run Start
+2026-03-09 19:30:57 | RainBuckets | Run Complete precip=0.000 disp0=0.00 disp1=0.00 disp2=0.00
+OK 2026-03-09T19:40:48 code=200 json=True len=19620
+2026-03-09 19:40:48 | AirTempGraphGen | Run Start
+2026-03-09 19:40:48 | AirTempGraphGen | Run Complete
+2026-03-09 19:40:48 | RainBuckets | Run Start
+2026-03-09 19:40:48 | RainBuckets | Run Complete precip=0.000 disp0=0.00 disp1=0.00 disp2=0.00
+OK 2026-03-09T19:50:40 code=200 json=True len=19619
+2026-03-09 19:50:40 | AirTempGraphGen | Run Start
+2026-03-09 19:50:40 | AirTempGraphGen | Run Complete
+2026-03-09 19:50:40 | RainBuckets | Run Start
+2026-03-09 19:50:40 | RainBuckets | Run Complete precip=0.000 disp0=0.00 disp1=0.00 disp2=0.00
+OK 2026-03-09T20:00:33 code=200 json=True len=19620
+2026-03-09 20:00:33 | AirTempGraphGen | Run Start
+2026-03-09 20:00:33 | AirTempGraphGen | Run Complete
+2026-03-09 20:00:33 | RainBuckets | Run Start
+2026-03-09 20:00:33 | RainBuckets | Run Complete precip=0.000 disp0=0.00 disp1=0.00 disp2=0.00
+OK 2026-03-09T20:10:24 code=200 json=True len=19619
+2026-03-09 20:10:24 | AirTempGraphGen | Run Start
+2026-03-09 20:10:24 | AirTempGraphGen | Run Complete
+2026-03-09 20:10:24 | RainBuckets | Run Start
+2026-03-09 20:10:24 | RainBuckets | Run Complete precip=0.000 disp0=0.00 disp1=0.00 disp2=0.00
+OK 2026-03-09T20:20:24 code=200 json=True len=19620
+2026-03-09 20:20:24 | AirTempGraphGen | Run Start
+2026-03-09 20:20:24 | AirTempGraphGen | Run Complete
+2026-03-09 20:20:24 | RainBuckets | Run Start
+2026-03-09 20:20:24 | RainBuckets | Run Complete precip=0.000 disp0=0.00 disp1=0.00 disp2=0.00
+OK 2026-03-09T20:30:47 code=200 json=True len=19619
+2026-03-09 20:30:47 | AirTempGraphGen | Run Start
+2026-03-09 20:30:47 | AirTempGraphGen | Run Complete
+2026-03-09 20:30:47 | RainBuckets | Run Start
+2026-03-09 20:30:48 | RainBuckets | Run Complete precip=0.000 disp0=0.00 disp1=0.00 disp2=0.00
+OK 2026-03-09T20:41:04 code=200 json=True len=19619
+2026-03-09 20:41:04 | AirTempGraphGen | Run Start
+2026-03-09 20:41:04 | AirTempGraphGen | Run Complete
+2026-03-09 20:41:04 | RainBuckets | Run Start
+2026-03-09 20:41:05 | RainBuckets | Run Complete precip=0.000 disp0=0.00 disp1=0.00 disp2=0.00
+OK 2026-03-09T20:50:56 code=200 json=True len=19620
+2026-03-09 20:50:56 | AirTempGraphGen | Run Start
+2026-03-09 20:50:56 | AirTempGraphGen | Run Complete
+2026-03-09 20:50:56 | RainBuckets | Run Start
+2026-03-09 20:50:56 | RainBuckets | Run Complete precip=0.000 disp0=0.00 disp1=0.00 disp2=0.00
+OK 2026-03-09T21:00:48 code=200 json=True len=19619
+2026-03-09 21:00:48 | AirTempGraphGen | Run Start
+2026-03-09 21:00:48 | AirTempGraphGen | Run Complete
+2026-03-09 21:00:48 | RainBuckets | Run Start
+2026-03-09 21:00:48 | RainBuckets | Run Complete precip=0.000 disp0=0.00 disp1=0.00 disp2=0.00
+OK 2026-03-09T21:10:39 code=200 json=True len=19620
+2026-03-09 21:10:39 | AirTempGraphGen | Run Start
+2026-03-09 21:10:39 | AirTempGraphGen | Run Complete
+2026-03-09 21:10:39 | RainBuckets | Run Start
+2026-03-09 21:10:39 | RainBuckets | Run Complete precip=0.000 disp0=0.00 disp1=0.00 disp2=0.00
+OK 2026-03-09T21:20:31 code=200 json=True len=19620
+2026-03-09 21:20:31 | AirTempGraphGen | Run Start
+2026-03-09 21:20:31 | AirTempGraphGen | Run Complete
+2026-03-09 21:20:31 | RainBuckets | Run Start
+2026-03-09 21:20:31 | RainBuckets | Run Complete precip=0.000 disp0=0.00 disp1=0.00 disp2=0.00
+OK 2026-03-09T21:30:24 code=200 json=True len=19619
+2026-03-09 21:30:24 | AirTempGraphGen | Run Start
+2026-03-09 21:30:24 | AirTempGraphGen | Run Complete
+2026-03-09 21:30:24 | RainBuckets | Run Start
+2026-03-09 21:30:24 | RainBuckets | Run Complete precip=0.000 disp0=0.00 disp1=0.00 disp2=0.00
+OK 2026-03-09T21:40:17 code=200 json=True len=19619
+2026-03-09 21:40:17 | AirTempGraphGen | Run Start
+2026-03-09 21:40:17 | AirTempGraphGen | Run Complete
+2026-03-09 21:40:17 | RainBuckets | Run Start
+2026-03-09 21:40:17 | RainBuckets | Run Complete precip=0.000 disp0=0.00 disp1=0.00 disp2=0.00
+OK 2026-03-09T21:50:12 code=200 json=True len=19619
+2026-03-09 21:50:12 | AirTempGraphGen | Run Start
+2026-03-09 21:50:12 | AirTempGraphGen | Run Complete
+2026-03-09 21:50:12 | RainBuckets | Run Start
+2026-03-09 21:50:12 | RainBuckets | Run Complete precip=0.000 disp0=0.00 disp1=0.00 disp2=0.00
+OK 2026-03-09T22:11:05 code=200 json=True len=19620
+2026-03-09 22:11:05 | AirTempGraphGen | Run Start
+2026-03-09 22:11:05 | AirTempGraphGen | Run Complete
+2026-03-09 22:11:05 | RainBuckets | Run Start
+2026-03-09 22:11:05 | RainBuckets | Run Complete precip=0.000 disp0=0.00 disp1=0.00 disp2=0.00
+OK 2026-03-09T22:20:58 code=200 json=True len=19620
+2026-03-09 22:20:58 | AirTempGraphGen | Run Start
+2026-03-09 22:20:58 | AirTempGraphGen | Run Complete
+2026-03-09 22:20:58 | RainBuckets | Run Start
+2026-03-09 22:20:58 | RainBuckets | Run Complete precip=0.000 disp0=0.00 disp1=0.00 disp2=0.00
+OK 2026-03-09T22:30:52 code=200 json=True len=19620
+2026-03-09 22:30:52 | AirTempGraphGen | Run Start
+2026-03-09 22:30:52 | AirTempGraphGen | Run Complete
+2026-03-09 22:30:52 | RainBuckets | Run Start
+2026-03-09 22:30:52 | RainBuckets | Run Complete precip=0.000 disp0=0.00 disp1=0.00 disp2=0.00
+OK 2026-03-09T22:40:44 code=200 json=True len=19620
+2026-03-09 22:40:44 | AirTempGraphGen | Run Start
+2026-03-09 22:40:44 | AirTempGraphGen | Run Complete
+2026-03-09 22:40:44 | RainBuckets | Run Start
+2026-03-09 22:40:44 | RainBuckets | Run Complete precip=0.000 disp0=0.00 disp1=0.00 disp2=0.00
+OK 2026-03-09T22:50:38 code=200 json=True len=19620
+2026-03-09 22:50:38 | AirTempGraphGen | Run Start
+2026-03-09 22:50:38 | AirTempGraphGen | Run Complete
+2026-03-09 22:50:38 | RainBuckets | Run Start
+2026-03-09 22:50:38 | RainBuckets | Run Complete precip=0.000 disp0=0.00 disp1=0.00 disp2=0.00
+OK 2026-03-09T23:00:30 code=200 json=True len=19619
+2026-03-09 23:00:30 | AirTempGraphGen | Run Start
+2026-03-09 23:00:30 | AirTempGraphGen | Run Complete
+2026-03-09 23:00:30 | RainBuckets | Run Start
+2026-03-09 23:00:30 | RainBuckets | Run Complete precip=0.000 disp0=0.00 disp1=0.00 disp2=0.00
+OK 2026-03-09T23:10:21 code=200 json=True len=19619
+2026-03-09 23:10:21 | AirTempGraphGen | Run Start
+2026-03-09 23:10:21 | AirTempGraphGen | Run Complete
+2026-03-09 23:10:21 | RainBuckets | Run Start
+2026-03-09 23:10:21 | RainBuckets | Run Complete precip=0.000 disp0=0.00 disp1=0.00 disp2=0.00
+OK 2026-03-09T23:20:14 code=200 json=True len=19620
+2026-03-09 23:20:14 | AirTempGraphGen | Run Start
+2026-03-09 23:20:14 | AirTempGraphGen | Run Complete
+2026-03-09 23:20:14 | RainBuckets | Run Start
+2026-03-09 23:20:14 | RainBuckets | Run Complete precip=0.000 disp0=0.00 disp1=0.00 disp2=0.00
+OK 2026-03-09T23:41:02 code=200 json=True len=19620
+2026-03-09 23:41:02 | AirTempGraphGen | Run Start
+2026-03-09 23:41:02 | AirTempGraphGen | Run Complete
+2026-03-09 23:41:02 | RainBuckets | Run Start
+2026-03-09 23:41:02 | RainBuckets | Run Complete precip=0.000 disp0=0.00 disp1=0.00 disp2=0.00
+OK 2026-03-10T08:10:36 code=200 json=True len=19617
+2026-03-10 08:10:36 | AirTempGraphGen | Run Start
+2026-03-10 08:10:36 | AirTempGraphGen | Run Complete
+2026-03-10 08:10:36 | RainBuckets | Run Start
+2026-03-10 08:10:36 | RainBuckets | Run Complete precip=0.000 disp0=0.00 disp1=0.00 disp2=0.00
+OK 2026-03-10T08:20:31 code=200 json=True len=19618
+2026-03-10 08:20:31 | AirTempGraphGen | Run Start
+2026-03-10 08:20:31 | AirTempGraphGen | Run Complete
+2026-03-10 08:20:31 | RainBuckets | Run Start
+2026-03-10 08:20:31 | RainBuckets | Run Complete precip=0.000 disp0=0.00 disp1=0.00 disp2=0.00
+OK 2026-03-10T08:30:23 code=200 json=True len=19616
+2026-03-10 08:30:23 | AirTempGraphGen | Run Start
+2026-03-10 08:30:23 | AirTempGraphGen | Run Complete
+2026-03-10 08:30:23 | RainBuckets | Run Start
+2026-03-10 08:30:23 | RainBuckets | Run Complete precip=0.000 disp0=0.00 disp1=0.00 disp2=0.00
+OK 2026-03-10T08:40:15 code=200 json=True len=19617
+2026-03-10 08:40:15 | AirTempGraphGen | Run Start
+2026-03-10 08:40:15 | AirTempGraphGen | Run Complete
+2026-03-10 08:40:15 | RainBuckets | Run Start
+2026-03-10 08:40:15 | RainBuckets | Run Complete precip=0.000 disp0=0.00 disp1=0.00 disp2=0.00
+OK 2026-03-10T09:01:06 code=200 json=True len=19617
+2026-03-10 09:01:06 | AirTempGraphGen | Run Start
+2026-03-10 09:01:06 | AirTempGraphGen | Run Complete
+2026-03-10 09:01:06 | RainBuckets | Run Start
+2026-03-10 09:01:06 | RainBuckets | Run Complete precip=0.000 disp0=0.00 disp1=0.00 disp2=0.00
+OK 2026-03-10T09:11:00 code=200 json=True len=19618
+2026-03-10 09:11:00 | AirTempGraphGen | Run Start
+2026-03-10 09:11:00 | AirTempGraphGen | Run Complete
+2026-03-10 09:11:00 | RainBuckets | Run Start
+2026-03-10 09:11:00 | RainBuckets | Run Complete precip=0.000 disp0=0.00 disp1=0.00 disp2=0.00
+OK 2026-03-10T09:20:52 code=200 json=True len=19618
+2026-03-10 09:20:52 | AirTempGraphGen | Run Start
+2026-03-10 09:20:52 | AirTempGraphGen | Run Complete
+2026-03-10 09:20:52 | RainBuckets | Run Start
+2026-03-10 09:20:52 | RainBuckets | Run Complete precip=0.000 disp0=0.00 disp1=0.00 disp2=0.00
+OK 2026-03-10T09:30:43 code=200 json=True len=19618
+2026-03-10 09:30:43 | AirTempGraphGen | Run Start
+2026-03-10 09:30:43 | AirTempGraphGen | Run Complete
+2026-03-10 09:30:43 | RainBuckets | Run Start
+2026-03-10 09:30:43 | RainBuckets | Run Complete precip=0.000 disp0=0.00 disp1=0.00 disp2=0.00
+OK 2026-03-10T09:40:35 code=200 json=True len=19618
+2026-03-10 09:40:35 | AirTempGraphGen | Run Start
+2026-03-10 09:40:35 | AirTempGraphGen | Run Complete
+2026-03-10 09:40:35 | RainBuckets | Run Start
+2026-03-10 09:40:35 | RainBuckets | Run Complete precip=0.000 disp0=0.00 disp1=0.00 disp2=0.00
+OK 2026-03-10T09:50:26 code=200 json=True len=19618
+2026-03-10 09:50:26 | AirTempGraphGen | Run Start
+2026-03-10 09:50:26 | AirTempGraphGen | Run Complete
+2026-03-10 09:50:26 | RainBuckets | Run Start
+2026-03-10 09:50:26 | RainBuckets | Run Complete precip=0.000 disp0=0.00 disp1=0.00 disp2=0.00
+OK 2026-03-10T10:00:22 code=200 json=True len=19617
+2026-03-10 10:00:22 | AirTempGraphGen | Run Start
+2026-03-10 10:00:22 | AirTempGraphGen | Run Complete
+2026-03-10 10:00:22 | RainBuckets | Run Start
+2026-03-10 10:00:22 | RainBuckets | Run Complete precip=0.000 disp0=0.00 disp1=0.00 disp2=0.00
+OK 2026-03-10T10:10:13 code=200 json=True len=19617
+2026-03-10 10:10:13 | AirTempGraphGen | Run Start
+2026-03-10 10:10:13 | AirTempGraphGen | Run Complete
+2026-03-10 10:10:13 | RainBuckets | Run Start
+2026-03-10 10:10:13 | RainBuckets | Run Complete precip=0.000 disp0=0.00 disp1=0.00 disp2=0.00
+OK 2026-03-10T10:21:07 code=200 json=True len=19616
+2026-03-10 10:21:07 | AirTempGraphGen | Run Start
+2026-03-10 10:21:07 | AirTempGraphGen | Run Complete
+2026-03-10 10:21:07 | RainBuckets | Run Start
+2026-03-10 10:21:07 | RainBuckets | Run Complete precip=0.000 disp0=0.00 disp1=0.00 disp2=0.00
+OK 2026-03-10T10:30:59 code=200 json=True len=19619
+2026-03-10 10:30:59 | AirTempGraphGen | Run Start
+2026-03-10 10:30:59 | AirTempGraphGen | Run Complete
+2026-03-10 10:30:59 | RainBuckets | Run Start
+2026-03-10 10:30:59 | RainBuckets | Run Complete precip=0.000 disp0=0.00 disp1=0.00 disp2=0.00
+OK 2026-03-10T10:40:55 code=200 json=True len=19619
+2026-03-10 10:40:55 | AirTempGraphGen | Run Start
+2026-03-10 10:40:55 | AirTempGraphGen | Run Complete
+2026-03-10 10:40:55 | RainBuckets | Run Start
+2026-03-10 10:40:55 | RainBuckets | Run Complete precip=0.000 disp0=0.00 disp1=0.00 disp2=0.00
+OK 2026-03-10T10:50:50 code=200 json=True len=19618
+2026-03-10 10:50:50 | AirTempGraphGen | Run Start
+2026-03-10 10:50:50 | AirTempGraphGen | Run Complete
+2026-03-10 10:50:50 | RainBuckets | Run Start
+2026-03-10 10:50:50 | RainBuckets | Run Complete precip=0.000 disp0=0.00 disp1=0.00 disp2=0.00
+OK 2026-03-10T11:00:42 code=200 json=True len=19619
+2026-03-10 11:00:42 | AirTempGraphGen | Run Start
+2026-03-10 11:00:42 | AirTempGraphGen | Run Complete
+2026-03-10 11:00:42 | RainBuckets | Run Start
+2026-03-10 11:00:42 | RainBuckets | Run Complete precip=0.000 disp0=0.00 disp1=0.00 disp2=0.00
+OK 2026-03-10T11:10:33 code=200 json=True len=19619
+2026-03-10 11:10:33 | AirTempGraphGen | Run Start
+2026-03-10 11:10:33 | AirTempGraphGen | Run Complete
+2026-03-10 11:10:33 | RainBuckets | Run Start
+2026-03-10 11:10:33 | RainBuckets | Run Complete precip=0.000 disp0=0.00 disp1=0.00 disp2=0.00
+OK 2026-03-10T11:20:25 code=200 json=True len=19620
+2026-03-10 11:20:25 | AirTempGraphGen | Run Start
+2026-03-10 11:20:25 | AirTempGraphGen | Run Complete
+2026-03-10 11:20:25 | RainBuckets | Run Start
+2026-03-10 11:20:25 | RainBuckets | Run Complete precip=0.000 disp0=0.00 disp1=0.00 disp2=0.00
+OK 2026-03-10T11:30:18 code=200 json=True len=19619
+2026-03-10 11:30:19 | AirTempGraphGen | Run Start
+2026-03-10 11:30:19 | AirTempGraphGen | Run Complete
+2026-03-10 11:30:19 | RainBuckets | Run Start
+2026-03-10 11:30:19 | RainBuckets | Run Complete precip=0.000 disp0=0.00 disp1=0.00 disp2=0.00
+OK 2026-03-10T11:40:12 code=200 json=True len=19619
+2026-03-10 11:40:12 | AirTempGraphGen | Run Start
+2026-03-10 11:40:12 | AirTempGraphGen | Run Complete
+2026-03-10 11:40:12 | RainBuckets | Run Start
+2026-03-10 11:40:12 | RainBuckets | Run Complete precip=0.000 disp0=0.00 disp1=0.00 disp2=0.00
+OK 2026-03-10T11:51:07 code=200 json=True len=19617
+2026-03-10 11:51:07 | AirTempGraphGen | Run Start
+2026-03-10 11:51:07 | AirTempGraphGen | Run Complete
+2026-03-10 11:51:07 | RainBuckets | Run Start
+2026-03-10 11:51:07 | RainBuckets | Run Complete precip=0.000 disp0=0.00 disp1=0.00 disp2=0.00
+OK 2026-03-10T12:00:27 master=E:\Documents\Rainmeter\Skins\Heartland\ks_soiltemp_2in_master.csv rolling=E:\Documents\Rainmeter\Skins\Heartland\ks_soiltemp_2in_rolling7day.csv rows=187
+2026-03-10 12:00:27 | SoilGraphGen | Run Start
+2026-03-10 12:00:27 | SoilGraphGen | Run Complete
+OK 2026-03-10T12:00:58 code=200 json=True len=19617
+2026-03-10 12:00:58 | AirTempGraphGen | Run Start
+2026-03-10 12:00:58 | AirTempGraphGen | Run Complete
+2026-03-10 12:00:58 | RainBuckets | Run Start
+2026-03-10 12:00:59 | RainBuckets | Run Complete precip=0.000 disp0=0.00 disp1=0.00 disp2=0.00
+OK 2026-03-10T12:10:50 code=200 json=True len=19617
+2026-03-10 12:10:50 | AirTempGraphGen | Run Start
+2026-03-10 12:10:50 | AirTempGraphGen | Run Complete
+2026-03-10 12:10:50 | RainBuckets | Run Start
+2026-03-10 12:10:50 | RainBuckets | Run Complete precip=0.000 disp0=0.00 disp1=0.00 disp2=0.00
+OK 2026-03-10T12:20:42 code=200 json=True len=19617
+2026-03-10 12:20:42 | AirTempGraphGen | Run Start
+2026-03-10 12:20:42 | AirTempGraphGen | Run Complete
+2026-03-10 12:20:42 | RainBuckets | Run Start
+2026-03-10 12:20:42 | RainBuckets | Run Complete precip=0.000 disp0=0.00 disp1=0.00 disp2=0.00
+OK 2026-03-10T12:30:34 code=200 json=True len=19618
+2026-03-10 12:30:34 | AirTempGraphGen | Run Start
+2026-03-10 12:30:34 | AirTempGraphGen | Run Complete
+2026-03-10 12:30:34 | RainBuckets | Run Start
+2026-03-10 12:30:34 | RainBuckets | Run Complete precip=0.000 disp0=0.00 disp1=0.00 disp2=0.00
+OK 2026-03-10T12:40:26 code=200 json=True len=19618
+2026-03-10 12:40:26 | AirTempGraphGen | Run Start
+2026-03-10 12:40:26 | AirTempGraphGen | Run Complete
+2026-03-10 12:40:26 | RainBuckets | Run Start
+2026-03-10 12:40:26 | RainBuckets | Run Complete precip=0.000 disp0=0.00 disp1=0.00 disp2=0.00
+OK 2026-03-10T12:50:17 code=200 json=True len=19618
+2026-03-10 12:50:17 | AirTempGraphGen | Run Start
+2026-03-10 12:50:17 | AirTempGraphGen | Run Complete
+2026-03-10 12:50:17 | RainBuckets | Run Start
+2026-03-10 12:50:17 | RainBuckets | Run Complete precip=0.000 disp0=0.00 disp1=0.00 disp2=0.00
+OK 2026-03-10T13:00:17 code=200 json=True len=19618
+2026-03-10 13:00:17 | AirTempGraphGen | Run Start
+2026-03-10 13:00:17 | AirTempGraphGen | Run Complete
+2026-03-10 13:00:17 | RainBuckets | Run Start
+2026-03-10 13:00:17 | RainBuckets | Run Complete precip=0.000 disp0=0.00 disp1=0.00 disp2=0.00
+OK 2026-03-10T13:21:04 code=200 json=True len=19618
+2026-03-10 13:21:04 | AirTempGraphGen | Run Start
+2026-03-10 13:21:04 | AirTempGraphGen | Run Complete
+2026-03-10 13:21:04 | RainBuckets | Run Start
+2026-03-10 13:21:04 | RainBuckets | Run Complete precip=0.000 disp0=0.00 disp1=0.00 disp2=0.00
+OK 2026-03-10T13:30:55 code=200 json=True len=19618
+2026-03-10 13:30:55 | AirTempGraphGen | Run Start
+2026-03-10 13:30:55 | AirTempGraphGen | Run Complete
+2026-03-10 13:30:55 | RainBuckets | Run Start
+2026-03-10 13:30:55 | RainBuckets | Run Complete precip=0.000 disp0=0.00 disp1=0.00 disp2=0.00
+OK 2026-03-10T13:40:47 code=200 json=True len=19614
+2026-03-10 13:40:47 | AirTempGraphGen | Run Start
+2026-03-10 13:40:47 | AirTempGraphGen | Run Complete
+2026-03-10 13:40:47 | RainBuckets | Run Start
+2026-03-10 13:40:47 | RainBuckets | Run Complete precip=0.000 disp0=0.00 disp1=0.00 disp2=0.00
+OK 2026-03-10T13:50:38 code=200 json=True len=19613
+2026-03-10 13:50:38 | AirTempGraphGen | Run Start
+2026-03-10 13:50:38 | AirTempGraphGen | Run Complete
+2026-03-10 13:50:38 | RainBuckets | Run Start
+2026-03-10 13:50:38 | RainBuckets | Run Complete precip=0.000 disp0=0.00 disp1=0.00 disp2=0.00
+OK 2026-03-10T14:00:30 code=200 json=True len=19612
+2026-03-10 14:00:30 | AirTempGraphGen | Run Start
+2026-03-10 14:00:30 | AirTempGraphGen | Run Complete
+2026-03-10 14:00:30 | RainBuckets | Run Start
+2026-03-10 14:00:30 | RainBuckets | Run Complete precip=0.000 disp0=0.00 disp1=0.00 disp2=0.00
+OK 2026-03-10T14:10:21 code=200 json=True len=19613
+2026-03-10 14:10:21 | AirTempGraphGen | Run Start
+2026-03-10 14:10:22 | AirTempGraphGen | Run Complete
+2026-03-10 14:10:22 | RainBuckets | Run Start
+2026-03-10 14:10:22 | RainBuckets | Run Complete precip=0.000 disp0=0.00 disp1=0.00 disp2=0.00
+OK 2026-03-10T14:20:13 code=200 json=True len=19612
+2026-03-10 14:20:13 | AirTempGraphGen | Run Start
+2026-03-10 14:20:13 | AirTempGraphGen | Run Complete
+2026-03-10 14:20:13 | RainBuckets | Run Start
+2026-03-10 14:20:13 | RainBuckets | Run Complete precip=0.000 disp0=0.00 disp1=0.00 disp2=0.00
+OK 2026-03-10T14:41:02 code=200 json=True len=19612
+2026-03-10 14:41:02 | AirTempGraphGen | Run Start
+2026-03-10 14:41:02 | AirTempGraphGen | Run Complete
+2026-03-10 14:41:02 | RainBuckets | Run Start
+2026-03-10 14:41:02 | RainBuckets | Run Complete precip=0.000 disp0=0.00 disp1=0.00 disp2=0.00
+OK 2026-03-10T14:50:55 code=200 json=True len=19612
+2026-03-10 14:50:55 | AirTempGraphGen | Run Start
+2026-03-10 14:50:55 | AirTempGraphGen | Run Complete
+2026-03-10 14:50:55 | RainBuckets | Run Start
+2026-03-10 14:50:55 | RainBuckets | Run Complete precip=0.000 disp0=0.00 disp1=0.00 disp2=0.00
+OK 2026-03-10T15:00:47 code=200 json=True len=19613
+2026-03-10 15:00:47 | AirTempGraphGen | Run Start
+2026-03-10 15:00:47 | AirTempGraphGen | Run Complete
+2026-03-10 15:00:47 | RainBuckets | Run Start
+2026-03-10 15:00:47 | RainBuckets | Run Complete precip=0.000 disp0=0.00 disp1=0.00 disp2=0.00
+OK 2026-03-10T15:10:39 code=200 json=True len=19613
+2026-03-10 15:10:39 | AirTempGraphGen | Run Start
+2026-03-10 15:10:39 | AirTempGraphGen | Run Complete
+2026-03-10 15:10:39 | RainBuckets | Run Start
+2026-03-10 15:10:39 | RainBuckets | Run Complete precip=0.000 disp0=0.00 disp1=0.00 disp2=0.00
+OK 2026-03-10T15:20:31 code=200 json=True len=19610
+2026-03-10 15:20:31 | AirTempGraphGen | Run Start
+2026-03-10 15:20:31 | AirTempGraphGen | Run Complete
+2026-03-10 15:20:31 | RainBuckets | Run Start
+2026-03-10 15:20:31 | RainBuckets | Run Complete precip=0.000 disp0=0.00 disp1=0.00 disp2=0.00
+OK 2026-03-10T15:30:22 code=200 json=True len=19611
+2026-03-10 15:30:22 | AirTempGraphGen | Run Start
+2026-03-10 15:30:22 | AirTempGraphGen | Run Complete
+2026-03-10 15:30:22 | RainBuckets | Run Start
+2026-03-10 15:30:22 | RainBuckets | Run Complete precip=0.000 disp0=0.00 disp1=0.00 disp2=0.00
+OK 2026-03-10T15:40:14 code=200 json=True len=19612
+2026-03-10 15:40:14 | AirTempGraphGen | Run Start
+2026-03-10 15:40:14 | AirTempGraphGen | Run Complete
+2026-03-10 15:40:14 | RainBuckets | Run Start
+2026-03-10 15:40:14 | RainBuckets | Run Complete precip=0.000 disp0=0.00 disp1=0.00 disp2=0.00
+OK 2026-03-10T16:01:03 code=200 json=True len=19613
+2026-03-10 16:01:03 | AirTempGraphGen | Run Start
+2026-03-10 16:01:03 | AirTempGraphGen | Run Complete
+2026-03-10 16:01:03 | RainBuckets | Run Start
+2026-03-10 16:01:03 | RainBuckets | Run Complete precip=0.000 disp0=0.00 disp1=0.00 disp2=0.00
+OK 2026-03-10T16:10:55 code=200 json=True len=19613
+2026-03-10 16:10:55 | AirTempGraphGen | Run Start
+2026-03-10 16:10:55 | AirTempGraphGen | Run Complete
+2026-03-10 16:10:55 | RainBuckets | Run Start
+2026-03-10 16:10:55 | RainBuckets | Run Complete precip=0.000 disp0=0.00 disp1=0.00 disp2=0.00
+OK 2026-03-10T16:20:46 code=200 json=True len=19613
+2026-03-10 16:20:46 | AirTempGraphGen | Run Start
+2026-03-10 16:20:46 | AirTempGraphGen | Run Complete
+2026-03-10 16:20:46 | RainBuckets | Run Start
+2026-03-10 16:20:46 | RainBuckets | Run Complete precip=0.000 disp0=0.00 disp1=0.00 disp2=0.00
+OK 2026-03-10T16:30:38 code=200 json=True len=19613
+2026-03-10 16:30:38 | AirTempGraphGen | Run Start
+2026-03-10 16:30:38 | AirTempGraphGen | Run Complete
+2026-03-10 16:30:38 | RainBuckets | Run Start
+2026-03-10 16:30:38 | RainBuckets | Run Complete precip=0.000 disp0=0.00 disp1=0.00 disp2=0.00
+OK 2026-03-10T16:40:30 code=200 json=True len=19613
+2026-03-10 16:40:30 | AirTempGraphGen | Run Start
+2026-03-10 16:40:30 | AirTempGraphGen | Run Complete
+2026-03-10 16:40:30 | RainBuckets | Run Start
+2026-03-10 16:40:30 | RainBuckets | Run Complete precip=0.000 disp0=0.00 disp1=0.00 disp2=0.00
+OK 2026-03-10T16:50:21 code=200 json=True len=19614
+2026-03-10 16:50:21 | AirTempGraphGen | Run Start
+2026-03-10 16:50:21 | AirTempGraphGen | Run Complete
+2026-03-10 16:50:21 | RainBuckets | Run Start
+2026-03-10 16:50:21 | RainBuckets | Run Complete precip=0.000 disp0=0.00 disp1=0.00 disp2=0.00
+OK 2026-03-10T17:00:18 code=200 json=True len=19614
+2026-03-10 17:00:18 | AirTempGraphGen | Run Start
+2026-03-10 17:00:18 | AirTempGraphGen | Run Complete
+2026-03-10 17:00:18 | RainBuckets | Run Start
+2026-03-10 17:00:18 | RainBuckets | Run Complete precip=0.000 disp0=0.00 disp1=0.00 disp2=0.00
+OK 2026-03-10T17:21:02 code=200 json=True len=19613
+2026-03-10 17:21:02 | AirTempGraphGen | Run Start
+2026-03-10 17:21:02 | AirTempGraphGen | Run Complete
+2026-03-10 17:21:02 | RainBuckets | Run Start
+2026-03-10 17:21:02 | RainBuckets | Run Complete precip=0.000 disp0=0.00 disp1=0.00 disp2=0.00
+OK 2026-03-10T17:30:54 code=200 json=True len=19613
+2026-03-10 17:30:54 | AirTempGraphGen | Run Start
+2026-03-10 17:30:54 | AirTempGraphGen | Run Complete
+2026-03-10 17:30:54 | RainBuckets | Run Start
+2026-03-10 17:30:54 | RainBuckets | Run Complete precip=0.000 disp0=0.00 disp1=0.00 disp2=0.00
+OK 2026-03-10T17:40:45 code=200 json=True len=19613
+2026-03-10 17:40:45 | AirTempGraphGen | Run Start
+2026-03-10 17:40:45 | AirTempGraphGen | Run Complete
+2026-03-10 17:40:45 | RainBuckets | Run Start
+2026-03-10 17:40:45 | RainBuckets | Run Complete precip=0.000 disp0=0.00 disp1=0.00 disp2=0.00
+OK 2026-03-10T17:50:36 code=200 json=True len=19611
+2026-03-10 17:50:37 | AirTempGraphGen | Run Start
+2026-03-10 17:50:37 | AirTempGraphGen | Run Complete
+2026-03-10 17:50:37 | RainBuckets | Run Start
+2026-03-10 17:50:37 | RainBuckets | Run Complete precip=0.000 disp0=0.00 disp1=0.00 disp2=0.00
+OK 2026-03-10T18:00:30 code=200 json=True len=19612
+2026-03-10 18:00:31 | AirTempGraphGen | Run Start
+2026-03-10 18:00:31 | AirTempGraphGen | Run Complete
+2026-03-10 18:00:31 | RainBuckets | Run Start
+2026-03-10 18:00:31 | RainBuckets | Run Complete precip=0.000 disp0=0.00 disp1=0.00 disp2=0.00
+OK 2026-03-10T18:10:23 code=200 json=True len=19612
+2026-03-10 18:10:23 | AirTempGraphGen | Run Start
+2026-03-10 18:10:23 | AirTempGraphGen | Run Complete
+2026-03-10 18:10:23 | RainBuckets | Run Start
+2026-03-10 18:10:23 | RainBuckets | Run Complete precip=0.000 disp0=0.00 disp1=0.00 disp2=0.00
+OK 2026-03-10T18:20:14 code=200 json=True len=19612
+2026-03-10 18:20:14 | AirTempGraphGen | Run Start
+2026-03-10 18:20:14 | AirTempGraphGen | Run Complete
+2026-03-10 18:20:14 | RainBuckets | Run Start
+2026-03-10 18:20:14 | RainBuckets | Run Complete precip=0.000 disp0=0.00 disp1=0.00 disp2=0.00
+OK 2026-03-10T18:41:04 code=200 json=True len=19611
+2026-03-10 18:41:04 | AirTempGraphGen | Run Start
+2026-03-10 18:41:04 | AirTempGraphGen | Run Complete
+2026-03-10 18:41:04 | RainBuckets | Run Start
+2026-03-10 18:41:04 | RainBuckets | Run Complete precip=0.000 disp0=0.00 disp1=0.00 disp2=0.00
+OK 2026-03-10T18:50:55 code=200 json=True len=19612
+2026-03-10 18:50:56 | AirTempGraphGen | Run Start
+2026-03-10 18:50:56 | AirTempGraphGen | Run Complete
+2026-03-10 18:50:56 | RainBuckets | Run Start
+2026-03-10 18:50:56 | RainBuckets | Run Complete precip=0.000 disp0=0.00 disp1=0.00 disp2=0.00
+OK 2026-03-10T19:00:47 code=200 json=True len=19609
+2026-03-10 19:00:47 | AirTempGraphGen | Run Start
+2026-03-10 19:00:47 | AirTempGraphGen | Run Complete
+2026-03-10 19:00:47 | RainBuckets | Run Start
+2026-03-10 19:00:47 | RainBuckets | Run Complete precip=0.000 disp0=0.00 disp1=0.00 disp2=0.00
+OK 2026-03-10T19:10:39 code=200 json=True len=19609
+2026-03-10 19:10:39 | AirTempGraphGen | Run Start
+2026-03-10 19:10:39 | AirTempGraphGen | Run Complete
+2026-03-10 19:10:39 | RainBuckets | Run Start
+2026-03-10 19:10:39 | RainBuckets | Run Complete precip=0.000 disp0=0.00 disp1=0.00 disp2=0.00
+OK 2026-03-10T19:20:30 code=200 json=True len=19611
+2026-03-10 19:20:30 | AirTempGraphGen | Run Start
+2026-03-10 19:20:30 | AirTempGraphGen | Run Complete
+2026-03-10 19:20:30 | RainBuckets | Run Start
+2026-03-10 19:20:30 | RainBuckets | Run Complete precip=0.000 disp0=0.00 disp1=0.00 disp2=0.00
+OK 2026-03-10T19:30:22 code=200 json=True len=19619
+2026-03-10 19:30:22 | AirTempGraphGen | Run Start
+2026-03-10 19:30:22 | AirTempGraphGen | Run Complete
+2026-03-10 19:30:22 | RainBuckets | Run Start
+2026-03-10 19:30:22 | RainBuckets | Run Complete precip=0.000 disp0=0.00 disp1=0.00 disp2=0.00
+OK 2026-03-10T19:40:14 code=200 json=True len=19619
+2026-03-10 19:40:14 | AirTempGraphGen | Run Start
+2026-03-10 19:40:14 | AirTempGraphGen | Run Complete
+2026-03-10 19:40:14 | RainBuckets | Run Start
+2026-03-10 19:40:14 | RainBuckets | Run Complete precip=0.000 disp0=0.00 disp1=0.00 disp2=0.00
+OK 2026-03-10T20:01:03 code=200 json=True len=19616
+2026-03-10 20:01:03 | AirTempGraphGen | Run Start
+2026-03-10 20:01:03 | AirTempGraphGen | Run Complete
+2026-03-10 20:01:03 | RainBuckets | Run Start
+2026-03-10 20:01:03 | RainBuckets | Run Complete precip=0.000 disp0=0.00 disp1=0.00 disp2=0.00
+OK 2026-03-10T20:10:54 code=200 json=True len=19617
+2026-03-10 20:10:54 | AirTempGraphGen | Run Start
+2026-03-10 20:10:54 | AirTempGraphGen | Run Complete
+2026-03-10 20:10:54 | RainBuckets | Run Start
+2026-03-10 20:10:54 | RainBuckets | Run Complete precip=0.000 disp0=0.00 disp1=0.00 disp2=0.00
+OK 2026-03-10T20:20:46 code=200 json=True len=19618
+2026-03-10 20:20:46 | AirTempGraphGen | Run Start
+2026-03-10 20:20:46 | AirTempGraphGen | Run Complete
+2026-03-10 20:20:46 | RainBuckets | Run Start
+2026-03-10 20:20:46 | RainBuckets | Run Complete precip=0.000 disp0=0.00 disp1=0.00 disp2=0.00
+OK 2026-03-10T20:30:37 code=200 json=True len=19617
+2026-03-10 20:30:37 | AirTempGraphGen | Run Start
+2026-03-10 20:30:37 | AirTempGraphGen | Run Complete
+2026-03-10 20:30:37 | RainBuckets | Run Start
+2026-03-10 20:30:37 | RainBuckets | Run Complete precip=0.000 disp0=0.00 disp1=0.00 disp2=0.00
+OK 2026-03-10T20:40:29 code=200 json=True len=19618
+2026-03-10 20:40:29 | AirTempGraphGen | Run Start
+2026-03-10 20:40:29 | AirTempGraphGen | Run Complete
+2026-03-10 20:40:29 | RainBuckets | Run Start
+2026-03-10 20:40:29 | RainBuckets | Run Complete precip=0.000 disp0=0.00 disp1=0.00 disp2=0.00
+OK 2026-03-10T20:50:20 code=200 json=True len=19617
+2026-03-10 20:50:20 | AirTempGraphGen | Run Start
+2026-03-10 20:50:20 | AirTempGraphGen | Run Complete
+2026-03-10 20:50:20 | RainBuckets | Run Start
+2026-03-10 20:50:20 | RainBuckets | Run Complete precip=0.000 disp0=0.00 disp1=0.00 disp2=0.00
+OK 2026-03-10T21:00:19 code=200 json=True len=19617
+2026-03-10 21:00:19 | AirTempGraphGen | Run Start
+2026-03-10 21:00:19 | AirTempGraphGen | Run Complete
+2026-03-10 21:00:19 | RainBuckets | Run Start
+2026-03-10 21:00:19 | RainBuckets | Run Complete precip=0.000 disp0=0.00 disp1=0.00 disp2=0.00
+OK 2026-03-10T21:21:01 code=200 json=True len=19619
+2026-03-10 21:21:01 | AirTempGraphGen | Run Start
+2026-03-10 21:21:01 | AirTempGraphGen | Run Complete
+2026-03-10 21:21:01 | RainBuckets | Run Start
+2026-03-10 21:21:01 | RainBuckets | Run Complete precip=0.000 disp0=0.00 disp1=0.00 disp2=0.00
+OK 2026-03-11T08:20:32 code=200 json=True len=19611
+2026-03-11 08:20:32 | AirTempGraphGen | Run Start
+2026-03-11 08:20:32 | AirTempGraphGen | Run Complete
+2026-03-11 08:20:32 | RainBuckets | Run Start
+2026-03-11 08:20:32 | RainBuckets | Run Complete precip=0.000 disp0=0.00 disp1=0.00 disp2=0.00
+OK 2026-03-11T08:30:23 code=200 json=True len=19610
+2026-03-11 08:30:23 | AirTempGraphGen | Run Start
+2026-03-11 08:30:23 | AirTempGraphGen | Run Complete
+2026-03-11 08:30:23 | RainBuckets | Run Start
+2026-03-11 08:30:24 | RainBuckets | Run Complete precip=0.000 disp0=0.00 disp1=0.00 disp2=0.00
+OK 2026-03-11T08:40:17 code=200 json=True len=19611
+2026-03-11 08:40:17 | AirTempGraphGen | Run Start
+2026-03-11 08:40:17 | AirTempGraphGen | Run Complete
+2026-03-11 08:40:17 | RainBuckets | Run Start
+2026-03-11 08:40:17 | RainBuckets | Run Complete precip=0.000 disp0=0.00 disp1=0.00 disp2=0.00
+OK 2026-03-11T09:01:04 code=200 json=True len=19610
+2026-03-11 09:01:04 | AirTempGraphGen | Run Start
+2026-03-11 09:01:04 | AirTempGraphGen | Run Complete
+2026-03-11 09:01:04 | RainBuckets | Run Start
+2026-03-11 09:01:04 | RainBuckets | Run Complete precip=0.000 disp0=0.00 disp1=0.00 disp2=0.00
+OK 2026-03-11T09:10:55 code=200 json=True len=19609
+2026-03-11 09:10:55 | AirTempGraphGen | Run Start
+2026-03-11 09:10:55 | AirTempGraphGen | Run Complete
+2026-03-11 09:10:55 | RainBuckets | Run Start
+2026-03-11 09:10:55 | RainBuckets | Run Complete precip=0.000 disp0=0.00 disp1=0.00 disp2=0.00
+OK 2026-03-11T09:20:47 code=200 json=True len=19611
+2026-03-11 09:20:47 | AirTempGraphGen | Run Start
+2026-03-11 09:20:47 | AirTempGraphGen | Run Complete
+2026-03-11 09:20:47 | RainBuckets | Run Start
+2026-03-11 09:20:47 | RainBuckets | Run Complete precip=0.000 disp0=0.00 disp1=0.00 disp2=0.00
+OK 2026-03-11T09:30:38 code=200 json=True len=19611
+2026-03-11 09:30:38 | AirTempGraphGen | Run Start
+2026-03-11 09:30:38 | AirTempGraphGen | Run Complete
+2026-03-11 09:30:38 | RainBuckets | Run Start
+2026-03-11 09:30:38 | RainBuckets | Run Complete precip=0.000 disp0=0.00 disp1=0.00 disp2=0.00
+OK 2026-03-11T09:40:30 code=200 json=True len=19610
+2026-03-11 09:40:30 | AirTempGraphGen | Run Start
+2026-03-11 09:40:30 | AirTempGraphGen | Run Complete
+2026-03-11 09:40:30 | RainBuckets | Run Start
+2026-03-11 09:40:30 | RainBuckets | Run Complete precip=0.000 disp0=0.00 disp1=0.00 disp2=0.00
+OK 2026-03-11T09:50:21 code=200 json=True len=19612
+2026-03-11 09:50:21 | AirTempGraphGen | Run Start
+2026-03-11 09:50:21 | AirTempGraphGen | Run Complete
+2026-03-11 09:50:21 | RainBuckets | Run Start
+2026-03-11 09:50:21 | RainBuckets | Run Complete precip=0.000 disp0=0.00 disp1=0.00 disp2=0.00
+OK 2026-03-11T10:00:18 code=200 json=True len=19611
+2026-03-11 10:00:18 | AirTempGraphGen | Run Start
+2026-03-11 10:00:18 | AirTempGraphGen | Run Complete
+2026-03-11 10:00:18 | RainBuckets | Run Start
+2026-03-11 10:00:18 | RainBuckets | Run Complete precip=0.000 disp0=0.00 disp1=0.00 disp2=0.00
+OK 2026-03-11T10:21:02 code=200 json=True len=19610
+2026-03-11 10:21:02 | AirTempGraphGen | Run Start
+2026-03-11 10:21:02 | AirTempGraphGen | Run Complete
+2026-03-11 10:21:02 | RainBuckets | Run Start
+2026-03-11 10:21:02 | RainBuckets | Run Complete precip=0.000 disp0=0.00 disp1=0.00 disp2=0.00
+OK 2026-03-11T10:30:53 code=200 json=True len=19612
+2026-03-11 10:30:53 | AirTempGraphGen | Run Start
+2026-03-11 10:30:53 | AirTempGraphGen | Run Complete
+2026-03-11 10:30:53 | RainBuckets | Run Start
+2026-03-11 10:30:53 | RainBuckets | Run Complete precip=0.000 disp0=0.00 disp1=0.00 disp2=0.00
+OK 2026-03-11T10:40:45 code=200 json=True len=19611
+2026-03-11 10:40:45 | AirTempGraphGen | Run Start
+2026-03-11 10:40:45 | AirTempGraphGen | Run Complete
+2026-03-11 10:40:45 | RainBuckets | Run Start
+2026-03-11 10:40:45 | RainBuckets | Run Complete precip=0.000 disp0=0.00 disp1=0.00 disp2=0.00
+OK 2026-03-11T10:50:36 code=200 json=True len=19612
+2026-03-11 10:50:36 | AirTempGraphGen | Run Start
+2026-03-11 10:50:36 | AirTempGraphGen | Run Complete
+2026-03-11 10:50:36 | RainBuckets | Run Start
+2026-03-11 10:50:36 | RainBuckets | Run Complete precip=0.000 disp0=0.00 disp1=0.00 disp2=0.00
+OK 2026-03-11T11:00:28 code=200 json=True len=19612
+2026-03-11 11:00:28 | AirTempGraphGen | Run Start
+2026-03-11 11:00:28 | AirTempGraphGen | Run Complete
+2026-03-11 11:00:28 | RainBuckets | Run Start
+2026-03-11 11:00:28 | RainBuckets | Run Complete precip=0.000 disp0=0.00 disp1=0.00 disp2=0.00
+OK 2026-03-11T11:10:20 code=200 json=True len=19611
+2026-03-11 11:10:20 | AirTempGraphGen | Run Start
+2026-03-11 11:10:20 | AirTempGraphGen | Run Complete
+2026-03-11 11:10:20 | RainBuckets | Run Start
+2026-03-11 11:10:20 | RainBuckets | Run Complete precip=0.000 disp0=0.00 disp1=0.00 disp2=0.00
+OK 2026-03-11T11:20:13 code=200 json=True len=19612
+2026-03-11 11:20:13 | AirTempGraphGen | Run Start
+2026-03-11 11:20:13 | AirTempGraphGen | Run Complete
+2026-03-11 11:20:13 | RainBuckets | Run Start
+2026-03-11 11:20:13 | RainBuckets | Run Complete precip=0.000 disp0=0.00 disp1=0.00 disp2=0.00
+OK 2026-03-11T11:41:02 code=200 json=True len=19611
+2026-03-11 11:41:02 | AirTempGraphGen | Run Start
+2026-03-11 11:41:02 | AirTempGraphGen | Run Complete
+2026-03-11 11:41:02 | RainBuckets | Run Start
+2026-03-11 11:41:02 | RainBuckets | Run Complete precip=0.000 disp0=0.00 disp1=0.00 disp2=0.00
+OK 2026-03-11T11:50:58 code=200 json=True len=19612
+2026-03-11 11:50:58 | AirTempGraphGen | Run Start
+2026-03-11 11:50:58 | AirTempGraphGen | Run Complete
+2026-03-11 11:50:58 | RainBuckets | Run Start
+2026-03-11 11:50:58 | RainBuckets | Run Complete precip=0.000 disp0=0.00 disp1=0.00 disp2=0.00
+OK 2026-03-11T12:00:18 master=E:\Documents\Rainmeter\Skins\Heartland\ks_soiltemp_2in_master.csv rolling=E:\Documents\Rainmeter\Skins\Heartland\ks_soiltemp_2in_rolling7day.csv rows=187
+2026-03-11 12:00:18 | SoilGraphGen | Run Start
+2026-03-11 12:00:18 | SoilGraphGen | Run Complete
+OK 2026-03-11T12:00:50 code=200 json=True len=19612
+2026-03-11 12:00:50 | AirTempGraphGen | Run Start
+2026-03-11 12:00:50 | AirTempGraphGen | Run Complete
+2026-03-11 12:00:50 | RainBuckets | Run Start
+2026-03-11 12:00:50 | RainBuckets | Run Complete precip=0.000 disp0=0.00 disp1=0.00 disp2=0.00
+OK 2026-03-11T12:10:41 code=200 json=True len=19612
+2026-03-11 12:10:41 | AirTempGraphGen | Run Start
+2026-03-11 12:10:41 | AirTempGraphGen | Run Complete
+2026-03-11 12:10:41 | RainBuckets | Run Start
+2026-03-11 12:10:41 | RainBuckets | Run Complete precip=0.000 disp0=0.00 disp1=0.00 disp2=0.00
+OK 2026-03-11T12:20:33 code=200 json=True len=19610
+2026-03-11 12:20:33 | AirTempGraphGen | Run Start
+2026-03-11 12:20:33 | AirTempGraphGen | Run Complete
+2026-03-11 12:20:33 | RainBuckets | Run Start
+2026-03-11 12:20:33 | RainBuckets | Run Complete precip=0.000 disp0=0.00 disp1=0.00 disp2=0.00
+OK 2026-03-11T12:30:25 code=200 json=True len=19611
+2026-03-11 12:30:25 | AirTempGraphGen | Run Start
+2026-03-11 12:30:25 | AirTempGraphGen | Run Complete
+2026-03-11 12:30:25 | RainBuckets | Run Start
+2026-03-11 12:30:25 | RainBuckets | Run Complete precip=0.000 disp0=0.00 disp1=0.00 disp2=0.00
+OK 2026-03-11T12:40:16 code=200 json=True len=19613
+2026-03-11 12:40:16 | AirTempGraphGen | Run Start
+2026-03-11 12:40:16 | AirTempGraphGen | Run Complete
+2026-03-11 12:40:16 | RainBuckets | Run Start
+2026-03-11 12:40:16 | RainBuckets | Run Complete precip=0.000 disp0=0.00 disp1=0.00 disp2=0.00
+OK 2026-03-11T12:50:11 code=200 json=True len=19613
+2026-03-11 12:50:11 | AirTempGraphGen | Run Start
+2026-03-11 12:50:11 | AirTempGraphGen | Run Complete
+2026-03-11 12:50:11 | RainBuckets | Run Start
+2026-03-11 12:50:11 | RainBuckets | Run Complete precip=0.000 disp0=0.00 disp1=0.00 disp2=0.00
+OK 2026-03-11T13:01:05 code=200 json=True len=19612
+2026-03-11 13:01:05 | AirTempGraphGen | Run Start
+2026-03-11 13:01:05 | AirTempGraphGen | Run Complete
+2026-03-11 13:01:05 | RainBuckets | Run Start
+2026-03-11 13:01:06 | RainBuckets | Run Complete precip=0.000 disp0=0.00 disp1=0.00 disp2=0.00
+OK 2026-03-11T13:11:00 code=200 json=True len=19612
+2026-03-11 13:11:00 | AirTempGraphGen | Run Start
+2026-03-11 13:11:00 | AirTempGraphGen | Run Complete
+2026-03-11 13:11:00 | RainBuckets | Run Start
+2026-03-11 13:11:00 | RainBuckets | Run Complete precip=0.000 disp0=0.00 disp1=0.00 disp2=0.00
+OK 2026-03-11T13:20:49 code=200 json=True len=19613
+2026-03-11 13:20:49 | AirTempGraphGen | Run Start
+2026-03-11 13:20:49 | AirTempGraphGen | Run Complete
+2026-03-11 13:20:49 | RainBuckets | Run Start
+2026-03-11 13:20:49 | RainBuckets | Run Complete precip=0.000 disp0=0.00 disp1=0.00 disp2=0.00
+OK 2026-03-11T13:30:41 code=200 json=True len=19612
+2026-03-11 13:30:41 | AirTempGraphGen | Run Start
+2026-03-11 13:30:41 | AirTempGraphGen | Run Complete
+2026-03-11 13:30:41 | RainBuckets | Run Start
+2026-03-11 13:30:41 | RainBuckets | Run Complete precip=0.000 disp0=0.00 disp1=0.00 disp2=0.00
+OK 2026-03-11T13:40:33 code=200 json=True len=19612
+2026-03-11 13:40:33 | AirTempGraphGen | Run Start
+2026-03-11 13:40:33 | AirTempGraphGen | Run Complete
+2026-03-11 13:40:33 | RainBuckets | Run Start
+2026-03-11 13:40:33 | RainBuckets | Run Complete precip=0.000 disp0=0.00 disp1=0.00 disp2=0.00
+OK 2026-03-11T13:50:24 code=200 json=True len=19612
+2026-03-11 13:50:24 | AirTempGraphGen | Run Start
+2026-03-11 13:50:24 | AirTempGraphGen | Run Complete
+2026-03-11 13:50:24 | RainBuckets | Run Start
+2026-03-11 13:50:24 | RainBuckets | Run Complete precip=0.000 disp0=0.00 disp1=0.00 disp2=0.00
+OK 2026-03-11T14:00:25 code=200 json=True len=19613
+2026-03-11 14:00:25 | AirTempGraphGen | Run Start
+2026-03-11 14:00:25 | AirTempGraphGen | Run Complete
+2026-03-11 14:00:25 | RainBuckets | Run Start
+2026-03-11 14:00:25 | RainBuckets | Run Complete precip=0.000 disp0=0.00 disp1=0.00 disp2=0.00
+OK 2026-03-11T14:21:16 code=200 json=True len=19612
+2026-03-11 14:21:16 | AirTempGraphGen | Run Start
+2026-03-11 14:21:16 | AirTempGraphGen | Run Complete
+2026-03-11 14:21:16 | RainBuckets | Run Start
+2026-03-11 14:21:16 | RainBuckets | Run Complete precip=0.000 disp0=0.00 disp1=0.00 disp2=0.00
+OK 2026-03-11T14:31:00 code=200 json=True len=19613
+2026-03-11 14:31:00 | AirTempGraphGen | Run Start
+2026-03-11 14:31:00 | AirTempGraphGen | Run Complete
+2026-03-11 14:31:00 | RainBuckets | Run Start
+2026-03-11 14:31:00 | RainBuckets | Run Complete precip=0.000 disp0=0.00 disp1=0.00 disp2=0.00
+OK 2026-03-11T14:40:55 code=200 json=True len=19613
+2026-03-11 14:40:55 | AirTempGraphGen | Run Start
+2026-03-11 14:40:55 | AirTempGraphGen | Run Complete
+2026-03-11 14:40:55 | RainBuckets | Run Start
+2026-03-11 14:40:55 | RainBuckets | Run Complete precip=0.000 disp0=0.00 disp1=0.00 disp2=0.00
+OK 2026-03-11T14:50:39 code=200 json=True len=19613
+2026-03-11 14:50:39 | AirTempGraphGen | Run Start
+2026-03-11 14:50:40 | AirTempGraphGen | Run Complete
+2026-03-11 14:50:40 | RainBuckets | Run Start
+2026-03-11 14:50:40 | RainBuckets | Run Complete precip=0.000 disp0=0.00 disp1=0.00 disp2=0.00
+OK 2026-03-11T15:00:33 code=200 json=True len=19613
+2026-03-11 15:00:34 | AirTempGraphGen | Run Start
+2026-03-11 15:00:34 | AirTempGraphGen | Run Complete
+2026-03-11 15:00:34 | RainBuckets | Run Start
+2026-03-11 15:00:34 | RainBuckets | Run Complete precip=0.000 disp0=0.00 disp1=0.00 disp2=0.00
+OK 2026-03-11T15:10:32 code=200 json=True len=19613
+2026-03-11 15:10:33 | AirTempGraphGen | Run Start
+2026-03-11 15:10:33 | AirTempGraphGen | Run Complete
+2026-03-11 15:10:33 | RainBuckets | Run Start
+2026-03-11 15:10:33 | RainBuckets | Run Complete precip=0.000 disp0=0.00 disp1=0.00 disp2=0.00
+OK 2026-03-11T15:20:19 code=200 json=True len=19612
+2026-03-11 15:20:19 | AirTempGraphGen | Run Start
+2026-03-11 15:20:19 | AirTempGraphGen | Run Complete
+2026-03-11 15:20:19 | RainBuckets | Run Start
+2026-03-11 15:20:19 | RainBuckets | Run Complete precip=0.000 disp0=0.00 disp1=0.00 disp2=0.00

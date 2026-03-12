@@ -130,7 +130,18 @@ setShape(meterName, shapeIdx, "Path FreezePatch1 | StrokeWidth 0 | Fill Color 14
 
 
 ## Instructions for Claude
-
+- [ ] Extend rain indicator bars over the entire air temp graph, one for each day. Past = actual precip, today = Forcast in alpha 180 + actual in alpha 255, future = forecast precip (as is)
+    - Use blue for rain, cyan for mix, white for snow
+    - Front Z, below only the blue line and freeze fill.
+- [ ] I extended the bg down by 50. 
+    - Move the Air Temp graph and Soil temp graphs down by 50. 
+    - Move B2 (rainbucket) down by 50, b1 down by 30, b0 down by 10. Adjust the start and stop points of the raidrops and drips and overflow drips accordingly. 
+    - [ ] Modify the OM pull to extract alerts, warnings, watches and the like, if not already pulled. (examples: Fire watch, tornado warning)
+        - Create a row below the barometer-humidity row that displays the warnings at 120% the size of the icon row above (windsock, eg).
+            - Use appropriate graphics from /WeatherIcons for each alert. Display them in the same hidden-not hidden/left justified manner as the windsock row. 
+            - Put the code in an .inc or whatever the professional way would be to create this feature instead of making 100 more lines in the ini. 
+            - Initially, make all of the icons visible for inspection. Create appropriate tooltips for each icon. 
+- [ ] Mesonet dot indicates red when it should be green on OK probe. It's only red when ERR or other not OK status is detected.
 
 ## Completed
 - [x] Add lines similar to the freeze line (just a horizontal line) in the *soil graph* at 50, 55 and 60 degrees. Make them green, but 50 opacity is 150, 55 is 160, 60 is 180. Actually... I changed my mind about the color. Make the 50 degree one yellow and the other two green.

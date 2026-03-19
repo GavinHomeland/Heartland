@@ -317,7 +317,7 @@ function Run()
       local h = math.floor(((clamp(v, minF, maxF) - minF) / rangeF) * graphH + 0.5)
       if h < 1 then h = 1 end
       local r, g, b = interpStops(AIR_STOPS, v)
-      local alpha = (i > pastDays) and 50 or 100
+      local alpha = (i > pastDays) and 70 or 120
       setShape(meterName, shapeIdx,
         string.format("Rectangle %d,%d,%d,%d,0 | Fill Color %s | StrokeWidth 0",
           barLeftX(i), graphH - h, barW, h, rgba(r, g, b, alpha)))

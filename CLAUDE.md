@@ -133,6 +133,7 @@ setShape(meterName, shapeIdx, "Path FreezePatch1 | StrokeWidth 0 | Fill Color 14
 - [ ] Extend rain indicator bars over the entire air temp graph, one for each day. Past = actual precip, today = Forcast in alpha 180 + actual in alpha 255, future = forecast precip (as is)
     - Use blue for rain, cyan for mix, white for snow
     - Front Z, below only the blue line and freeze fill.
+- [ ] On Air Temp, create a grey alpha 180 horizontal line at 72 degrees (z same as the day vertical lines -- in the back) for reference.
 - [ ] I extended the bg down by 50. 
     - Move the Air Temp graph and Soil temp graphs down by 50. 
     - Move B2 (rainbucket) down by 50, b1 down by 30, b0 down by 10. Adjust the start and stop points of the raidrops and drips and overflow drips accordingly. 

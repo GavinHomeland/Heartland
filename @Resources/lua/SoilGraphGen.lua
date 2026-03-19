@@ -292,9 +292,12 @@ local lastUpdatedStr = "n/a"
       idx = idx + 1
     end
   end
-  -- Freeze Line
+  -- Freeze Line (32°F red) + Warning Line (34°F yellow)
   local freezeY = math.floor(graphH - (((32 - minF) / rangeF) * graphH) + 0.5)
   setShape(meterName, idx, string.format("Line 0,%d,%d,%d | StrokeWidth 1 | Stroke Color 255,0,0,210", freezeY, graphW, freezeY))
+  idx = idx + 1
+  local warnY = math.floor(graphH - (((34 - minF) / rangeF) * graphH) + 0.5)
+  setShape(meterName, idx, string.format("Line 0,%d,%d,%d | StrokeWidth 1 | Stroke Color 255,220,0,180", warnY, graphW, warnY))
   idx = idx + 1
 
   -- Warm threshold lines (50°F yellow, 55/60°F green)

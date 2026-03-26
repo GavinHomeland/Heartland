@@ -458,6 +458,9 @@ end
 -- UPDATE  (called every 100ms)
 -- ============================================================
 function Update()
+  -- Nothing to animate when dry; Run() sets fill levels on each OM fetch
+  if not isRaining and not isThunderstorm then return "" end
+
   -- Lightning flash
   if isThunderstorm then
     if lightningOn then
@@ -508,7 +511,7 @@ function Update()
   updateOverflowDripShapes()
 
   SKIN:Bang("!UpdateMeter", METER)
-  SKIN:Bang("!Redraw")
+  SKIN:Bang("!Redraw")   -- only reached when isRaining or isThunderstorm
 end
 
 -- ============================================================

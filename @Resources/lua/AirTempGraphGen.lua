@@ -73,6 +73,14 @@ local function appendLog(path, msg)
   if f then f:write(msg .. "\n"); f:close() end
 end
 
+-- Wind speed color stops (mph): still→white, breeze→green, windy→yellow, max→red
+local WIND_STOPS = {
+  { t=  0, r=255, g=255, b=255 },  -- still: white
+  { t= 10, r=  0, g=210, b=  0 },  -- light breeze: green
+  { t= 25, r=255, g=220, b=  0 },  -- windy: yellow
+  { t= 45, r=255, g= 40, b= 40 },  -- max: red
+}
+
 -- Color stops: hard break at 32°F, range -20..110°F
 local AIR_STOPS = {
   { t=-20, r=255, g=255, b=255 },
@@ -121,6 +129,7 @@ local function rotateLogs()
   rotateLogFile(SKIN:GetVariable("RainBucketsLog",     ""), 1000)
   rotateLogFile(SKIN:GetVariable("OM_FetchLog",        ""), 1000)
   rotateLogFile(SKIN:GetVariable("KSSoilFetchLog",     ""), 1000)
+  rotateLogFile(SKIN:GetVariable("NWSAlerts_Log",      ""), 1000)
 end
 
 function Run()
@@ -228,13 +237,27 @@ function Run()
   end
   if not todayIdx then todayIdx = pastDays + 1 end
 
-  -- Parse current.temperature_2m
-  local currentTemp = nil
+  -- Parse daily.wind_speed_10m_max and wind_gusts_10m_max
+  local allWindSpeeds, allWindGusts = {}, {}
+  local windSpeedStr = jsonContent:match('"wind_speed_10m_max"%s*:%s*%[([^%]]+)%]')
+  if windSpeedStr then
+    for v in windSpeedStr:gmatch("([%d%.]+)") do allWindSpeeds[#allWindSpeeds+1] = tonumber(v) or 0 end
+  end
+  local windGustStr = jsonContent:match('"wind_gusts_10m_max"%s*:%s*%[([^%]]+)%]')
+  if windGustStr then
+    for v in windGustStr:gmatch("([%d%.]+)") do allWindGusts[#allWindGusts+1] = tonumber(v) or 0 end
+  end
+
+  -- Parse current.temperature_2m, current.wind_speed_10m, current.wind_gusts_10m, current.wind_direction_10m
+  local currentTemp, currentWindSpeed, currentWindGust, currentWindDir = nil, nil, nil, nil
   local curStart = jsonContent:find('"current"%s*:')
   if curStart then
     local curBlock = jsonContent:sub(curStart):match('%b{}')
     if curBlock then
-      currentTemp = tonumber(curBlock:match('"temperature_2m"%s*:%s*(-?%d+%.?%d*)'))
+      currentTemp      = tonumber(curBlock:match('"temperature_2m"%s*:%s*(-?%d+%.?%d*)'))
+      currentWindSpeed = tonumber(curBlock:match('"wind_speed_10m"%s*:%s*(-?%d+%.?%d*)'))
+      currentWindGust  = tonumber(curBlock:match('"wind_gusts_10m"%s*:%s*(-?%d+%.?%d*)'))
+      currentWindDir   = tonumber(curBlock:match('"wind_direction_10m"%s*:%s*(-?%d+%.?%d*)'))
     end
   end
 
@@ -454,7 +477,7 @@ function Run()
   end
 
   -- Cleanup leftover shapes (pre-declared up to 122 in INI)
-  local maxShapes = 123
+  local maxShapes = 130
   local blank = "Line 0,0,0,0 | StrokeWidth 0"
   for j = shapeIdx, maxShapes do setShape(meterName, j, blank) end
 
@@ -494,6 +517,86 @@ function Run()
   -- Shape 123: yellow warning line at 34°F (forefront)
   setShape(meterName, 123, string.format("Line 0,%d,%d,%d | StrokeWidth 1 | Stroke Color 255,220,0,210",
     warnY, graphW, warnY))
+
+  -- Shapes 124-130: wind forecast polyline (today → +7), 7 segments
+  -- Y=0 (top of graph) = MAX_WIND; rises up to graphH/3 at calm.
+  -- Color: white; alpha = clamp(100 + avg_gust_mph_of_segment, 100, 200).
+  -- Drawn at forefront z, above all other shapes.
+  do
+    local MAX_WIND = 60.0
+    local windBandH = graphH / 3.0
+
+    local function windToY(spd)
+      return math.floor((1 - clamp(spd, 0, MAX_WIND) / MAX_WIND) * windBandH + 0.5)
+    end
+
+    -- Build 8 points: today (i=pastDays) through today+7 (i=pastDays+futureDays)
+    local wPts = {}
+    for i = 0, futureDays do
+      local barI   = pastDays + i
+      local offset = (todayIdx - pastDays) + barI  -- 1-based into daily arrays
+      local spd    = allWindSpeeds[offset] or 0
+      local gst    = allWindGusts[offset]  or 0
+      -- Today: blend live current wind with forecast daily max
+      if i == 0 then
+        if currentWindSpeed then spd = (spd + currentWindSpeed) / 2 end
+        if currentWindGust  then gst = math.max(gst, currentWindGust) end
+      end
+      wPts[i] = { x = barCenterX(barI), y = windToY(spd), spd = spd, gust = gst }
+    end
+
+    local windLog = string.format("WindLine pts: ")
+    for i = 0, futureDays do
+      if wPts[i] then
+        windLog = windLog .. string.format("[%d x=%d y=%d g=%.1f] ", i, wPts[i].x, wPts[i].y, wPts[i].gust)
+      end
+    end
+    appendLog(logPath, os.date("%Y-%m-%d %H:%M:%S") .. " | AirTempGraphGen | " .. windLog)
+
+    -- Export next 3 days' wind forecast + pre-bake stable tooltip on overlay meter
+    local DAY_ABBR    = {"Sun","Mon","Tue","Wed","Thu","Fri","Sat"}
+    local CARDINALS   = {"N","NE","E","SE","S","SW","W","NW"}
+    local function cardinalFromDeg(d)
+      return CARDINALS[math.floor((d % 360 + 22.5) / 45) % 8 + 1]
+    end
+    for i = 1, 3 do
+      if wPts[i] then
+        local t   = os.time() + i * 86400
+        local dow = os.date("*t", t).wday
+        SKIN:Bang("!SetVariable", "WindFcstDay" .. i, DAY_ABBR[dow])
+        SKIN:Bang("!SetVariable", "WindFcstSpd" .. i, string.format("%.0f", wPts[i].spd))
+        SKIN:Bang("!SetVariable", "WindFcstGst" .. i, string.format("%.0f", wPts[i].gust))
+      end
+    end
+    -- Compose pre-baked tooltip (set once per OM fetch on stable overlay meter)
+    local tipSpd = currentWindSpeed and string.format("%.0f", currentWindSpeed) or "?"
+    local tipGst = currentWindGust  and string.format("%.0f", currentWindGust)  or "?"
+    local tipDir = currentWindDir   and string.format(" %s (%d\176)", cardinalFromDeg(currentWindDir), math.floor(currentWindDir)) or ""
+    local windTip = string.format("Wind: %s mph%s  Gusts: %s mph", tipSpd, tipDir, tipGst)
+    for i = 1, 3 do
+      if wPts[i] then
+        local t   = os.time() + i * 86400
+        local dow = os.date("*t", t).wday
+        windTip = windTip .. string.format("\n%s: %.0f-%.0f mph", DAY_ABBR[dow], wPts[i].spd, wPts[i].gust)
+      end
+    end
+    SKIN:Bang("!SetOption",  "MeterWindArrowTip", "ToolTipText", windTip)
+    SKIN:Bang("!UpdateMeter","MeterWindArrowTip")
+
+    -- Draw 7 segments (i to i+1); color varies by avg speed (still→white, breeze→green, windy→yellow, max→red)
+    for i = 0, futureDays - 1 do
+      local p0, p1 = wPts[i], wPts[i + 1]
+      if p0 and p1 then
+        local avgSpd  = (p0.spd + p1.spd) / 2
+        local wr, wg, wb = interpStops(WIND_STOPS, avgSpd)
+        setShape(meterName, 124 + i, string.format(
+          "Line %d,%d,%d,%d | StrokeWidth 2 | Stroke Color %d,%d,%d,220",
+          p0.x, p0.y, p1.x, p1.y, wr, wg, wb))
+      else
+        setShape(meterName, 124 + i, blank)
+      end
+    end
+  end
 
   -- ===== Day-label meters: today + every-other future day =====
   -- Each meter is individually positioned at the bar center X in the ini.

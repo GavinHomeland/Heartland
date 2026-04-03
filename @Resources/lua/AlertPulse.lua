@@ -198,8 +198,8 @@ function Update()
                 SKIN:Bang("!CommandMeasure", "MeasureAlertSoundTornadoPS", "Run")
             end
             lastSoundTick = tick
-        elseif (anyWarn or tornadoWatch) and (tick - lastSoundTick >= SOUND_INTERVAL) then
-            -- Normal alerts + tornado watch: triple beep every 30 s
+        elseif anyWarn and (tick - lastSoundTick >= SOUND_INTERVAL) then
+            -- Warnings only: triple beep every 30 s (watches are silent)
             if muted ~= "1" then
                 SKIN:Bang("!CommandMeasure", "MeasureAlertSoundPS", "Run")
                 SKIN:Bang("!Log", "AlertPulse: sound triggered (tick=" .. tick .. ")", "Notice")
@@ -213,7 +213,7 @@ function Update()
     local needRedraw = false
 
     -- ACK button visibility — only bang when state changes
-    local ackHidden = not (anyAlert and not acknowledged)
+    local ackHidden = not (anyWarn and not acknowledged)
     if ackHidden ~= lastAckHidden then
         lastAckHidden = ackHidden
         setHidden(ACK_METER, ackHidden)

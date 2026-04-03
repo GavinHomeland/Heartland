@@ -76,9 +76,9 @@ end
 -- Wind speed color stops (mph): still→white, breeze→green, windy→yellow, max→red
 local WIND_STOPS = {
   { t=  0, r=255, g=255, b=255 },  -- still: white
-  { t= 10, r=  0, g=210, b=  0 },  -- light breeze: green
-  { t= 25, r=255, g=220, b=  0 },  -- windy: yellow
-  { t= 45, r=255, g= 40, b= 40 },  -- max: red
+  { t= 15, r=  0, g=210, b=  0 },  -- light breeze: green
+  { t= 30, r=255, g=220, b=  0 },  -- windy: yellow
+  { t= 50, r=255, g= 40, b= 40 },  -- severe: red
 }
 
 -- Color stops: hard break at 32°F, range -20..110°F
@@ -145,14 +145,13 @@ function Run()
   local omJsonPath = SKIN:GetVariable("OM_JSON", "")
   local barW       = tonumber(SKIN:GetVariable("AirTempGraphBarW",  "8"))   or 8
   local barGap     = tonumber(SKIN:GetVariable("AirTempGraphBarGap", "1"))  or 1
-  local graphH     = tonumber(SKIN:GetVariable("AirTempGraphH",    "130"))  or 130
-  local minF       = tonumber(SKIN:GetVariable("AirTempGraphMinF",  "-20")) or -20
+  local graphH     = tonumber(SKIN:GetVariable("AirTempGraphH",    "150"))  or 150
   local maxF       = tonumber(SKIN:GetVariable("AirTempGraphMaxF",  "110")) or 110
   local pastDays   = 14
   local futureDays = 7
   local totalBars  = pastDays + 1 + futureDays  -- 22
-  local rangeF     = (maxF - minF <= 0) and 1 or (maxF - minF)
   local graphW     = totalBars * barW + math.max(0, totalBars - 1) * barGap  -- 197
+  local minF, rangeF = -20, 130  -- placeholders; overridden after data parse
 
   -- Read om.json
   local jsonContent = ""
@@ -213,6 +212,36 @@ function Run()
               if tt >= t8pm and tt <= t8am then
                 if not lastNightLow or temp < lastNightLow then lastNightLow = temp end
               end
+            end
+          end
+        end
+      end
+    end
+  end
+
+  -- Sum hourly.precipitation from midnight today up to current hour
+  local todayFallenIn = 0
+  do
+    local hStart = jsonContent:find('"hourly"%s*:')
+    if hStart then
+      local hBlock     = jsonContent:sub(hStart)
+      local hTimesStr  = hBlock:match('"time"%s*:%s*%[([^%]]+)%]')
+      local hPrecipStr = hBlock:match('"precipitation"%s*:%s*%[([^%]]+)%]')
+      if hTimesStr and hPrecipStr then
+        local hTimes, hPrecips = {}, {}
+        for ts in hTimesStr:gmatch('"([^"]+)"')      do hTimes[#hTimes+1]   = ts            end
+        for pv in hPrecipStr:gmatch("([%d%.]+)")     do hPrecips[#hPrecips+1] = tonumber(pv) or 0 end
+        local nowT      = os.date("*t")
+        local midnightT = os.time({year=nowT.year, month=nowT.month, day=nowT.day,
+                                    hour=0, min=0, sec=0, isdst=nowT.isdst})
+        local nowEpoch  = os.time()
+        for k, ts in ipairs(hTimes) do
+          local yr, mo, dy, hr = ts:match("(%d+)-(%d+)-(%d+)T(%d+):")
+          if yr then
+            local tt = os.time({year=tonumber(yr), month=tonumber(mo), day=tonumber(dy),
+                                 hour=tonumber(hr), min=0, sec=0, isdst=nowT.isdst})
+            if tt >= midnightT and tt <= nowEpoch then
+              todayFallenIn = todayFallenIn + (hPrecips[k] or 0)
             end
           end
         end
@@ -284,6 +313,21 @@ function Run()
     end
   end
 
+  -- Dynamic floor: lowest value across all mins + current, padded 10°F, rounded down to 5°F
+  local dataMin = nil
+  for i = 0, totalBars - 1 do
+    local v = points[i]
+    if v and (not dataMin or v < dataMin) then dataMin = v end
+  end
+  if currentTemp and (not dataMin or currentTemp < dataMin) then dataMin = currentTemp end
+  local minF
+  if dataMin then
+    minF = math.floor((dataMin - 20) / 5) * 5
+  else
+    minF = tonumber(SKIN:GetVariable("AirTempGraphMinF", "-20")) or -20
+  end
+  local rangeF = (maxF - minF <= 0) and 1 or (maxF - minF)
+
   -- Helpers
   local function tempToY(t)
     return math.floor(graphH - ((clamp(t, minF, maxF) - minF) / rangeF) * graphH + 0.5)
@@ -319,6 +363,17 @@ function Run()
   local freezeY = math.floor(graphH - (((32 - minF) / rangeF) * graphH) + 0.5)
   local warnY   = math.floor(graphH - (((34 - minF) / rangeF) * graphH) + 0.5)
 
+  -- Shape (wind zero reference line, z=back): grey horizontal at 0 mph, today→end
+  do
+    local windBandH = graphH / 3.0
+    local zeroY     = math.floor(windBandH + 0.5)
+    local startX    = barLeftX(pastDays)
+    setShape(meterName, shapeIdx,
+      string.format("Line %d,%d,%d,%d | StrokeWidth 1 | Stroke Color 140,140,140,180",
+        startX, zeroY, graphW, zeroY))
+    shapeIdx = shapeIdx + 1
+  end
+
   -- Shapes (future day reference lines, z=back): grey vertical, stops at top of hi bar
   for i = pastDays + 1, totalBars - 1 do
     local cx = barCenterX(i)
@@ -341,7 +396,7 @@ function Run()
       local h = math.floor(((clamp(v, minF, maxF) - minF) / rangeF) * graphH + 0.5)
       if h < 1 then h = 1 end
       local r, g, b = interpStops(AIR_STOPS, v)
-      local alpha = (i > pastDays) and 70 or 120
+      local alpha = (i > pastDays) and 85 or 120
       setShape(meterName, shapeIdx,
         string.format("Rectangle %d,%d,%d,%d,0 | Fill Color %s | StrokeWidth 0",
           barLeftX(i), graphH - h, barW, h, rgba(r, g, b, alpha)))
@@ -356,7 +411,7 @@ function Run()
       local h = math.floor(((clamp(v, minF, maxF) - minF) / rangeF) * graphH + 0.5)
       if h < 1 then h = 1 end
       local r, g, b = interpStops(AIR_STOPS, v)
-      local alpha = (i == pastDays) and 255 or (i > pastDays and 50 or 100)
+      local alpha = (i == pastDays) and 255 or (i > pastDays and 61 or 100)
       setShape(meterName, shapeIdx,
         string.format("Rectangle %d,%d,%d,%d,0 | Fill Color %s | StrokeWidth 0",
           barLeftX(i), graphH - h, barW, h, rgba(r, g, b, alpha)))
@@ -477,26 +532,55 @@ function Run()
   end
 
   -- Cleanup leftover shapes (pre-declared up to 122 in INI)
-  local maxShapes = 130
+  local maxShapes = 131
   local blank = "Line 0,0,0,0 | StrokeWidth 0"
   for j = shapeIdx, maxShapes do setShape(meterName, j, blank) end
 
   -- Shapes 111-118: precipitation bars (today + 7 forecast; forefront z)
-  -- Scale: 2.0 in = full height (graphH - freezeY = 52px); clamped at freeze line
+  -- Scale: 2.0 in = full height; clamped at freeze line.
+  -- Today (j=0): split bar — fallen (alpha 255) below, remaining forecast (alpha 140) above.
   local maxPrecipH = graphH - freezeY
   for j = 0, futureDays do
     local si = 111 + j
     local dailyIdx = todayIdx + j
     local precipIn = dailyPrecip[dailyIdx] or 0
-    local h = math.floor(math.min(precipIn / 2.0, 1.0) * maxPrecipH + 0.5)
     local barI = pastDays + j
     local bx = barI * (barW + barGap)
-    if h >= 1 then
-      setShape(meterName, si, string.format(
-        "Rectangle %d,%d,%d,%d | Fill Color 80,160,255,255 | StrokeWidth 0",
-        bx, graphH - h, barW, h))
+    if j == 0 then
+      -- Today: split into fallen (solid) + remaining forecast (translucent)
+      local fallen    = clamp(todayFallenIn, 0, precipIn)
+      local remaining = math.max(0, precipIn - fallen)
+      local hFallen   = math.floor(math.min(fallen    / 2.0, 1.0) * maxPrecipH + 0.5)
+      local hRemain   = math.floor(math.min(remaining / 2.0, 1.0) * maxPrecipH + 0.5)
+      if fallen    > 0.005 and hFallen  < 3 then hFallen  = 3 end
+      if remaining > 0.005 and hRemain  < 3 then hRemain  = 3 end
+      local hTotal = hFallen + hRemain
+      -- Draw fallen portion (bottom): blue alpha 255
+      if hFallen >= 1 then
+        SKIN:Bang("!SetOption", meterName, "Shape" .. si, string.format(
+          "Rectangle %d,%d,%d,%d | Fill Color 40,100,200,255 | StrokeWidth 0",
+          bx, graphH - hFallen, barW, hFallen))
+      else
+        SKIN:Bang("!SetOption", meterName, "Shape" .. si, blank)
+      end
+      -- Draw remaining forecast portion (above fallen): cyan alpha 255
+      if hRemain >= 1 then
+        SKIN:Bang("!SetOption", meterName, "Shape131", string.format(
+          "Rectangle %d,%d,%d,%d | Fill Color 0,200,220,255 | StrokeWidth 0",
+          bx, graphH - hTotal, barW, hRemain))
+      else
+        SKIN:Bang("!SetOption", meterName, "Shape131", blank)
+      end
     else
-      setShape(meterName, si, blank)
+      local h = math.floor(math.min(precipIn / 2.0, 1.0) * maxPrecipH + 0.5)
+      if precipIn > 0.005 and h < 3 then h = 3 end
+      if h >= 1 then
+        SKIN:Bang("!SetOption", meterName, "Shape" .. si, string.format(
+          "Rectangle %d,%d,%d,%d | Fill Color 40,100,200,140 | StrokeWidth 0",
+          bx, graphH - h, barW, h))
+      else
+        SKIN:Bang("!SetOption", meterName, "Shape" .. si, blank)
+      end
     end
   end
 
@@ -523,11 +607,12 @@ function Run()
   -- Color: white; alpha = clamp(100 + avg_gust_mph_of_segment, 100, 200).
   -- Drawn at forefront z, above all other shapes.
   do
-    local MAX_WIND = 60.0
+    local MAX_WIND = 50.0
     local windBandH = graphH / 3.0
 
     local function windToY(spd)
-      return math.floor((1 - clamp(spd, 0, MAX_WIND) / MAX_WIND) * windBandH + 0.5)
+      local t = clamp(spd, 0, MAX_WIND) / MAX_WIND
+      return math.floor((1 - t) * (windBandH + 10) + 0.5)
     end
 
     -- Build 8 points: today (i=pastDays) through today+7 (i=pastDays+futureDays)
@@ -537,10 +622,10 @@ function Run()
       local offset = (todayIdx - pastDays) + barI  -- 1-based into daily arrays
       local spd    = allWindSpeeds[offset] or 0
       local gst    = allWindGusts[offset]  or 0
-      -- Today: blend live current wind with forecast daily max
+      -- Today: use live current wind directly (same source as wind arrow)
       if i == 0 then
-        if currentWindSpeed then spd = (spd + currentWindSpeed) / 2 end
-        if currentWindGust  then gst = math.max(gst, currentWindGust) end
+        if currentWindSpeed then spd = currentWindSpeed end
+        if currentWindGust  then gst = currentWindGust  end
       end
       wPts[i] = { x = barCenterX(barI), y = windToY(spd), spd = spd, gust = gst }
     end

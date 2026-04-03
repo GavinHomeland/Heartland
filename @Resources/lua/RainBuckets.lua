@@ -201,11 +201,11 @@ end
 -- RAINDROP ANIMATION
 -- ============================================================
 local function intensityToParams(rate)
-  if rate >= 1.0 then return 8, 4
-  elseif rate >= 0.31 then return 6, 3
-  elseif rate >= 0.11 then return 4, 2
-  elseif rate >= 0.01 then return 2, 2
-  else return 1, 1
+  if rate >= 1.0 then return 8, 8
+  elseif rate >= 0.31 then return 6, 6
+  elseif rate >= 0.11 then return 4, 4
+  elseif rate >= 0.01 then return 2, 4
+  else return 1, 2
   end
 end
 
@@ -240,7 +240,7 @@ local function advanceDrops()
       if d.y >= d.stopY then
         d.active     = false
         d.splashing  = true
-        d.splashTick = 4
+        d.splashTick = 2
         d.splashY    = d.stopY
         d.spawnIn    = math.random(0, 2)
       end
@@ -308,13 +308,13 @@ local function advanceDrips()
         dynEndY = clamp(B2_BOT - math.floor(waterH), B2_TOP, B2_BOT)
       end
 
-      local blobSpeed = (thunderCode == 96 or thunderCode == 99) and 3 or 2
+      local blobSpeed = (thunderCode == 96 or thunderCode == 99) and 6 or 4
       if bl.active then
         bl.y = bl.y + blobSpeed
         if bl.y >= dynEndY then
           bl.active    = false
           bl.splashing = true
-          bl.splashTick = 3
+          bl.splashTick = 2
           bl.splashY   = dynEndY
         end
       else
@@ -380,7 +380,7 @@ local function advanceOverflowDrips()
     for _, drop in ipairs(side.drops) do
       if isOverflow then
         if drop.active then
-          drop.y = drop.y + 2
+          drop.y = drop.y + 4
           if drop.y >= dynEndY then
             drop.active   = false
             drop.cooldown = 0
@@ -458,8 +458,12 @@ end
 -- UPDATE  (called every 100ms)
 -- ============================================================
 function Update()
-  -- Nothing to animate when dry; Run() sets fill levels on each OM fetch
-  if not isRaining and not isThunderstorm then return "" end
+  -- Skip entirely only when there is truly nothing to animate or drain
+  local anyWater    = (disp0 > 0) or (disp1 > 0) or (disp2 > 0)
+  local anyOverflow = (disp0 > 1.0) or (disp1 > 1.0) or (disp2 > 1.0)
+  if not isRaining and not isThunderstorm and not anyWater and not anyOverflow then
+    return ""
+  end
 
   -- Lightning flash
   if isThunderstorm then
@@ -511,7 +515,7 @@ function Update()
   updateOverflowDripShapes()
 
   SKIN:Bang("!UpdateMeter", METER)
-  SKIN:Bang("!Redraw")   -- only reached when isRaining or isThunderstorm
+  SKIN:Bang("!Redraw")
 end
 
 -- ============================================================
@@ -538,8 +542,18 @@ function Run()
   disp0 = curPrecip / RATE_FULL
 
   -- isRaining: true when past-hour precipitation is non-trivial
+  local wasRaining = isRaining
   isRaining = (curPrecip > 0.005)
   testRate  = curPrecip
+
+  -- Rain just stopped: reset all drop slots so nothing lingers mid-air
+  if wasRaining and not isRaining then
+    for i = 1, NUM_DROPS do
+      drops[i].active   = false
+      drops[i].splashing = false
+    end
+    updateDropShapes()
+  end
 
   -- Show/hide rain icon
   if isRaining then

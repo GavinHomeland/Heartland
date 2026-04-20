@@ -16,7 +16,9 @@ param(
     [string]$Lat,
     [string]$Lon,
     [string]$NWSState = "KS",
-    [string]$NWSZones = ""   # comma-separated zone codes always included (e.g. "KSZ047")
+    [string]$NWSZones  = "",  # comma-separated zone codes always included (e.g. "KSZ047")
+    [string]$GeoFilter = ""   # comma-separated towns/counties; if set, alerts whose description
+                              # matches none of these terms are skipped
 )
 
 $ErrorActionPreference = 'Stop'
@@ -79,34 +81,57 @@ AppendLog $NWSAlertsLog "$stamp | NWSAlertsFetch | Start Lat=$Lat Lon=$Lon"
 AppendLog $HeartlandLog  "$stamp | NWSAlertsFetch | Start Lat=$Lat Lon=$Lon"
 
 function MapEvent {
-    param([string]$e, [hashtable]$flags)
-    if ($e -match 'Tornado Warning')                                  { $flags['TornadoWarning']            = 1 }
-    if ($e -match 'Tornado Watch')                                    { $flags['TornadoWatch']              = 1 }
-    if ($e -match 'Severe Thunderstorm Warning')                      { $flags['SevereThunderstormWarning'] = 1 }
-    if ($e -match 'Severe Thunderstorm Watch')                        { $flags['SevereThunderstormWatch']   = 1 }
-    if ($e -match 'Flash Flood Warning')                              { $flags['FlashFloodWarning']         = 1 }
-    if ($e -match 'Flash Flood Watch')                                { $flags['FlashFloodWatch']           = 1 }
-    if ($e -match 'Fire Weather Watch')                               { $flags['FireWeatherWatch']          = 1 }
-    if ($e -match 'Red Flag Warning')                                 { $flags['RedFlagWarning']            = 1 }
-    if ($e -match 'Winter Storm Warning|Blizzard Warning')            { $flags['WinterStormWarning']        = 1 }
-    if ($e -match 'Winter Storm Watch')                               { $flags['WinterStormWatch']          = 1 }
-    if ($e -match 'Ice Storm')                                        { $flags['IceStorm']                  = 1 }
-    if ($e -match 'High Wind Warning')                                { $flags['HighWind']                  = 1 }
-    if ($e -match 'Wind Advisory')                                    { $flags['WindAdvisory']              = 1 }
-    if ($e -match 'Excessive Heat')                                   { $flags['ExcessiveHeat']             = 1 }
-    if ($e -match 'Heat Advisory')                                    { $flags['HeatAdvisory']              = 1 }
-    if ($e -match 'Freeze Warning|Frost Advisory')                    { $flags['FreezeWarning']             = 1 }
-    if ($e -match 'Dense Fog')                                        { $flags['DenseFog']                  = 1 }
-    if ($e -match 'Dust Storm|Blowing Dust')                          { $flags['DustStorm']                 = 1 }
-    if ($e -match 'Flood Warning'    -and $e -notmatch 'Flash Flood') { $flags['FloodWarning']              = 1 }
-    if ($e -match 'Flood Watch'      -and $e -notmatch 'Flash Flood') { $flags['FloodWatch']                = 1 }
-    if ($e -match 'Winter Weather Advisory')                          { $flags['WinterWeatherAdvisory']     = 1 }
-    if ($e -match 'Wind Chill Warning')                               { $flags['WindChillWarning']          = 1 }
-    if ($e -match 'Wind Chill Advisory')                              { $flags['WindChillAdvisory']         = 1 }
-    if ($e -match 'Freeze Watch')                                     { $flags['FreezeWatch']               = 1 }
-    if ($e -match 'Hard Freeze Warning')                              { $flags['HardFreezeWarning']         = 1 }
-    if ($e -match 'Air Quality Alert')                                { $flags['AirQualityAlert']           = 1 }
-    if ($e -match 'Dense Smoke')                                      { $flags['DenseSmokeAdvisory']        = 1 }
+    param([string]$e)
+    $keys = [System.Collections.Generic.List[string]]::new()
+    if ($e -match 'Tornado Warning')                                  { $keys.Add('TornadoWarning') }
+    if ($e -match 'Tornado Watch')                                    { $keys.Add('TornadoWatch') }
+    if ($e -match 'Severe Thunderstorm Warning')                      { $keys.Add('SevereThunderstormWarning') }
+    if ($e -match 'Severe Thunderstorm Watch')                        { $keys.Add('SevereThunderstormWatch') }
+    if ($e -match 'Flash Flood Warning')                              { $keys.Add('FlashFloodWarning') }
+    if ($e -match 'Flash Flood Watch')                                { $keys.Add('FlashFloodWatch') }
+    if ($e -match 'Fire Weather Watch')                               { $keys.Add('FireWeatherWatch') }
+    if ($e -match 'Red Flag Warning')                                 { $keys.Add('RedFlagWarning') }
+    if ($e -match 'Winter Storm Warning|Blizzard Warning')            { $keys.Add('WinterStormWarning') }
+    if ($e -match 'Winter Storm Watch')                               { $keys.Add('WinterStormWatch') }
+    if ($e -match 'Ice Storm')                                        { $keys.Add('IceStorm') }
+    if ($e -match 'High Wind Warning')                                { $keys.Add('HighWind') }
+    if ($e -match 'Wind Advisory')                                    { $keys.Add('WindAdvisory') }
+    if ($e -match 'Excessive Heat')                                   { $keys.Add('ExcessiveHeat') }
+    if ($e -match 'Heat Advisory')                                    { $keys.Add('HeatAdvisory') }
+    if ($e -match 'Freeze Warning|Frost Advisory')                    { $keys.Add('FreezeWarning') }
+    if ($e -match 'Dense Fog')                                        { $keys.Add('DenseFog') }
+    if ($e -match 'Dust Storm|Blowing Dust')                          { $keys.Add('DustStorm') }
+    if ($e -match 'Flood Warning'    -and $e -notmatch 'Flash Flood') { $keys.Add('FloodWarning') }
+    if ($e -match 'Flood Watch'      -and $e -notmatch 'Flash Flood') { $keys.Add('FloodWatch') }
+    if ($e -match 'Winter Weather Advisory')                          { $keys.Add('WinterWeatherAdvisory') }
+    if ($e -match 'Wind Chill Warning')                               { $keys.Add('WindChillWarning') }
+    if ($e -match 'Wind Chill Advisory')                              { $keys.Add('WindChillAdvisory') }
+    if ($e -match 'Freeze Watch')                                     { $keys.Add('FreezeWatch') }
+    if ($e -match 'Hard Freeze Warning')                              { $keys.Add('HardFreezeWarning') }
+    if ($e -match 'Air Quality Alert')                                { $keys.Add('AirQualityAlert') }
+    if ($e -match 'Dense Smoke')                                      { $keys.Add('DenseSmokeAdvisory') }
+    return $keys
+}
+
+# Build geo-filter term list (once, before the try block)
+$geoTerms = @()
+if ($GeoFilter -and $GeoFilter -ne '') {
+    foreach ($t in ($GeoFilter -split ',')) {
+        $t = $t.Trim()
+        if ($t) { $geoTerms += $t }
+    }
+}
+
+function MatchesGeoFilter {
+    param([string]$description, [string]$headline)
+    # If no filter configured, everything passes
+    if ($geoTerms.Count -eq 0) { return $true }
+    # Match against description first, then headline
+    $text = ($description + ' ' + $headline).ToLower()
+    foreach ($term in $geoTerms) {
+        if ($text -match [regex]::Escape($term.ToLower())) { return $true }
+    }
+    return $false
 }
 
 try {
@@ -143,6 +168,7 @@ try {
     $seenIds   = @{}
     $features  = @()
     $eventList = @()
+    $details   = @{}
 
     if ($zones.Count -gt 0) {
         $zJson = Invoke-RestMethod -Uri "https://api.weather.gov/alerts/active?zone=$($zones -join ',')" -Headers $hdrs -TimeoutSec 20
@@ -177,14 +203,63 @@ try {
     }
 
     # -----------------------------------------------------------------------
-    # Map events → flags
+    # Map events → flags + collect per-key details (first feature wins)
     # -----------------------------------------------------------------------
     foreach ($f in $features) {
         $e = $f.properties.event
         if (-not $e) { continue }
+
+        # Geographic filter: skip alerts that don't mention a local town/county
+        $rawDescForFilter = if ($f.properties.description) { $f.properties.description } else { '' }
+        $headlineForFilter = if ($f.properties.headline)    { $f.properties.headline }    else { '' }
+        if (-not (MatchesGeoFilter -description $rawDescForFilter -headline $headlineForFilter)) {
+            AppendLog $NWSAlertsLog "$stamp | NWSAlertsFetch | GeoFilter skip: $e"
+            continue
+        }
+
         $eventList += $e
-        MapEvent -e $e -flags $flags
+
+        $keys = MapEvent -e $e
+        foreach ($k in $keys) { $flags[$k] = 1 }
+
+        # Build expiry string: prefer ends over expires
+        $expRaw = if ($f.properties.ends) { $f.properties.ends } else { $f.properties.expires }
+        $expFmt = ''
+        if ($expRaw) {
+            try { $expFmt = [DateTimeOffset]::Parse($expRaw).ToLocalTime().ToString("ddd M/d h:mmtt") }
+            catch { $expFmt = $expRaw }
+        }
+
+        # Full description: collapse intra-paragraph newlines, keep paragraph breaks as \n
+        $descJson = ''
+        $rawDesc  = $f.properties.description
+        if ($rawDesc) {
+            $paras = $rawDesc -split '\r?\n\r?\n'
+            $formatted = ($paras | ForEach-Object {
+                ($_ -replace '[\r\n]+', ' ' -replace '\s+', ' ').Trim()
+            } | Where-Object { $_ -ne '' }) -join "`n"
+            # Strip chars unsafe for a JSON string value (quotes; backslashes escaped)
+            $formatted = $formatted -replace '"', "'"
+            $formatted = $formatted -replace '\\', '\\\\'
+            if ($formatted.Length -gt 2000) { $formatted = $formatted.Substring(0, 1997) + '...' }
+            # Encode actual newlines as JSON \n escape sequences
+            $descJson = $formatted.Trim() -replace "`n", '\n'
+        }
+
+        $eEsc = $e      -replace '[\\"]', ''
+        $xEsc = $expFmt -replace '[\\"]', ''
+
+        foreach ($k in $keys) {
+            if (-not $details.ContainsKey($k)) {
+                $details[$k] = '{"event":"' + $eEsc + '","exp":"' + $xEsc + '","desc":"' + $descJson + '"}'
+            }
+        }
     }
+
+    # Write details JSON (empty object if no active alerts)
+    $NWSDetailsJson = [IO.Path]::Combine([IO.Path]::GetDirectoryName($NWSJson), 'nws_alert_details.json')
+    $detailPairs    = $details.Keys | ForEach-Object { '"' + $_ + '":' + $details[$_] }
+    [IO.File]::WriteAllText($NWSDetailsJson, '{' + ($detailPairs -join ',') + '}', $enc)
 
     $json   = WriteAlertJson -flags $flags -path $NWSJson
     $active = ($flags.Keys | Where-Object { $flags[$_] -eq 1 }) -join ','

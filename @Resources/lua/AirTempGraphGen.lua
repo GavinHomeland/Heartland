@@ -77,7 +77,7 @@ end
 local WIND_STOPS = {
   { t=  0, r=255, g=255, b=255 },  -- still: white
   { t= 15, r=  0, g=210, b=  0 },  -- light breeze: green
-  { t= 30, r=255, g=220, b=  0 },  -- windy: yellow
+  { t= 25, r=255, g=220, b=  0 },  -- windy: yellow
   { t= 50, r=255, g= 40, b= 40 },  -- severe: red
 }
 
@@ -277,16 +277,26 @@ function Run()
     for v in windGustStr:gmatch("([%d%.]+)") do allWindGusts[#allWindGusts+1] = tonumber(v) or 0 end
   end
 
-  -- Parse current.temperature_2m, current.wind_speed_10m, current.wind_gusts_10m, current.wind_direction_10m
+  -- Parse current conditions from om_hrrr.json (HRRR: real-time, hourly updates)
+  -- Falls back to om.json current block if HRRR file unavailable.
   local currentTemp, currentWindSpeed, currentWindGust, currentWindDir = nil, nil, nil, nil
-  local curStart = jsonContent:find('"current"%s*:')
-  if curStart then
-    local curBlock = jsonContent:sub(curStart):match('%b{}')
-    if curBlock then
-      currentTemp      = tonumber(curBlock:match('"temperature_2m"%s*:%s*(-?%d+%.?%d*)'))
-      currentWindSpeed = tonumber(curBlock:match('"wind_speed_10m"%s*:%s*(-?%d+%.?%d*)'))
-      currentWindGust  = tonumber(curBlock:match('"wind_gusts_10m"%s*:%s*(-?%d+%.?%d*)'))
-      currentWindDir   = tonumber(curBlock:match('"wind_direction_10m"%s*:%s*(-?%d+%.?%d*)'))
+  do
+    local hrrrPath = SKIN:GetVariable("OM_HRRR_JSON", "")
+    local hrrrContent = ""
+    if hrrrPath ~= "" then
+      local f = io.open(hrrrPath, "r")
+      if f then hrrrContent = f:read("*all"); f:close() end
+    end
+    local src = (hrrrContent ~= "") and hrrrContent or jsonContent
+    local curStart = src:find('"current"%s*:')
+    if curStart then
+      local curBlock = src:sub(curStart):match('%b{}')
+      if curBlock then
+        currentTemp      = tonumber(curBlock:match('"temperature_2m"%s*:%s*(-?%d+%.?%d*)'))
+        currentWindSpeed = tonumber(curBlock:match('"wind_speed_10m"%s*:%s*(-?%d+%.?%d*)'))
+        currentWindGust  = tonumber(curBlock:match('"wind_gusts_10m"%s*:%s*(-?%d+%.?%d*)'))
+        currentWindDir   = tonumber(curBlock:match('"wind_direction_10m"%s*:%s*(-?%d+%.?%d*)'))
+      end
     end
   end
 
@@ -366,7 +376,7 @@ function Run()
   -- Shape (wind zero reference line, z=back): grey horizontal at 0 mph, today→end
   do
     local windBandH = graphH / 3.0
-    local zeroY     = math.floor(windBandH + 0.5)
+    local zeroY     = math.floor(windBandH + 10 + 0.5)
     local startX    = barLeftX(pastDays)
     setShape(meterName, shapeIdx,
       string.format("Line %d,%d,%d,%d | StrokeWidth 1 | Stroke Color 140,140,140,180",
@@ -532,7 +542,7 @@ function Run()
   end
 
   -- Cleanup leftover shapes (pre-declared up to 122 in INI)
-  local maxShapes = 131
+  local maxShapes = 132
   local blank = "Line 0,0,0,0 | StrokeWidth 0"
   for j = shapeIdx, maxShapes do setShape(meterName, j, blank) end
 
@@ -550,8 +560,8 @@ function Run()
       -- Today: split into fallen (solid) + remaining forecast (translucent)
       local fallen    = clamp(todayFallenIn, 0, precipIn)
       local remaining = math.max(0, precipIn - fallen)
-      local hFallen   = math.floor(math.min(fallen    / 2.0, 1.0) * maxPrecipH + 0.5)
-      local hRemain   = math.floor(math.min(remaining / 2.0, 1.0) * maxPrecipH + 0.5)
+      local hFallen   = math.floor(math.min(fallen    / 1.0, 1.0) * maxPrecipH + 0.5)
+      local hRemain   = math.floor(math.min(remaining / 1.0, 1.0) * maxPrecipH + 0.5)
       if fallen    > 0.005 and hFallen  < 3 then hFallen  = 3 end
       if remaining > 0.005 and hRemain  < 3 then hRemain  = 3 end
       local hTotal = hFallen + hRemain
@@ -572,11 +582,11 @@ function Run()
         SKIN:Bang("!SetOption", meterName, "Shape131", blank)
       end
     else
-      local h = math.floor(math.min(precipIn / 2.0, 1.0) * maxPrecipH + 0.5)
+      local h = math.floor(math.min(precipIn / 1.0, 1.0) * maxPrecipH + 0.5)
       if precipIn > 0.005 and h < 3 then h = 3 end
       if h >= 1 then
         SKIN:Bang("!SetOption", meterName, "Shape" .. si, string.format(
-          "Rectangle %d,%d,%d,%d | Fill Color 40,100,200,140 | StrokeWidth 0",
+          "Rectangle %d,%d,%d,%d | Fill Color 40,100,200,255 | StrokeWidth 0",
           bx, graphH - h, barW, h))
       else
         SKIN:Bang("!SetOption", meterName, "Shape" .. si, blank)
@@ -622,10 +632,14 @@ function Run()
       local offset = (todayIdx - pastDays) + barI  -- 1-based into daily arrays
       local spd    = allWindSpeeds[offset] or 0
       local gst    = allWindGusts[offset]  or 0
-      -- Today: use live current wind directly (same source as wind arrow)
+      -- Today: average steady + gusts for both position and color
       if i == 0 then
-        if currentWindSpeed then spd = currentWindSpeed end
-        if currentWindGust  then gst = currentWindGust  end
+        if currentWindSpeed and currentWindGust then
+          spd = (currentWindSpeed + currentWindGust) / 2
+        elseif currentWindSpeed then
+          spd = currentWindSpeed
+        end
+        if currentWindGust then gst = currentWindGust end
       end
       wPts[i] = { x = barCenterX(barI), y = windToY(spd), spd = spd, gust = gst }
     end
@@ -680,6 +694,19 @@ function Run()
       else
         setShape(meterName, 124 + i, blank)
       end
+    end
+
+    -- Shape 132: today sustained→gust range cap (2px vertical whisker, colored by gust speed)
+    if currentWindSpeed and currentWindGust and currentWindGust > currentWindSpeed then
+      local ySpd = windToY(currentWindSpeed)
+      local yGst = windToY(currentWindGust)
+      local cx   = barCenterX(pastDays)
+      local gr, gg, gb = interpStops(WIND_STOPS, currentWindGust)
+      setShape(meterName, 132, string.format(
+        "Line %d,%d,%d,%d | StrokeWidth 2 | Stroke Color %d,%d,%d,220",
+        cx, yGst, cx, ySpd, gr, gg, gb))
+    else
+      setShape(meterName, 132, blank)
     end
   end
 

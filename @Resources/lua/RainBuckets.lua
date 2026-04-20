@@ -12,10 +12,11 @@
 -- ============================================================
 -- CONSTANTS
 -- ============================================================
-local METER      = "MeterRainBuckets"
-local OM_JSON    = ""
-local LOG_PATH   = ""
-local MASTER_LOG = ""
+local METER        = "MeterRainBuckets"
+local OM_JSON      = ""
+local OM_HRRR_JSON = ""
+local LOG_PATH     = ""
+local MASTER_LOG   = ""
 
 -- Layout (meter coords; meter Y = SoilGraphY = 130)
 local W          = 60
@@ -184,7 +185,7 @@ local function drawFill(shapeIdx, y1, y2, disp, bx, bw)
     return
   end
   local bucketH = y2 - y1
-  local fillH   = math.floor(d * bucketH + 0.5)
+  local fillH   = math.max(2, math.floor(d * bucketH + 0.5))
   local fillTop = y2 - fillH
   setShape(shapeIdx, string.format(
     "Rectangle %d,%d,%d,%d,0 | Fill Color %s | StrokeWidth 0",
@@ -420,9 +421,10 @@ end
 -- INITIALIZE
 -- ============================================================
 function Initialize()
-  OM_JSON    = SKIN:GetVariable("OM_JSON", "")
-  LOG_PATH   = SKIN:GetVariable("RainBucketsLog")
-  MASTER_LOG = SKIN:GetVariable("HeartlandLog")
+  OM_JSON      = SKIN:GetVariable("OM_JSON", "")
+  OM_HRRR_JSON = SKIN:GetVariable("OM_HRRR_JSON", "")
+  LOG_PATH     = SKIN:GetVariable("RainBucketsLog")
+  MASTER_LOG   = SKIN:GetVariable("HeartlandLog")
   math.randomseed(os.time())
 
   -- Initialize overflow drop slots with random start delays
@@ -526,6 +528,7 @@ function Run()
   appendLog(LOG_PATH, startMsg)
   appendLog(MASTER_LOG, startMsg)
 
+  -- Read forecast data from om.json (ECMWF: daily sums, weather codes)
   local jsonPath = OM_JSON
   local f = io.open(jsonPath, "r")
   if not f then
@@ -579,8 +582,9 @@ function Run()
     SKIN:Bang("!UpdateMeter", "MeterLightningBolt")
   end
 
-  -- Parse daily time + precipitation arrays
-  local dailyTimeStr = json:match('"time"%s*:%s*%[([^%]]+)%]')
+  -- Parse daily time + precipitation arrays (anchor to "daily" block to avoid hourly "time" match)
+  local dailyBlock   = json:match('"daily"%s*:%s*(%b{})')
+  local dailyTimeStr = dailyBlock and dailyBlock:match('"time"%s*:%s*%[([^%]]+)%]')
   local dailySumStr  = json:match('"precipitation_sum"%s*:%s*%[([^%]]+)%]')
   local dailyTimes, dailySums = {}, {}
   if dailyTimeStr then

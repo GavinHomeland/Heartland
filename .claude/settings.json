@@ -1,0 +1,8 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(python3 -c \"import sys,json; d=json.load\\(sys.stdin\\); k='FlashFloodWarning'; print\\(len\\(d.get\\(k,{}\\).get\\('desc',''\\)\\),'chars'\\); print\\(repr\\(d.get\\(k,{}\\).get\\('desc',''\\)[-200:]\\)\\)\")",
+      "Bash(python3 -c ' *)"
+    ]
+  }
+}

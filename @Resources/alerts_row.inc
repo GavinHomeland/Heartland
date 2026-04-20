@@ -217,15 +217,17 @@ Group=NWSAlerts
 [MeterAlertTornadoWarning]
 Meter=Image
 Group=NWSAlerts
-UpdateDivider=-1
+UpdateDivider=1
 X=24
 Y=#AlertRowY#
 W=54
 H=54
 PreserveAspectRatio=1
 ImageName=#@#WeatherIcons\tornado_warning.webp
+ImageAlpha=#AlertPulseAlpha#
 Hidden=1
-ToolTipText=TORNADO WARNING#CRLF#NWS active alert -take cover immediately
+ToolTipText=Tornado Warning
+LeftMouseUpAction=[!CommandMeasure MeasureAlertPulse "ShowDetail('TornadoWarning')"]
 DynamicVariables=1
 
 [MeterAlertTornadoWatch]
@@ -239,21 +241,24 @@ H=54
 PreserveAspectRatio=1
 ImageName=#@#WeatherIcons\tornado_watch.webp
 Hidden=1
-ToolTipText=TORNADO WATCH#CRLF#NWS active alert -conditions favorable for tornadoes
+ToolTipText=Tornado Watch
+LeftMouseUpAction=[!CommandMeasure MeasureAlertPulse "ShowDetail('TornadoWatch')"]
 DynamicVariables=1
 
 [MeterAlertSevereThunderstormWarning]
 Meter=Image
 Group=NWSAlerts
-UpdateDivider=-1
+UpdateDivider=1
 X=140
 Y=#AlertRowY#
 W=54
 H=54
 PreserveAspectRatio=1
 ImageName=#@#WeatherIcons\thunderstorms-extreme.png
+ImageAlpha=#AlertPulseAlpha#
 Hidden=1
-ToolTipText=SEVERE THUNDERSTORM WARNING#CRLF#NWS active alert -large hail / damaging wind imminent
+ToolTipText=Severe Thunderstorm Warning
+LeftMouseUpAction=[!CommandMeasure MeasureAlertPulse "ShowDetail('SevereThunderstormWarning')"]
 DynamicVariables=1
 
 [MeterAlertSevereThunderstormWatch]
@@ -267,21 +272,24 @@ H=54
 PreserveAspectRatio=1
 ImageName=#@#WeatherIcons\thunderstorms-day.png
 Hidden=1
-ToolTipText=SEVERE THUNDERSTORM WATCH#CRLF#NWS active alert -severe storms possible
+ToolTipText=Severe Thunderstorm Watch
+LeftMouseUpAction=[!CommandMeasure MeasureAlertPulse "ShowDetail('SevereThunderstormWatch')"]
 DynamicVariables=1
 
 [MeterAlertFlashFloodWarning]
 Meter=Image
 Group=NWSAlerts
-UpdateDivider=-1
+UpdateDivider=1
 X=256
 Y=#AlertRowY#
 W=54
 H=54
 PreserveAspectRatio=1
 ImageName=#@#WeatherIcons\extreme-rain.png
+ImageAlpha=#AlertPulseAlpha#
 Hidden=1
-ToolTipText=FLASH FLOOD WARNING#CRLF#NWS active alert -flooding occurring or imminent
+ToolTipText=Flash Flood Warning
+LeftMouseUpAction=[!CommandMeasure MeasureAlertPulse "ShowDetail('FlashFloodWarning')"]
 DynamicVariables=1
 
 [MeterAlertFlashFloodWatch]
@@ -295,7 +303,8 @@ H=54
 PreserveAspectRatio=1
 ImageName=#@#WeatherIcons\rain.png
 Hidden=1
-ToolTipText=FLASH FLOOD WATCH#CRLF#NWS active alert -flash flooding possible
+ToolTipText=Flash Flood Watch
+LeftMouseUpAction=[!CommandMeasure MeasureAlertPulse "ShowDetail('FlashFloodWatch')"]
 DynamicVariables=1
 
 [MeterAlertFireWeatherWatch]
@@ -309,35 +318,40 @@ H=54
 PreserveAspectRatio=1
 ImageName=#@#WeatherIcons\code-orange.png
 Hidden=1
-ToolTipText=FIRE WEATHER WATCH#CRLF#NWS active alert -critical fire weather conditions possible
+ToolTipText=Fire Weather Watch
+LeftMouseUpAction=[!CommandMeasure MeasureAlertPulse "ShowDetail('FireWeatherWatch')"]
 DynamicVariables=1
 
 [MeterAlertRedFlagWarning]
 Meter=Image
 Group=NWSAlerts
-UpdateDivider=-1
+UpdateDivider=1
 X=430
 Y=#AlertRowY#
 W=54
 H=54
 PreserveAspectRatio=1
 ImageName=#@#WeatherIcons\fire_weather_warning.webp
+ImageAlpha=#AlertPulseAlpha#
 Hidden=1
-ToolTipText=RED FLAG WARNING#CRLF#NWS active alert -critical fire weather conditions are occurring
+ToolTipText=Red Flag Warning
+LeftMouseUpAction=[!CommandMeasure MeasureAlertPulse "ShowDetail('RedFlagWarning')"]
 DynamicVariables=1
 
 [MeterAlertWinterStormWarning]
 Meter=Image
 Group=NWSAlerts
-UpdateDivider=-1
+UpdateDivider=1
 X=488
 Y=#AlertRowY#
 W=54
 H=54
 PreserveAspectRatio=1
 ImageName=#@#WeatherIcons\extreme-snow.png
+ImageAlpha=#AlertPulseAlpha#
 Hidden=1
-ToolTipText=WINTER STORM / BLIZZARD WARNING#CRLF#NWS active alert -heavy snow / blizzard conditions
+ToolTipText=Winter Storm Warning
+LeftMouseUpAction=[!CommandMeasure MeasureAlertPulse "ShowDetail('WinterStormWarning')"]
 DynamicVariables=1
 
 [MeterAlertWinterStormWatch]
@@ -351,36 +365,41 @@ H=54
 PreserveAspectRatio=1
 ImageName=#@#WeatherIcons\overcast-snow.png
 Hidden=1
-ToolTipText=WINTER STORM WATCH#CRLF#NWS active alert -winter storm conditions possible
+ToolTipText=Winter Storm Watch
+LeftMouseUpAction=[!CommandMeasure MeasureAlertPulse "ShowDetail('WinterStormWatch')"]
 DynamicVariables=1
 
 [MeterAlertIceStorm]
 Meter=Image
 Group=NWSAlerts
-UpdateDivider=-1
+UpdateDivider=1
 X=82
 Y=(#AlertRowY# + 64)
 W=54
 H=54
 PreserveAspectRatio=1
 ImageName=#@#WeatherIcons\ice_warning.webp
+ImageAlpha=#AlertPulseAlpha#
 Hidden=1
-ToolTipText=ICE STORM WARNING#CRLF#NWS active alert -significant ice accumulation expected
+ToolTipText=Ice Storm Warning
+LeftMouseUpAction=[!CommandMeasure MeasureAlertPulse "ShowDetail('IceStorm')"]
 DynamicVariables=1
 
 ; Row 2: 9 icons per row, slots 9-17
 [MeterAlertHighWind]
 Meter=Image
 Group=NWSAlerts
-UpdateDivider=-1
+UpdateDivider=1
 X=140
 Y=(#AlertRowY# + 64)
 W=54
 H=54
 PreserveAspectRatio=1
 ImageName=#@#WeatherIcons\wind-alert.png
+ImageAlpha=#AlertPulseAlpha#
 Hidden=1
-ToolTipText=HIGH WIND WARNING#CRLF#NWS active alert -sustained winds >= 40 mph or gusts >= 58 mph
+ToolTipText=High Wind Warning
+LeftMouseUpAction=[!CommandMeasure MeasureAlertPulse "ShowDetail('HighWind')"]
 DynamicVariables=1
 
 [MeterAlertWindAdvisory]
@@ -394,21 +413,24 @@ H=54
 PreserveAspectRatio=1
 ImageName=#@#WeatherIcons\wind.png
 Hidden=1
-ToolTipText=WIND ADVISORY#CRLF#NWS active alert -sustained winds 25-39 mph or gusts 35-57 mph
+ToolTipText=Wind Advisory
+LeftMouseUpAction=[!CommandMeasure MeasureAlertPulse "ShowDetail('WindAdvisory')"]
 DynamicVariables=1
 
 [MeterAlertExcessiveHeat]
 Meter=Image
 Group=NWSAlerts
-UpdateDivider=-1
+UpdateDivider=1
 X=256
 Y=(#AlertRowY# + 64)
 W=54
 H=54
 PreserveAspectRatio=1
 ImageName=#@#WeatherIcons\sun-hot.png
+ImageAlpha=#AlertPulseAlpha#
 Hidden=1
-ToolTipText=EXCESSIVE HEAT WARNING#CRLF#NWS active alert -dangerously hot conditions expected
+ToolTipText=Excessive Heat Warning
+LeftMouseUpAction=[!CommandMeasure MeasureAlertPulse "ShowDetail('ExcessiveHeat')"]
 DynamicVariables=1
 
 [MeterAlertHeatAdvisory]
@@ -422,21 +444,24 @@ H=54
 PreserveAspectRatio=1
 ImageName=#@#WeatherIcons\thermometer-sun.png
 Hidden=1
-ToolTipText=HEAT ADVISORY#CRLF#NWS active alert -hot conditions with HI 100-104F
+ToolTipText=Heat Advisory
+LeftMouseUpAction=[!CommandMeasure MeasureAlertPulse "ShowDetail('HeatAdvisory')"]
 DynamicVariables=1
 
 [MeterAlertFreezeWarning]
 Meter=Image
 Group=NWSAlerts
-UpdateDivider=-1
+UpdateDivider=1
 X=372
 Y=(#AlertRowY# + 64)
 W=54
 H=54
 PreserveAspectRatio=1
 ImageName=#@#WeatherIcons\thermometer-snow.png
+ImageAlpha=#AlertPulseAlpha#
 Hidden=1
-ToolTipText=FREEZE WARNING / FROST ADVISORY#CRLF#NWS active alert -sub-freezing temperatures expected
+ToolTipText=Freeze Warning
+LeftMouseUpAction=[!CommandMeasure MeasureAlertPulse "ShowDetail('FreezeWarning')"]
 DynamicVariables=1
 
 [MeterAlertDenseFog]
@@ -450,21 +475,24 @@ H=54
 PreserveAspectRatio=1
 ImageName=#@#WeatherIcons\fog.png
 Hidden=1
-ToolTipText=DENSE FOG ADVISORY#CRLF#NWS active alert -visibility <= 1/4 mile
+ToolTipText=Dense Fog Advisory
+LeftMouseUpAction=[!CommandMeasure MeasureAlertPulse "ShowDetail('DenseFog')"]
 DynamicVariables=1
 
 [MeterAlertDustStorm]
 Meter=Image
 Group=NWSAlerts
-UpdateDivider=-1
+UpdateDivider=1
 X=488
 Y=(#AlertRowY# + 64)
 W=54
 H=54
 PreserveAspectRatio=1
 ImageName=#@#WeatherIcons\dust.png
+ImageAlpha=#AlertPulseAlpha#
 Hidden=1
-ToolTipText=DUST STORM / BLOWING DUST ADVISORY#CRLF#NWS active alert -blowing dust reducing visibility
+ToolTipText=Dust Storm
+LeftMouseUpAction=[!CommandMeasure MeasureAlertPulse "ShowDetail('DustStorm')"]
 DynamicVariables=1
 
 ; ---------------------------------------------------------------------------
@@ -474,15 +502,17 @@ DynamicVariables=1
 [MeterAlertFloodWarning]
 Meter=Image
 Group=NWSAlerts
-UpdateDivider=-1
+UpdateDivider=1
 X=24
 Y=(#AlertRowY# + 128)
 W=54
 H=54
 PreserveAspectRatio=1
 ImageName=#@#WeatherIcons\extreme-day-rain.png
+ImageAlpha=#AlertPulseAlpha#
 Hidden=1
-ToolTipText=FLOOD WARNING#CRLF#NWS active alert -river or areal flooding occurring or imminent
+ToolTipText=Flood Warning
+LeftMouseUpAction=[!CommandMeasure MeasureAlertPulse "ShowDetail('FloodWarning')"]
 DynamicVariables=1
 
 [MeterAlertFloodWatch]
@@ -496,7 +526,8 @@ H=54
 PreserveAspectRatio=1
 ImageName=#@#WeatherIcons\overcast-day-rain.png
 Hidden=1
-ToolTipText=FLOOD WATCH#CRLF#NWS active alert -river or areal flooding possible
+ToolTipText=Flood Watch
+LeftMouseUpAction=[!CommandMeasure MeasureAlertPulse "ShowDetail('FloodWatch')"]
 DynamicVariables=1
 
 [MeterAlertWinterWeatherAdvisory]
@@ -510,21 +541,24 @@ H=54
 PreserveAspectRatio=1
 ImageName=#@#WeatherIcons\overcast-day-snow.png
 Hidden=1
-ToolTipText=WINTER WEATHER ADVISORY#CRLF#NWS active alert -mixed winter precip expected
+ToolTipText=Winter Weather Advisory
+LeftMouseUpAction=[!CommandMeasure MeasureAlertPulse "ShowDetail('WinterWeatherAdvisory')"]
 DynamicVariables=1
 
 [MeterAlertWindChillWarning]
 Meter=Image
 Group=NWSAlerts
-UpdateDivider=-1
+UpdateDivider=1
 X=198
 Y=(#AlertRowY# + 128)
 W=54
 H=54
 PreserveAspectRatio=1
 ImageName=#@#WeatherIcons\thermometer-colder.png
+ImageAlpha=#AlertPulseAlpha#
 Hidden=1
-ToolTipText=WIND CHILL WARNING#CRLF#NWS active alert -dangerously cold wind chills
+ToolTipText=Wind Chill Warning
+LeftMouseUpAction=[!CommandMeasure MeasureAlertPulse "ShowDetail('WindChillWarning')"]
 DynamicVariables=1
 
 [MeterAlertWindChillAdvisory]
@@ -538,7 +572,8 @@ H=54
 PreserveAspectRatio=1
 ImageName=#@#WeatherIcons\thermometer-glass.png
 Hidden=1
-ToolTipText=WIND CHILL ADVISORY#CRLF#NWS active alert -hazardous wind chills
+ToolTipText=Wind Chill Advisory
+LeftMouseUpAction=[!CommandMeasure MeasureAlertPulse "ShowDetail('WindChillAdvisory')"]
 DynamicVariables=1
 
 [MeterAlertFreezeWatch]
@@ -550,23 +585,26 @@ Y=(#AlertRowY# + 128)
 W=54
 H=54
 PreserveAspectRatio=1
-ImageName=#@#WeatherIcons\thermometer-mercury.png
+ImageName=#@#WeatherIcons\thermometer-colder.png
 Hidden=1
-ToolTipText=FREEZE WATCH#CRLF#NWS active alert -sub-freezing temperatures possible
+ToolTipText=Freeze Watch
+LeftMouseUpAction=[!CommandMeasure MeasureAlertPulse "ShowDetail('FreezeWatch')"]
 DynamicVariables=1
 
 [MeterAlertHardFreezeWarning]
 Meter=Image
 Group=NWSAlerts
-UpdateDivider=-1
+UpdateDivider=1
 X=372
 Y=(#AlertRowY# + 128)
 W=54
 H=54
 PreserveAspectRatio=1
-ImageName=#@#WeatherIcons\thermometer-mercury-cold.png
+ImageName=#@#WeatherIcons\snowflake1.png
+ImageAlpha=#AlertPulseAlpha#
 Hidden=1
-ToolTipText=HARD FREEZE WARNING#CRLF#NWS active alert -temps 28F or below for 2+ hours
+ToolTipText=Hard Freeze Warning
+LeftMouseUpAction=[!CommandMeasure MeasureAlertPulse "ShowDetail('HardFreezeWarning')"]
 DynamicVariables=1
 
 [MeterAlertAirQualityAlert]
@@ -580,7 +618,8 @@ H=54
 PreserveAspectRatio=1
 ImageName=#@#WeatherIcons\haze.png
 Hidden=1
-ToolTipText=AIR QUALITY ALERT#CRLF#NWS active alert -unhealthy air quality levels
+ToolTipText=Air Quality Alert
+LeftMouseUpAction=[!CommandMeasure MeasureAlertPulse "ShowDetail('AirQualityAlert')"]
 DynamicVariables=1
 
 [MeterAlertDenseSmokeAdvisory]
@@ -594,7 +633,91 @@ H=54
 PreserveAspectRatio=1
 ImageName=#@#WeatherIcons\extreme-smoke.png
 Hidden=1
-ToolTipText=DENSE SMOKE ADVISORY#CRLF#NWS active alert -smoke reducing visibility
+ToolTipText=Dense Smoke Advisory
+LeftMouseUpAction=[!CommandMeasure MeasureAlertPulse "ShowDetail('DenseSmokeAdvisory')"]
+DynamicVariables=1
+
+; ---------------------------------------------------------------------------
+; ALERT DETAIL POPUP — shown on icon click; dismissed by close button or
+; when alert layout changes. All positioned at runtime by ShowDetail() in Lua.
+; Defined last so it renders above icons.
+; ---------------------------------------------------------------------------
+[MeterAlertDetailBG]
+Meter=Shape
+Group=AlertDetailPopup
+UpdateDivider=-1
+X=0
+Y=0
+Shape=Rectangle 0,0,360,240,6 | StrokeWidth 1 | Stroke Color 255,255,255,50 | Fill Color 12,18,32,238
+Hidden=1
+DynamicVariables=1
+
+[MeterAlertDetailTitle]
+Meter=String
+Group=AlertDetailPopup
+UpdateDivider=-1
+X=12
+Y=10
+W=278
+H=26
+FontSize=14
+FontWeight=700
+FontColor=255,255,255,255
+Antialias=1
+ClipString=1
+Text=
+Hidden=1
+DynamicVariables=1
+
+[MeterAlertDetailExpiry]
+Meter=String
+Group=AlertDetailPopup
+UpdateDivider=-1
+X=12
+Y=40
+W=318
+H=18
+FontSize=12
+FontWeight=400
+FontColor=255,210,90,230
+Antialias=1
+ClipString=1
+Text=
+Hidden=1
+DynamicVariables=1
+
+[MeterAlertDetailDesc]
+Meter=String
+Group=AlertDetailPopup
+UpdateDivider=-1
+X=12
+Y=62
+W=336
+FontSize=12
+FontWeight=400
+FontColor=215,215,215,255
+Antialias=1
+Text=
+Hidden=1
+DynamicVariables=1
+
+[MeterAlertDetailClose]
+Meter=String
+Group=AlertDetailPopup
+UpdateDivider=-1
+X=290
+Y=8
+W=24
+H=24
+FontSize=11
+FontWeight=700
+FontColor=255,255,255,200
+SolidColor=90,25,25,200
+StringAlign=CenterCenter
+Antialias=1
+Text=x
+Hidden=1
+LeftMouseUpAction=[!CommandMeasure MeasureAlertPulse "HideDetail()"]
 DynamicVariables=1
 
 ; ---------------------------------------------------------------------------
@@ -616,10 +739,10 @@ H=26
 FontSize=10
 FontWeight=700
 FontColor=255,255,255,255
-SolidColor=180,30,30,210
+SolidColor=224,13,13,210
 StringAlign=CenterCenter
 Antialias=1
-Text=⚠ ACK ALARM
+Text=! ACK ALARM
 Hidden=1
 LeftMouseUpAction=[!CommandMeasure MeasureAlertPulse "Acknowledge()"]
 ToolTipText=Click to acknowledge -silences pulse and alarm sound

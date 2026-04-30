@@ -2,7 +2,7 @@
 -- 3 stacked animated rain buckets, each narrower than the one below.
 -- Shape meter layout:
 --   Shape 1     : invisible base anchor
---   Shapes 2-4  : fill rectangles (behind structure)
+--   Shapes 2-4  : fill rectangles (behind structure); B0+B1 fills extend into nipple area
 --   Shapes 5-26 : structure lines (chamfers, walls, bottoms, nipples)
 --   Shapes 27-28: drip blobs (B0→B1, B1→B2)
 --   Shapes 29-36: raindrops (8 slots)
@@ -180,12 +180,12 @@ end
 -- Overflow is indicated by side drip animation only.
 local function drawFill(shapeIdx, y1, y2, disp, bx, bw)
   local d = clamp(disp, 0, 1.0)
-  if d < 0.005 then
+  if d <= 0 then
     setShape(shapeIdx, "Rectangle 0,0,1,1 | Fill Color 0,0,0,0 | StrokeWidth 0")
     return
   end
   local bucketH = y2 - y1
-  local fillH   = math.max(2, math.floor(d * bucketH + 0.5))
+  local fillH   = math.max(3, math.floor(d * bucketH + 0.5))
   local fillTop = y2 - fillH
   setShape(shapeIdx, string.format(
     "Rectangle %d,%d,%d,%d,0 | Fill Color %s | StrokeWidth 0",
@@ -241,7 +241,7 @@ local function advanceDrops()
       if d.y >= d.stopY then
         d.active     = false
         d.splashing  = true
-        d.splashTick = 2
+        d.splashTick = 4
         d.splashY    = d.stopY
         d.spawnIn    = math.random(0, 2)
       end
@@ -272,12 +272,13 @@ local function updateDropShapes()
         "Rectangle %d,%d,1,4,0 | Fill Color 160,210,255,%d | StrokeWidth 0",
         d.x, d.y, d.alpha))
     elseif d.splashing and isRaining then
+      -- splashTick 4→1: alpha 220→55, width 4→10px, 2px tall
       local splashAlpha = math.floor(d.splashTick * 55)
-      local splashW = (5 - d.splashTick) * 2 + 2
-      local splashX = clamp(d.x - splashW / 2, B0_X + 1, B0_X + B0_W - splashW - 1)
+      local splashW     = (5 - d.splashTick) * 2 + 2
+      local splashX     = clamp(d.x - math.floor(splashW / 2), B0_X + 1, B0_X + B0_W - splashW - 1)
       setShape(si, string.format(
-        "Rectangle %d,%d,%d,1,0 | Fill Color 200,230,255,%d | StrokeWidth 0",
-        splashX, d.splashY, splashW, splashAlpha))
+        "Rectangle %d,%d,%d,2,0 | Fill Color 200,230,255,%d | StrokeWidth 0",
+        splashX, d.splashY - 1, splashW, splashAlpha))
     else
       setShape(si, "Rectangle 0,0,1,1 | Fill Color 0,0,0,0 | StrokeWidth 0")
     end
@@ -313,10 +314,10 @@ local function advanceDrips()
       if bl.active then
         bl.y = bl.y + blobSpeed
         if bl.y >= dynEndY then
-          bl.active    = false
-          bl.splashing = true
-          bl.splashTick = 2
-          bl.splashY   = dynEndY
+          bl.active     = false
+          bl.splashing  = true
+          bl.splashTick = 4
+          bl.splashY    = dynEndY
         end
       else
         if bl.cooldown > 0 then
@@ -348,12 +349,13 @@ local function updateDripShapes()
         CX - math.floor(blobW / 2), bl.y, blobW, blobH, blobC))
     elseif bl.splashing then
       -- Splash at water surface: expanding horizontal bar, fading out
-      local alpha  = bl.splashTick * 65     -- 195 → 130 → 65
-      local sw     = (4 - bl.splashTick) * 2 + 4  -- 4 → 6 → 8px
-      local sx     = clamp(CX - math.floor(sw / 2), 1, W - sw - 1)
+      -- splashTick 4→1: alpha 240→60, width 4→10px, 2px tall
+      local alpha = math.min(255, bl.splashTick * 60)
+      local sw    = (5 - bl.splashTick) * 2 + 2
+      local sx    = clamp(CX - math.floor(sw / 2), 1, W - sw - 1)
       setShape(bl.shapeIdx, string.format(
-        "Rectangle %d,%d,%d,1,0 | Fill Color 200,230,255,%d | StrokeWidth 0",
-        sx, bl.splashY, sw, alpha))
+        "Rectangle %d,%d,%d,2,0 | Fill Color 200,230,255,%d | StrokeWidth 0",
+        sx, bl.splashY - 1, sw, alpha))
     else
       setShape(bl.shapeIdx, "Rectangle 0,0,1,1 | Fill Color 0,0,0,0 | StrokeWidth 0")
     end
@@ -440,6 +442,7 @@ function Initialize()
   disp1 = 0.0
   disp2 = 0.0
   isRaining = false
+  SKIN:Bang("!SetOption", METER, "ToolTipText", "Last hour: --\nToday: --\n7-day: --")
 
   SKIN:Bang("!HideMeter", "MeterRainIcon")
   SKIN:Bang("!HideMeter", "MeterLightningBolt")
@@ -613,6 +616,13 @@ function Run()
 
   drawStructure()
   updateFills()
+
+  local todayTotal = dailySums[todayIdx] or 0
+  local tip = string.format(
+    "Last hour: %.2f in\nToday: %.2f in\n7-day: %.2f in",
+    curPrecip, todayTotal, weekSum)
+  SKIN:Bang("!SetOption", METER, "ToolTipText", tip)
+
   SKIN:Bang("!UpdateMeter", METER)
   SKIN:Bang("!Redraw")
 

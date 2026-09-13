@@ -244,13 +244,17 @@ end
 -- ============================================================
 -- RAINDROP ANIMATION
 -- ============================================================
--- Returns (drop count, fall speed in px/tick). Count is never scaled; speed is.
-local function intensityToParams(rate)
-  if rate >= 1.0 then return 8, sc(8)
-  elseif rate >= 0.31 then return 6, sc(6)
-  elseif rate >= 0.11 then return 4, sc(4)
-  elseif rate >= 0.01 then return 2, sc(4)
-  else return 1, sc(2)
+-- Raindrops fall at a fixed terminal velocity, same as the drip blobs
+-- (DRIP_SPEED below) — gravity doesn't care how hard it's raining. Only the
+-- number of simultaneous drops scales with intensity.
+local DROP_SPEED = 4   -- base px/tick, scaled by sc() at use site
+
+local function intensityToCount(rate)
+  if rate >= 1.0 then return 8
+  elseif rate >= 0.31 then return 6
+  elseif rate >= 0.11 then return 4
+  elseif rate >= 0.01 then return 2
+  else return 1
   end
 end
 
@@ -272,7 +276,7 @@ local function spawnDrop(slot, speed, fillStopY, stagger)
 end
 
 local function advanceDrops()
-  local numActive, speed = intensityToParams(testRate)
+  local numActive, speed = intensityToCount(testRate), sc(DROP_SPEED)
   local fillStopY = B0_BOT - math.floor(clamp(disp0, 0, 1.0) * BUCKET_H)
   fillStopY = clamp(fillStopY, B0_TOP, B0_BOT)
 

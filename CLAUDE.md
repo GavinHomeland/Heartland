@@ -178,6 +178,76 @@ both graphs right-justified at W-Pad, day labels aligned to bar centers, all thr
 buckets and the dial row render fully inside the panel.
 
 
+### Precipitation now comes from measured gauges, not the models
+
+**The bug that started this:** 0.22 in fell overnight 2026-09-12/13 and no bar
+appeared on the air temp graph. Root cause was data, not rendering.
+
+**Finding 1 — the skin was never getting HRRR.** `OM_HRRR_URL` has no `models=`
+parameter, so it returns `best_match`. Verified by comparison: `best_match`,
+`ncep_hrrr_conus` and `gfs_seamless` return *bit-identical* hourly series for
+this location (temperature included), because HRRR's forecast length is 18-48 h
+and a `past_days=7` request falls outside its range entirely. The file is still
+named `om_hrrr.json`; treat that name as historical. Its `current` block is
+still the right thing to use for live conditions — scored against the Hoisington
+gauge, best_match beat ECMWF on temperature (MAE 1.03 vs 1.28 °C).
+
+**Finding 2 — `past_days` returns archived FORECASTS, not observations.** So
+"which model is more accurate about last night" was the wrong question. Scored
+against a real gauge over 60 days:
+
+| source | total (gauge = 2.30 in) | hits | misses | false alarms |
+|---|---|---|---|---|
+| best_match/GFS | 0.72 in (−1.58) | 4 | **8** | 4 |
+| ecmwf_ifs025 | 2.76 in (+0.46) | 12 | **0** | 19 |
+
+best_match missed 8 of 12 rain days. That is what erased the rain, since the
+graph preferred it for past + today.
+
+**The fix:** `@Resources/lua/KSPrecipFetch.ps1` pulls `PRECIP` from the Kansas
+Mesonet — the same REST endpoint already used for soil temp, just
+`vars=PRECIP` — and writes `ks_precip_daily.csv` (date,precipIn). Mesonet
+reports **millimetres**; the PS1 converts to inches so everything downstream
+stays in inches. Today's row is a partial total through the last closed hour.
+
+Consumers prefer the gauge for past + today and fall back to the model only if
+the fetch failed. Forecast days are still ECMWF — nothing measures the future.
+- `AirTempGraphGen.lua` — precip bars.
+- `RainBuckets.lua` — B1 (today) and B2 (past 7 days). B0 / `isRaining` still
+  use the model's `current` block, which is the live "is it raining now" signal.
+
+**Why a weighted average of stations.** Convective cells here are smaller than
+the station spacing, so any one gauge either shares your storm or misses it.
+Leave-one-out cross-validation, 61 days x 7 stations:
+
+| method | wet-day MAE | wet-day bias | missed rain days | last night at Albert |
+|---|---|---|---|---|
+| nearest | 0.233 | −0.064 | 32 | 0.23 in |
+| idw p=1 | 0.186 | −0.122 | 14 | 0.06 in |
+| idw p=4 | 0.195 | −0.087 | 17 | 0.15 in |
+| idw p=6 | 0.205 | −0.075 | 18 | 0.18 in |
+
+Nearest-station has the least systematic under-statement and nailed the one
+verified reading (0.23 vs 0.22 actual) but misses twice as many events.
+Low-power IDW catches events but dilutes local cells by averaging in distant
+zeros. **`KSPrecipPower=6`** is the default compromise. Raise toward 8 for
+nearest-station behaviour, lower for a smoother regional average.
+
+Stations are ranked by distance from `#Lat#`/`#Lon#` at fetch time, so the list
+self-maintains. Several nearby sites (Great Bend, Radium, Rozel) return empty
+for PRECIP, so the script walks outward until it has `KSPrecipStations` working
+ones. Weights are recomputed per day over only the stations reporting that day,
+so one offline site cannot drag the estimate toward zero.
+
+**Chain note:** the precip fetch is triggered only from `MeasureOM_FetchPS`'s
+FinishAction. Do NOT also add it to `MeasureStartupTimer` — both fire within
+~2 s and the RunCommand plugin throws "Error 101: Program still running". The
+OM fetch already runs at startup, so startup is covered.
+
+**PowerShell gotcha:** inside a *method call*'s parentheses a comma is an
+argument separator, not an array constructor. `$sb.AppendLine('{0},{1}' -f $a, $b)`
+silently starves `-f` of its second value; it needs doubled parens.
+
 ## Instructions for Claude (ignore for now)
 - [x] Extend rain indicator bars over the entire air temp graph, one for each day. Past = actual precip, today = Forcast in alpha 180 + actual in alpha 255, future = forecast precip (as is)
     - Use blue for rain, cyan for mix, white for snow

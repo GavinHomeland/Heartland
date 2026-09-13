@@ -314,6 +314,24 @@ function Run()
     end
   end
 
+  -- Measured rainfall from the Mesonet gauge network (ks_precip_daily.csv,
+  -- written by KSPrecipFetch.ps1). Keyed by date string -> inches.
+  -- This is the ONLY observed precip source; everything else here is a forecast.
+  local gaugePrecip = {}
+  do
+    local p = SKIN:GetVariable("KSPrecipCsv", "")
+    if p ~= "" then
+      local f = io.open(p, "r")
+      if f then
+        for line in f:lines() do
+          local d, v = line:match("^(%d%d%d%d%-%d%d%-%d%d),([%d%.%-]+)")
+          if d and v then gaugePrecip[d] = tonumber(v) end
+        end
+        f:close()
+      end
+    end
+  end
+
   -- Parse HRRR daily precipitation (past 7 days + today) from om_hrrr.json.
   -- Keyed by j offset from today: hrrrPrecip[0]=today, hrrrPrecip[-1]=yesterday, etc.
   -- Used in place of ECMWF for rain bars on past days; ECMWF still used for j>0 forecast.
@@ -625,21 +643,37 @@ function Run()
   -- j=-14→133 .. j=-1→146, j=0→147, j=1→148 .. j=7→154.
   -- Shape 131: today remaining forecast (cyan overlay on today bar).
   -- Scale: 1.0 in = full height up to freeze line; clamped there.
-  -- Past (j<0): actual precip, blue alpha 160.
-  -- Today (j=0): fallen actual (blue 255) + remaining forecast (cyan 255).
+  -- Past (j<0): measured gauge rainfall, blue alpha 160.
+  -- Today (j=0): measured so far (blue 255) + remaining forecast (purple 255).
   -- Future (j>0): forecast precip, blue alpha 200.
+  --
+  -- Source priority for past + today is the Mesonet gauge network, because
+  -- Open-Meteo's past_days values are archived forecasts rather than
+  -- observations and miss most convective rain at this location. The model is
+  -- only a fallback for when the gauge fetch failed, and the sole source for
+  -- forecast days.
   local maxPrecipH = math.max(graphH - freezeY, math.floor(graphH * 0.35))
   for j = -pastDays, futureDays do
     local si       = 133 + (j + pastDays)
     local dailyIdx = todayIdx + j
-    -- HRRR for past + today (j≤0); ECMWF for forecast (j>0)
-    local precipIn = (j <= 0 and hrrrPrecip[j] ~= nil) and hrrrPrecip[j]
-                     or dailyPrecip[dailyIdx] or 0
+    -- Midday offset keeps the date correct across DST shifts.
+    local dateStr  = os.date("%Y-%m-%d", os.time() + j * 86400)
+    local gauged   = gaugePrecip[dateStr]
+    local forecast = dailyPrecip[dailyIdx] or 0
+    local precipIn
+    if j < 0 then
+      precipIn = gauged or hrrrPrecip[j] or forecast
+    else
+      precipIn = forecast
+    end
     local barI     = pastDays + j
     local bx       = barI * (barW + barGap)
     if j == 0 then
-      -- Today: split into fallen (solid) + remaining forecast (translucent)
-      local fallen    = clamp(todayFallenIn, 0, precipIn)
+      -- Today: measured-so-far (solid) + whatever the forecast still expects.
+      -- Total is max(measured, forecast): once more has fallen than was
+      -- predicted, the gauge defines the day, not the model.
+      local fallen    = gauged or clamp(todayFallenIn, 0, forecast)
+      precipIn        = math.max(forecast, fallen)
       local remaining = math.max(0, precipIn - fallen)
       local hFallen   = math.floor(math.min(fallen    / 2.0, 1.0) * maxPrecipH + 0.5)
       local hRemain   = math.floor(math.min(remaining / 2.0, 1.0) * maxPrecipH + 0.5)

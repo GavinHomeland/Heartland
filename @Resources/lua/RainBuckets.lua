@@ -15,6 +15,7 @@
 local METER        = "MeterRainBuckets"
 local OM_JSON      = ""
 local OM_HRRR_JSON = ""
+local PRECIP_CSV   = ""
 local LOG_PATH     = ""
 local MASTER_LOG   = ""
 
@@ -151,6 +152,21 @@ local function appendLog(path, msg)
 end
 
 local function clamp(v, lo, hi) return math.max(lo, math.min(hi, v)) end
+
+-- Measured rainfall from the Mesonet gauges (ks_precip_daily.csv, inches).
+-- Returns date->inches, or an empty table when the fetch has not landed yet.
+local function readGaugeCsv()
+  local out = {}
+  if PRECIP_CSV == "" then return out end
+  local f = io.open(PRECIP_CSV, "r")
+  if not f then return out end
+  for line in f:lines() do
+    local d, v = line:match("^(%d%d%d%d%-%d%d%-%d%d),([%d%.%-]+)")
+    if d and v then out[d] = tonumber(v) end
+  end
+  f:close()
+  return out
+end
 
 local function mathrand(lo, hi)
   return lo + math.random() * (hi - lo)
@@ -451,6 +467,7 @@ end
 function Initialize()
   OM_JSON      = SKIN:GetVariable("OM_JSON", "")
   OM_HRRR_JSON = SKIN:GetVariable("OM_HRRR_JSON", "")
+  PRECIP_CSV   = SKIN:GetVariable("KSPrecipCsv", "")
   LOG_PATH     = SKIN:GetVariable("RainBucketsLog")
   MASTER_LOG   = SKIN:GetVariable("HeartlandLog")
   S = tonumber(SKIN:GetVariable("S", "1")) or 1
@@ -682,6 +699,21 @@ function Run()
       end
     end
   end
+  -- Prefer measured gauge rainfall over the model's archived forecast for both
+  -- accumulations. B1 = today so far, B2 = the 7 complete days before today.
+  -- Model values stay as the fallback for when the gauge fetch has not landed.
+  do
+    local gauge = readGaugeCsv()
+    local today = os.date("%Y-%m-%d")
+    if gauge[today] then todayActual = gauge[today] end
+    local gSum, gDays = 0, 0
+    for i = 1, 7 do
+      local d = os.date("%Y-%m-%d", os.time() - i * 86400)
+      if gauge[d] then gSum = gSum + gauge[d]; gDays = gDays + 1 end
+    end
+    if gDays > 0 then weekSum = gSum end
+  end
+
   disp1 = todayActual / DAILY_FULL
   disp2 = weekSum    / WEEKLY_FULL
 

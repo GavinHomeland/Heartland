@@ -2,8 +2,8 @@
 # KSSoilMasterFetch.ps1
 # Downloads Mesonet daily soil data and writes:
 # - Raw CSV (as downloaded)
-# - Master CSV: date,avgF,minF (last MasterDays)
-# - Rolling CSV: date,min7F,avg7F (last RollingDays; 7-day window)
+# - Master CSV: date,avgF,minF,maxF (last MasterDays)
+# - Rolling CSV: date,min7F,avg7F,max7F (last RollingDays; 7-day window)
 # - LastAttemptTxt: OK/ERR/PROBE timestamp + message  (overwrites, single line)
 # - FetchLog:       appending per-run log
 # - MasterLog:      appending master Heartland log
@@ -107,7 +107,7 @@ try {
     $t_end   = $tEnd.ToString('yyyyMMdd')   + '000000'
 
     $base = 'http://mesonet.k-state.edu/rest/stationdata/'
-    $vars = 'SOILTMP5AVG,SOILTMP5MIN'
+    $vars = 'SOILTMP5AVG,SOILTMP5MIN,SOILTMP5MAX'
 
     $url = $base + '?stn=' + [uri]::EscapeDataString($Station) +
           '&int=day&t_start=' + $t_start + '&t_end=' + $t_end + '&vars=' + $vars
@@ -135,18 +135,20 @@ try {
 
     $raw = Import-Csv -LiteralPath $RawCsv
 
-    # ---- Normalize rows -> Date, AvgF, MinF
+    # ---- Normalize rows -> Date, AvgF, MinF, MaxF
     $rows = $raw |
         Where-Object { $_.TIMESTAMP } |
         ForEach-Object {
             $dt   = [datetime]$_.TIMESTAMP
             $avgC = Get-DoubleOrNull $_.SOILTMP5AVG
             $minC = Get-DoubleOrNull $_.SOILTMP5MIN
-            if ($null -eq $avgC -or $null -eq $minC) { return }
+            $maxC = Get-DoubleOrNull $_.SOILTMP5MAX
+            if ($null -eq $avgC -or $null -eq $minC -or $null -eq $maxC) { return }
             [pscustomobject]@{
                 Date = $dt.Date
                 AvgF = Convert-CtoF $avgC
                 MinF = Convert-CtoF $minC
+                MaxF = Convert-CtoF $maxC
             }
         } |
         Sort-Object Date
@@ -159,13 +161,14 @@ try {
     $master = $rows | Select-Object -Last $MasterDays
 
     $masterLines = New-Object System.Collections.Generic.List[string]
-    $masterLines.Add('date,avgF,minF') | Out-Null
+    $masterLines.Add('date,avgF,minF,maxF') | Out-Null
     foreach ($r in $master) {
         $masterLines.Add((
-            '{0},{1},{2}' -f
+            '{0},{1},{2},{3}' -f
             $r.Date.ToString('yyyy-MM-dd'),
             ([math]::Round($r.AvgF,2)).ToString('0.##', [Globalization.CultureInfo]::InvariantCulture),
-            ([math]::Round($r.MinF,2)).ToString('0.##', [Globalization.CultureInfo]::InvariantCulture)
+            ([math]::Round($r.MinF,2)).ToString('0.##', [Globalization.CultureInfo]::InvariantCulture),
+            ([math]::Round($r.MaxF,2)).ToString('0.##', [Globalization.CultureInfo]::InvariantCulture)
         )) | Out-Null
     }
     Write-TextFileUtf8NoBom $MasterCsv ($masterLines -join "`n")
@@ -176,23 +179,26 @@ try {
         $win  = $master[($i-6)..$i]
         $min7 = ($win | Measure-Object -Property MinF -Minimum).Minimum
         $avg7 = ($win | Measure-Object -Property AvgF -Average).Average
+        $max7 = ($win | Measure-Object -Property MaxF -Maximum).Maximum
         $rollAll.Add([pscustomobject]@{
             Date  = $master[$i].Date
             Min7F = [math]::Round($min7, 2)
             Avg7F = [math]::Round($avg7, 2)
+            Max7F = [math]::Round($max7, 2)
         }) | Out-Null
     }
 
     $roll = $rollAll | Select-Object -Last $RollingDays
 
     $rollLines = New-Object System.Collections.Generic.List[string]
-    $rollLines.Add('date,min7F,avg7F') | Out-Null
+    $rollLines.Add('date,min7F,avg7F,max7F') | Out-Null
     foreach ($r in $roll) {
         $rollLines.Add((
-            '{0},{1},{2}' -f
+            '{0},{1},{2},{3}' -f
             $r.Date.ToString('yyyy-MM-dd'),
             $r.Min7F.ToString('0.##', [Globalization.CultureInfo]::InvariantCulture),
-            $r.Avg7F.ToString('0.##', [Globalization.CultureInfo]::InvariantCulture)
+            $r.Avg7F.ToString('0.##', [Globalization.CultureInfo]::InvariantCulture),
+            $r.Max7F.ToString('0.##', [Globalization.CultureInfo]::InvariantCulture)
         )) | Out-Null
     }
     Write-TextFileUtf8NoBom $RollingCsv ($rollLines -join "`n")

@@ -73,6 +73,19 @@ local function appendLog(path, msg)
   if f then f:write(msg .. "\n"); f:close() end
 end
 
+-- Parses a JSON array string into a Lua array, preserving null positions as nil.
+-- Uses explicit index assignment so "null" entries don't collapse the array,
+-- keeping positions aligned with the daily.time index used by todayIdx.
+local function parseJsonArray(str)
+  local arr = {}
+  local i = 0
+  for token in str:gmatch("[^,%s]+") do
+    i = i + 1
+    arr[i] = tonumber(token)  -- "null" → tonumber returns nil
+  end
+  return arr
+end
+
 -- Wind speed color stops (mph): still→white, breeze→green, windy→yellow, max→red
 local WIND_STOPS = {
   { t=  0, r=255, g=255, b=255 },  -- still: white
@@ -168,23 +181,17 @@ function Run()
   -- Parse daily.temperature_2m_min
   local allMins = {}
   local minsStr = jsonContent:match('"temperature_2m_min"%s*:%s*%[([^%]]+)%]')
-  if minsStr then
-    for v in minsStr:gmatch("(-?%d+%.?%d*)") do allMins[#allMins + 1] = tonumber(v) end
-  end
+  if minsStr then allMins = parseJsonArray(minsStr) end
 
   -- Parse daily.temperature_2m_max
   local allMaxs = {}
   local maxsStr = jsonContent:match('"temperature_2m_max"%s*:%s*%[([^%]]+)%]')
-  if maxsStr then
-    for v in maxsStr:gmatch("(-?%d+%.?%d*)") do allMaxs[#allMaxs + 1] = tonumber(v) end
-  end
+  if maxsStr then allMaxs = parseJsonArray(maxsStr) end
 
   -- Parse daily.precipitation_sum (inches, per OM_MISC precipitation_unit=inch)
   local dailyPrecip = {}
   local precipStr = jsonContent:match('"precipitation_sum"%s*:%s*%[([^%]]+)%]')
-  if precipStr then
-    for v in precipStr:gmatch("([%d%.]+)") do dailyPrecip[#dailyPrecip + 1] = tonumber(v) or 0 end
-  end
+  if precipStr then dailyPrecip = parseJsonArray(precipStr) end
 
   -- Parse hourly.temperature_2m: find min in 8pm-yesterday .. 8am-today window
   local lastNightLow = nil
@@ -196,8 +203,8 @@ function Run()
       local hTempsStr = hBlock:match('"temperature_2m"%s*:%s*%[([^%]]+)%]')
       if hTimesStr and hTempsStr then
         local hTimes, hTemps = {}, {}
-        for ts   in hTimesStr:gmatch('"([^"]+)"')    do hTimes[#hTimes+1] = ts            end
-        for tv   in hTempsStr:gmatch("(-?%d+%.?%d*)") do hTemps[#hTemps+1] = tonumber(tv) end
+        for ts in hTimesStr:gmatch('"([^"]+)"') do hTimes[#hTimes+1] = ts end
+        hTemps = parseJsonArray(hTempsStr)
         local nowT = os.date("*t")
         local t8am = os.time({year=nowT.year, month=nowT.month, day=nowT.day,
                                hour=8, min=0, sec=0, isdst=nowT.isdst})
@@ -229,8 +236,8 @@ function Run()
       local hPrecipStr = hBlock:match('"precipitation"%s*:%s*%[([^%]]+)%]')
       if hTimesStr and hPrecipStr then
         local hTimes, hPrecips = {}, {}
-        for ts in hTimesStr:gmatch('"([^"]+)"')      do hTimes[#hTimes+1]   = ts            end
-        for pv in hPrecipStr:gmatch("([%d%.]+)")     do hPrecips[#hPrecips+1] = tonumber(pv) or 0 end
+        for ts in hTimesStr:gmatch('"([^"]+)"') do hTimes[#hTimes+1] = ts end
+        hPrecips = parseJsonArray(hPrecipStr)
         local nowT      = os.date("*t")
         local midnightT = os.time({year=nowT.year, month=nowT.month, day=nowT.day,
                                     hour=0, min=0, sec=0, isdst=nowT.isdst})
@@ -269,13 +276,9 @@ function Run()
   -- Parse daily.wind_speed_10m_max and wind_gusts_10m_max
   local allWindSpeeds, allWindGusts = {}, {}
   local windSpeedStr = jsonContent:match('"wind_speed_10m_max"%s*:%s*%[([^%]]+)%]')
-  if windSpeedStr then
-    for v in windSpeedStr:gmatch("([%d%.]+)") do allWindSpeeds[#allWindSpeeds+1] = tonumber(v) or 0 end
-  end
+  if windSpeedStr then allWindSpeeds = parseJsonArray(windSpeedStr) end
   local windGustStr = jsonContent:match('"wind_gusts_10m_max"%s*:%s*%[([^%]]+)%]')
-  if windGustStr then
-    for v in windGustStr:gmatch("([%d%.]+)") do allWindGusts[#allWindGusts+1] = tonumber(v) or 0 end
-  end
+  if windGustStr then allWindGusts = parseJsonArray(windGustStr) end
 
   -- Parse current conditions from om_hrrr.json (HRRR: real-time, hourly updates)
   -- Falls back to om.json current block if HRRR file unavailable.
@@ -296,6 +299,42 @@ function Run()
         currentWindSpeed = tonumber(curBlock:match('"wind_speed_10m"%s*:%s*(-?%d+%.?%d*)'))
         currentWindGust  = tonumber(curBlock:match('"wind_gusts_10m"%s*:%s*(-?%d+%.?%d*)'))
         currentWindDir   = tonumber(curBlock:match('"wind_direction_10m"%s*:%s*(-?%d+%.?%d*)'))
+      end
+    end
+  end
+
+  -- Parse HRRR daily precipitation (past 7 days + today) from om_hrrr.json.
+  -- Keyed by j offset from today: hrrrPrecip[0]=today, hrrrPrecip[-1]=yesterday, etc.
+  -- Used in place of ECMWF for rain bars on past days; ECMWF still used for j>0 forecast.
+  local hrrrPrecip = {}
+  do
+    local hrrrPath = SKIN:GetVariable("OM_HRRR_JSON", "")
+    local hrrrContent = ""
+    if hrrrPath ~= "" then
+      local f = io.open(hrrrPath, "r")
+      if f then hrrrContent = f:read("*all"); f:close() end
+    end
+    if hrrrContent ~= "" then
+      local dailyStart = hrrrContent:find('"daily"%s*:')
+      if dailyStart then
+        local rest      = hrrrContent:sub(dailyStart)
+        local timesStr  = rest:match('"time"%s*:%s*%[([^%]]+)%]')
+        local precipStr = rest:match('"precipitation_sum"%s*:%s*%[([^%]]+)%]')
+        if timesStr and precipStr then
+          local hTimes   = {}
+          for t in timesStr:gmatch('"([^"]+)"') do hTimes[#hTimes+1] = t end
+          local hPrecips = parseJsonArray(precipStr)
+          local todayStr = os.date("%Y-%m-%d")
+          local hTodayIdx = nil
+          for i, t in ipairs(hTimes) do
+            if t == todayStr then hTodayIdx = i; break end
+          end
+          if hTodayIdx then
+            for i = 1, #hTimes do
+              hrrrPrecip[i - hTodayIdx] = hPrecips[i]  -- j=0 today, j=-1 yesterday …
+            end
+          end
+        end
       end
     end
   end
@@ -346,6 +385,7 @@ function Run()
   local function barCenterX(i) return barLeftX(i) + math.floor(barW / 2) end
 
   -- ===== Build shapes =====
+  local blank    = "Line 0,0,0,0 | StrokeWidth 0"
   local shapeIdx = 1
 
   -- Shape 1 (frame): visible rounded border; also sets meter bounding box
@@ -369,9 +409,11 @@ function Run()
   end
   shapeIdx = shapeIdx + 1
 
-  -- freezeY/warnY computed here; lines drawn at forefront (shapes 119, 123) below
-  local freezeY = math.floor(graphH - (((32 - minF) / rangeF) * graphH) + 0.5)
-  local warnY   = math.floor(graphH - (((34 - minF) / rangeF) * graphH) + 0.5)
+  -- freezeY/warnY computed here; lines drawn at forefront (shapes 119, 123) below.
+  -- Clamped to the graph bounds: in summer the dynamic floor (minF) can rise above
+  -- 32/34°F, which would otherwise push these lines below the visible graph box.
+  local freezeY = math.floor(clamp(graphH - (((32 - minF) / rangeF) * graphH), 0, graphH) + 0.5)
+  local warnY   = math.floor(clamp(graphH - (((34 - minF) / rangeF) * graphH), 0, graphH) + 0.5)
 
   -- Shape (wind zero reference line, z=back): grey horizontal at 0 mph, today→end
   do
@@ -397,6 +439,27 @@ function Run()
       string.format("Line %d,0,%d,%d | StrokeWidth 1 | Stroke Color 120,120,120,100",
         cx, cx, lineEnd))
     shapeIdx = shapeIdx + 1
+  end
+
+  -- Shapes (hi temp polyline, z=back, behind bars): red 2px line connecting tops of all 22 hi bars
+  do
+    local prevX, prevY = nil, nil
+    for i = 0, totalBars - 1 do
+      local v = hiPoints[i]
+      if v then
+        local cx = barCenterX(i)
+        local cy = tempToY(v)
+        if prevX then
+          setShape(meterName, shapeIdx, string.format(
+            "Line %d,%d,%d,%d | StrokeWidth 2 | Stroke Color %s",
+            prevX, prevY, cx, cy, rgba(255, 0, 0, 200)))
+          shapeIdx = shapeIdx + 1
+        end
+        prevX, prevY = cx, cy
+      else
+        prevX, prevY = nil, nil
+      end
+    end
   end
 
   -- Shapes (hi bars, z=back+1): daily high for all 22 columns
@@ -521,7 +584,7 @@ function Run()
   end
   local lineR, lineG, lineB = 200, 200, 200
   if lineMinVal then lineR, lineG, lineB = interpStops(AIR_STOPS, lineMinVal) end
-  local lineColor = rgba(lineR, lineG, lineB, 255)
+  local lineColor = rgba(lineR, lineG, lineB, 179)
 
   -- Shapes (z=front): 2px polyline across all 22 daily-low points
   local prevX, prevY = nil, nil
@@ -543,29 +606,35 @@ function Run()
 
   -- Cleanup leftover shapes (pre-declared up to 122 in INI)
   local maxShapes = 132
-  local blank = "Line 0,0,0,0 | StrokeWidth 0"
   for j = shapeIdx, maxShapes do setShape(meterName, j, blank) end
 
-  -- Shapes 111-118: precipitation bars (today + 7 forecast; forefront z)
-  -- Scale: 2.0 in = full height; clamped at freeze line.
-  -- Today (j=0): split bar — fallen (alpha 255) below, remaining forecast (alpha 140) above.
-  local maxPrecipH = graphH - freezeY
-  for j = 0, futureDays do
-    local si = 111 + j
+  -- Precip bars for all 22 days: shapes 133-154, 131 (forefront z).
+  -- si = 133 + (j + pastDays): contiguous immediately after Shape132 (Rainmeter's Shape
+  -- meter stops enumerating ShapeN at the first gap, so these MUST follow 132 with no holes).
+  -- j=-14→133 .. j=-1→146, j=0→147, j=1→148 .. j=7→154.
+  -- Shape 131: today remaining forecast (cyan overlay on today bar).
+  -- Scale: 1.0 in = full height up to freeze line; clamped there.
+  -- Past (j<0): actual precip, blue alpha 160.
+  -- Today (j=0): fallen actual (blue 255) + remaining forecast (cyan 255).
+  -- Future (j>0): forecast precip, blue alpha 200.
+  local maxPrecipH = math.max(graphH - freezeY, math.floor(graphH * 0.35))
+  for j = -pastDays, futureDays do
+    local si       = 133 + (j + pastDays)
     local dailyIdx = todayIdx + j
-    local precipIn = dailyPrecip[dailyIdx] or 0
-    local barI = pastDays + j
-    local bx = barI * (barW + barGap)
+    -- HRRR for past + today (j≤0); ECMWF for forecast (j>0)
+    local precipIn = (j <= 0 and hrrrPrecip[j] ~= nil) and hrrrPrecip[j]
+                     or dailyPrecip[dailyIdx] or 0
+    local barI     = pastDays + j
+    local bx       = barI * (barW + barGap)
     if j == 0 then
       -- Today: split into fallen (solid) + remaining forecast (translucent)
       local fallen    = clamp(todayFallenIn, 0, precipIn)
       local remaining = math.max(0, precipIn - fallen)
-      local hFallen   = math.floor(math.min(fallen    / 1.0, 1.0) * maxPrecipH + 0.5)
-      local hRemain   = math.floor(math.min(remaining / 1.0, 1.0) * maxPrecipH + 0.5)
-      if fallen    > 0.005 and hFallen  < 3 then hFallen  = 3 end
-      if remaining > 0.005 and hRemain  < 3 then hRemain  = 3 end
+      local hFallen   = math.floor(math.min(fallen    / 2.0, 1.0) * maxPrecipH + 0.5)
+      local hRemain   = math.floor(math.min(remaining / 2.0, 1.0) * maxPrecipH + 0.5)
+      if fallen    > 0.005 and hFallen < 3 then hFallen = 3 end
+      if remaining > 0.005 and hRemain < 3 then hRemain = 3 end
       local hTotal = hFallen + hRemain
-      -- Draw fallen portion (bottom): blue alpha 255
       if hFallen >= 1 then
         SKIN:Bang("!SetOption", meterName, "Shape" .. si, string.format(
           "Rectangle %d,%d,%d,%d | Fill Color 40,100,200,255 | StrokeWidth 0",
@@ -573,21 +642,21 @@ function Run()
       else
         SKIN:Bang("!SetOption", meterName, "Shape" .. si, blank)
       end
-      -- Draw remaining forecast portion (above fallen): cyan alpha 255
       if hRemain >= 1 then
         SKIN:Bang("!SetOption", meterName, "Shape131", string.format(
-          "Rectangle %d,%d,%d,%d | Fill Color 0,200,220,255 | StrokeWidth 0",
+          "Rectangle %d,%d,%d,%d | Fill Color 160,80,220,255 | StrokeWidth 0",
           bx, graphH - hTotal, barW, hRemain))
       else
         SKIN:Bang("!SetOption", meterName, "Shape131", blank)
       end
     else
-      local h = math.floor(math.min(precipIn / 1.0, 1.0) * maxPrecipH + 0.5)
+      local alpha = (j < 0) and 160 or 200
+      local h = math.floor(math.min(precipIn / 2.0, 1.0) * maxPrecipH + 0.5)
       if precipIn > 0.005 and h < 3 then h = 3 end
       if h >= 1 then
         SKIN:Bang("!SetOption", meterName, "Shape" .. si, string.format(
-          "Rectangle %d,%d,%d,%d | Fill Color 40,100,200,255 | StrokeWidth 0",
-          bx, graphH - h, barW, h))
+          "Rectangle %d,%d,%d,%d | Fill Color 40,100,200,%d | StrokeWidth 0",
+          bx, graphH - h, barW, h, alpha))
       else
         SKIN:Bang("!SetOption", meterName, "Shape" .. si, blank)
       end

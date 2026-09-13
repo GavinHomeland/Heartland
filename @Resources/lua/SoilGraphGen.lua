@@ -1,14 +1,16 @@
 -- ============================
 -- SoilGraphGen.lua (Rolling CSV -> dual-series Shape bars)
 -- NOTE: Do not alter graph drawing code or soil data structure without checking first.
--- CSV format (rolling): date,min7F,avg7F
+-- CSV format (rolling): date,min7F,avg7F,max7F
 --
 -- Draw order (back -> front):
 --   1) Frame
---   2) Avg7F bars (back)
---   3) Min7F bars (front)
---   4) Freeze line @ 32°F (red, on top)
---   5) Threshold lines @ 50°F (yellow), 55°F (green), 60°F (green)
+--   2) Max7F bars (back, translucent red)
+--   3) Avg7F line (bright yellow, 1px polyline through column centers)
+--   4) Min7F bars (front)
+--   5) Freeze line @ 32°F (red, on top)
+--   6) Threshold lines @ 50°F (yellow), 55°F (green), 60°F (green)
+--   7) Heat warn line @ SoilGraphHeatWarnF (yellow), danger line @ SoilGraphDangerF (red)
 --
 -- Variables read from skin:
 --   SoilHistCsv          : rolling CSV path
@@ -19,6 +21,8 @@
 --   SoilGraphMinF        : Y-axis floor (we force <= 20°F for this graph)
 --   SoilGraphMaxF        : Y-axis ceiling (we force >= 90°F)
 --   SoilGraphMinPalette  : "Heat" (default), "Same", or "ColdClamp"
+--   SoilGraphHeatWarnF   : yellow heat-warning line (°F)
+--   SoilGraphDangerF     : red heat-danger line (°F)
 --
 -- Requested behavior:
 -- - Y-axis should extend to 20°F, but bar *height* clamps at 25°F (no shorter than 25°F).
@@ -171,6 +175,8 @@ function Run()
   local graphH   = tonumber(SKIN:GetVariable("SoilGraphH", "65")) or 65
   local minF_in  = tonumber(SKIN:GetVariable("SoilGraphMinF", "20")) or 20
   local maxF_in  = tonumber(SKIN:GetVariable("SoilGraphMaxF", "90")) or 90
+  local heatWarnF = tonumber(SKIN:GetVariable("SoilGraphHeatWarnF", "86")) or 86
+  local dangerF   = tonumber(SKIN:GetVariable("SoilGraphDangerF", "95")) or 95
 
   -- 3. Extract Timestamp from Log
 local lastUpdatedStr = "n/a"
@@ -211,8 +217,9 @@ local lastUpdatedStr = "n/a"
         if not isHeader(fields) then
           local vMin = tonumber(fields[2] or "")
           local vAvg = tonumber(fields[3] or "")
-          if vMin or vAvg then
-            rows[#rows + 1] = { min7 = vMin, avg7 = vAvg }
+          local vMax = tonumber(fields[4] or "")
+          if vMin or vAvg or vMax then
+            rows[#rows + 1] = { min7 = vMin, avg7 = vAvg, max7 = vMax }
           end
         end
       end
@@ -275,14 +282,25 @@ local lastUpdatedStr = "n/a"
     idx = idx + 1
   end
 
-  -- Bars (avg/min will draw on top of current bar)
+  -- Bars (max drawn first as backmost layer; avg drawn as a line; min draws on top of current bar)
+  local prevAvgX, prevAvgY = nil, nil
   for i = 1, n do
-    -- Avg Bar
+    -- Max Bar (back layer, flat translucent red — warning overlay, not a heat gradient)
+    if rows[i].max7 then
+      local h = math.floor(((clamp(rows[i].max7, 25, maxF) - minF) / rangeF) * graphH + 0.5)
+      setShape(meterName, idx, string.format("Rectangle %d,%d,%d,%d,0 | Fill Color %s | StrokeWidth 1 | Stroke Color 255,0,0,220", (i-1)*(barW+barGap), graphH-h, barW, h, rgba(220,30,30,90)))
+      idx = idx + 1
+    end
+    -- Avg Line (bright yellow polyline through each day's column center)
     if rows[i].avg7 then
       local h = math.floor(((clamp(rows[i].avg7, 25, maxF) - minF) / rangeF) * graphH + 0.5)
-      local r, g, b = interpStops(AVG_STOPS, clamp(rows[i].avg7, 25, 90))
-      setShape(meterName, idx, string.format("Rectangle %d,%d,%d,%d,0 | Fill Color %s | StrokeWidth 0", (i-1)*(barW+barGap), graphH-h, barW, h, rgba(r,g,b,110)))
-      idx = idx + 1
+      local cx = (i - 1) * (barW + barGap) + math.floor(barW / 2)
+      local cy = graphH - h
+      if prevAvgX then
+        setShape(meterName, idx, string.format("Line %d,%d,%d,%d | StrokeWidth 1 | Stroke Color 255,255,0,255", prevAvgX, prevAvgY, cx, cy))
+        idx = idx + 1
+      end
+      prevAvgX, prevAvgY = cx, cy
     end
     -- Min Bar
     if rows[i].min7 then
@@ -309,10 +327,18 @@ local lastUpdatedStr = "n/a"
   idx = idx + 1
   local y60 = math.floor(graphH - (((60 - minF) / rangeF) * graphH) + 0.5)
   setShape(meterName, idx, string.format("Line 0,%d,%d,%d | StrokeWidth 1 | Stroke Color 0,200,0,180", y60, graphW, y60))
+  idx = idx + 1
+
+  -- Heat warn line (yellow) + Heat danger line (red)
+  local yHeatWarn = math.floor(graphH - (((heatWarnF - minF) / rangeF) * graphH) + 0.5)
+  setShape(meterName, idx, string.format("Line 0,%d,%d,%d | StrokeWidth 1 | Stroke Color 255,220,0,180", yHeatWarn, graphW, yHeatWarn))
+  idx = idx + 1
+  local yDanger = math.floor(graphH - (((dangerF - minF) / rangeF) * graphH) + 0.5)
+  setShape(meterName, idx, string.format("Line 0,%d,%d,%d | StrokeWidth 1 | Stroke Color 255,0,0,210", yDanger, graphW, yDanger))
   --print("Final Shape Index: " .. idx)
 
   -- Cleanup
-  local maxShapes = (2 * days) + 15
+  local maxShapes = (3 * days) + 15
   for j = idx + 1, maxShapes do setShape(meterName, j, "") end
 
 -- Tooltip
@@ -344,11 +370,12 @@ if masterPath ~= "" then
 end
 
 local tip = string.format(
-  "Albert, KS soil (2\") - 7 day readings\n%s - Current: %s\176F\navg: %s\176F    min: %s\176F",
+  "Albert, KS soil (2\") - 7 day readings\n%s - Current: %s\176F\navg: %s\176F    min: %s\176F    max: %s\176F",
   lastUpdatedStr,
   currentTemp,
   (last.avg7 and string.format("%.1f", last.avg7) or "n/a"),
-  (last.min7 and string.format("%.1f", last.min7) or "n/a")
+  (last.min7 and string.format("%.1f", last.min7) or "n/a"),
+  (last.max7 and string.format("%.1f", last.max7) or "n/a")
 )
   -- Final update to Rainmeter
   SKIN:Bang("!SetOption", meterName, "ToolTipText", tip)

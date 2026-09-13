@@ -54,10 +54,10 @@ local STROKE_C    = "160,210,255,200"
 local FILL_C      = "80,160,255,180"
 local DROP_BASE_A = 180   -- raindrop base alpha (±50 random)
 
--- Drain physics per 100ms tick
-local DRAIN0_PER_TICK = 1.0 / 18000         -- full→empty in 30 min
-local DECAY1_K        = 5.33e-6             -- bucket 1: reaches ~1% after 24h
-local DECAY2_K        = 2.3e-7              -- bucket 2: half-life ~3.5 days
+-- Drain physics per 100ms tick (commented out — levels now held from API data between fetches)
+-- local DRAIN0_PER_TICK = 1.0 / 18000         -- full→empty in 30 min
+-- local DECAY1_K        = 5.33e-6             -- bucket 1: reaches ~1% after 24h
+-- local DECAY2_K        = 2.3e-7              -- bucket 2: half-life ~3.5 days
 
 -- Animation state
 local disp0, disp1, disp2 = 0.0, 0.0, 0.0
@@ -495,18 +495,18 @@ function Update()
     SKIN:Bang("!UpdateMeter", "MeterLightningBolt")
   end
 
-  -- Drain physics
-  if disp0 > 0 then
-    disp0 = math.max(0, disp0 - DRAIN0_PER_TICK)
-  end
-  if disp1 > 0 then
-    disp1 = math.max(0, disp1 * (1 - DECAY1_K))
-    if disp1 < 0.001 then disp1 = 0 end
-  end
-  if disp2 > 0 then
-    disp2 = disp2 * (1 - DECAY2_K)
-    if disp2 < 0.001 then disp2 = 0 end
-  end
+  -- Drain physics commented out — levels held from API data, updated each Run()
+  -- if disp0 > 0 then
+  --   disp0 = math.max(0, disp0 - DRAIN0_PER_TICK)
+  -- end
+  -- if disp1 > 0 then
+  --   disp1 = math.max(0, disp1 * (1 - DECAY1_K))
+  --   if disp1 < 0.001 then disp1 = 0 end
+  -- end
+  -- if disp2 > 0 then
+  --   disp2 = disp2 * (1 - DECAY2_K)
+  --   if disp2 < 0.001 then disp2 = 0 end
+  -- end
 
   -- Animation
   if isRaining then advanceDrops() end
@@ -585,50 +585,92 @@ function Run()
     SKIN:Bang("!UpdateMeter", "MeterLightningBolt")
   end
 
-  -- Parse daily time + precipitation arrays (anchor to "daily" block to avoid hourly "time" match)
-  local dailyBlock   = json:match('"daily"%s*:%s*(%b{})')
-  local dailyTimeStr = dailyBlock and dailyBlock:match('"time"%s*:%s*%[([^%]]+)%]')
-  local dailySumStr  = json:match('"precipitation_sum"%s*:%s*%[([^%]]+)%]')
-  local dailyTimes, dailySums = {}, {}
-  if dailyTimeStr then
-    for t in dailyTimeStr:gmatch('"([^"]+)"') do dailyTimes[#dailyTimes+1] = t end
-  end
-  if dailySumStr then
-    for v in dailySumStr:gmatch("([%d%.]+)") do dailySums[#dailySums+1] = tonumber(v) or 0 end
-  end
+  -- B1 + B2: HRRR daily for past complete days; hourly for today's actual fallen.
+  -- Hourly "preceding hour sum": value at THH:00 = rain during (HH-1):00..HH:00.
+  -- Falls back to daily total (includes forecast) if hourly block not yet in JSON.
+  local todayActual = nil   -- nil until hourly data confirms a value
+  local todayTotal  = 0     -- HRRR daily sum for today (includes remaining forecast)
+  local weekSum     = 0
+  do
+    local hf = io.open(OM_HRRR_JSON, "r")
+    local hrrrJson = hf and hf:read("*a") or ""
+    if hf then hf:close() end
 
-  -- Find today's index in the time array
-  local todayStr  = os.date("%Y-%m-%d")
-  local todayIdx  = #dailyTimes  -- fallback: last entry
-  for i, t in ipairs(dailyTimes) do
-    if t == todayStr then todayIdx = i; break end
-  end
+    -- Parse daily sums
+    local dailyBlock = hrrrJson:match('"daily"%s*:%s*(%b{})')
+    local timesStr   = dailyBlock and dailyBlock:match('"time"%s*:%s*%[([^%]]+)%]')
+    local precipStr  = dailyBlock and dailyBlock:match('"precipitation_sum"%s*:%s*%[([^%]]+)%]')
+    local hTimes, hSums, hTodayIdx = {}, {}, nil
+    if timesStr and precipStr then
+      local todayStr = os.date("%Y-%m-%d")
+      for t in timesStr:gmatch('"([^"]+)"') do hTimes[#hTimes+1] = t end
+      local idx = 0
+      for v in precipStr:gmatch("[^,%s]+") do
+        idx = idx + 1; hSums[idx] = tonumber(v)
+      end
+      for i, t in ipairs(hTimes) do
+        if t == todayStr then hTodayIdx = i; break end
+      end
+      if hTodayIdx then
+        todayTotal = hSums[hTodayIdx] or 0
+      end
+    end
 
-  -- B1: today's accumulated precipitation
-  disp1 = (dailySums[todayIdx] or 0) / DAILY_FULL
+    -- Try hourly block: sum complete hours from midnight to current hour
+    local hourlyBlock = hrrrJson:match('"hourly"%s*:%s*(%b{})')
+    if hourlyBlock then
+      local hTimesStr  = hourlyBlock:match('"time"%s*:%s*%[([^%]]+)%]')
+      local hPrecipStr = hourlyBlock:match('"precipitation"%s*:%s*%[([^%]]+)%]')
+      if hTimesStr and hPrecipStr then
+        local hourlyTimes = {}
+        for t in hTimesStr:gmatch('"([^"]+)"') do hourlyTimes[#hourlyTimes+1] = t end
+        local hVals, hidx = {}, 0
+        for v in hPrecipStr:gmatch("[^,%s]+") do
+          hidx = hidx + 1; hVals[hidx] = tonumber(v) or 0
+        end
+        local curTimeStr = hrrrJson:match('"current"%s*:%s*%{[^}]*"time"%s*:%s*"([^"]+)"') or ""
+        local curHour = tonumber(curTimeStr:match("T(%d%d):")) or 0
+        local todayStr2 = os.date("%Y-%m-%d")
+        todayActual = 0
+        for i, t in ipairs(hourlyTimes) do
+          -- tHour >= 1: T01:00 = rain 00:00-01:00 today (first complete hour)
+          -- tHour <= curHour: only complete hours already past
+          local tDate = t:sub(1, 10)
+          local tHour = tonumber(t:sub(12, 13)) or 0
+          if tDate == todayStr2 and tHour >= 1 and tHour <= curHour then
+            todayActual = todayActual + (hVals[i] or 0)
+          end
+        end
+      end
+    end
 
-  -- B2: past 7 days (today and 6 prior)
-  local weekSum = 0
-  for i = math.max(1, todayIdx - 6), todayIdx do
-    weekSum = weekSum + (dailySums[i] or 0)
+    -- Fallback when hourly not yet available
+    if todayActual == nil then todayActual = todayTotal end
+
+    -- B2: past 7 complete calendar days only (today's water is already in B1)
+    if hTodayIdx then
+      for i = math.max(1, hTodayIdx - 7), hTodayIdx - 1 do
+        weekSum = weekSum + (hSums[i] or 0)
+      end
+    end
   end
-  disp2 = weekSum / WEEKLY_FULL
+  disp1 = todayActual / DAILY_FULL
+  disp2 = weekSum    / WEEKLY_FULL
 
   drawStructure()
   updateFills()
 
-  local todayTotal = dailySums[todayIdx] or 0
   local tip = string.format(
-    "Last hour: %.2f in\nToday: %.2f in\n7-day: %.2f in",
-    curPrecip, todayTotal, weekSum)
+    "Last 15 min: %.2f in\nToday: %.2f in\nPast 7 days: %.2f in",
+    curPrecip, todayActual, weekSum)
   SKIN:Bang("!SetOption", METER, "ToolTipText", tip)
 
   SKIN:Bang("!UpdateMeter", METER)
   SKIN:Bang("!Redraw")
 
   local endMsg = os.date("%Y-%m-%d %H:%M:%S") ..
-    string.format(" | RainBuckets | Run Complete precip=%.3f disp0=%.2f disp1=%.2f disp2=%.2f",
-      curPrecip, disp0, disp1, disp2)
+    string.format(" | RainBuckets | Run Complete precip=%.3f todayActual=%.3f weekSum=%.3f disp0=%.2f disp1=%.2f disp2=%.2f",
+      curPrecip, todayActual, weekSum, disp0, disp1, disp2)
   appendLog(LOG_PATH, endMsg)
   appendLog(MASTER_LOG, endMsg)
 end

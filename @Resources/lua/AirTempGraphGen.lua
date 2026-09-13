@@ -27,6 +27,16 @@
 --   AirTempGraphLog, HeartlandLog
 -- ============================
 
+-- Global panel scale (skin variable S). barW/barGap/graphH already arrive pre-scaled
+-- from the INI, so sc() is only for this file's own hard-coded pixel constants —
+-- stroke widths, corner radii and minimum bar heights.
+local S = 1
+local function sc(n)
+  local v = math.floor(n * S + 0.5)
+  if v < 1 and n > 0 then v = 1 end
+  return v
+end
+
 local function clamp(v, lo, hi)
   if v < lo then return lo end
   if v > hi then return hi end
@@ -146,6 +156,7 @@ local function rotateLogs()
 end
 
 function Run()
+  S = tonumber(SKIN:GetVariable("S", "1")) or 1
   rotateLogs()
   local meterName = "MeterAirTempGraph"
   local logPath   = SKIN:GetVariable("AirTempGraphLog", "")
@@ -390,8 +401,8 @@ function Run()
 
   -- Shape 1 (frame): visible rounded border; also sets meter bounding box
   setShape(meterName, shapeIdx,
-    string.format("Rectangle 0,0,%d,%d,4 | Fill Color 0,0,0,0 | StrokeWidth 1 | Stroke Color 255,255,255,90",
-      graphW, graphH))
+    string.format("Rectangle 0,0,%d,%d,%d | Fill Color 0,0,0,0 | StrokeWidth %d | Stroke Color 255,255,255,90",
+      graphW, graphH, sc(4), sc(1)))
   shapeIdx = shapeIdx + 1
 
   -- Shape 2 (today indicator, z=back): bright vertical line, stops at top of hi bar
@@ -404,8 +415,8 @@ function Run()
       lineEnd = graphH - h
     end
     setShape(meterName, shapeIdx,
-      string.format("Line %d,0,%d,%d | StrokeWidth 1 | Stroke Color 230,240,255,220",
-        todayCX, todayCX, lineEnd))
+      string.format("Line %d,0,%d,%d | StrokeWidth %d | Stroke Color 230,240,255,220",
+        todayCX, todayCX, lineEnd, sc(1)))
   end
   shapeIdx = shapeIdx + 1
 
@@ -418,11 +429,11 @@ function Run()
   -- Shape (wind zero reference line, z=back): grey horizontal at 0 mph, today→end
   do
     local windBandH = graphH / 3.0
-    local zeroY     = math.floor(windBandH + 10 + 0.5)
+    local zeroY     = math.floor(windBandH + sc(10) + 0.5)
     local startX    = barLeftX(pastDays)
     setShape(meterName, shapeIdx,
-      string.format("Line %d,%d,%d,%d | StrokeWidth 1 | Stroke Color 140,140,140,180",
-        startX, zeroY, graphW, zeroY))
+      string.format("Line %d,%d,%d,%d | StrokeWidth %d | Stroke Color 140,140,140,180",
+        startX, zeroY, graphW, zeroY, sc(1)))
     shapeIdx = shapeIdx + 1
   end
 
@@ -436,8 +447,8 @@ function Run()
       lineEnd = graphH - h
     end
     setShape(meterName, shapeIdx,
-      string.format("Line %d,0,%d,%d | StrokeWidth 1 | Stroke Color 120,120,120,100",
-        cx, cx, lineEnd))
+      string.format("Line %d,0,%d,%d | StrokeWidth %d | Stroke Color 120,120,120,100",
+        cx, cx, lineEnd, sc(1)))
     shapeIdx = shapeIdx + 1
   end
 
@@ -451,8 +462,8 @@ function Run()
         local cy = tempToY(v)
         if prevX then
           setShape(meterName, shapeIdx, string.format(
-            "Line %d,%d,%d,%d | StrokeWidth 2 | Stroke Color %s",
-            prevX, prevY, cx, cy, rgba(255, 0, 0, 200)))
+            "Line %d,%d,%d,%d | StrokeWidth %d | Stroke Color %s",
+            prevX, prevY, cx, cy, sc(2), rgba(255, 0, 0, 200)))
           shapeIdx = shapeIdx + 1
         end
         prevX, prevY = cx, cy
@@ -500,8 +511,8 @@ function Run()
       if h < 1 then h = 1 end
       local r, g, b = interpStops(AIR_STOPS, v)
       setShape(meterName, shapeIdx,
-        string.format("Rectangle %d,%d,%d,%d,0 | Fill Color %s | StrokeWidth 1 | Stroke Color 0,0,0,150",
-          barLeftX(pastDays), graphH - h, barW, h, rgba(r, g, b, 200)))
+        string.format("Rectangle %d,%d,%d,%d,0 | Fill Color %s | StrokeWidth %d | Stroke Color 0,0,0,150",
+          barLeftX(pastDays), graphH - h, barW, h, rgba(r, g, b, 200), sc(1)))
       shapeIdx = shapeIdx + 1
     end
   end
@@ -570,8 +581,8 @@ function Run()
       if h < 1 then h = 1 end
       local r, g, b = interpStops(AIR_STOPS, v)
       setShape(meterName, shapeIdx,
-        string.format("Rectangle %d,%d,%d,%d,0 | Fill Color %s | StrokeWidth 1 | Stroke Color 0,0,0,150",
-          barLeftX(i), graphH - h, barW, h, rgba(r, g, b, 200)))
+        string.format("Rectangle %d,%d,%d,%d,0 | Fill Color %s | StrokeWidth %d | Stroke Color 0,0,0,150",
+          barLeftX(i), graphH - h, barW, h, rgba(r, g, b, 200), sc(1)))
       shapeIdx = shapeIdx + 1
     end
   end
@@ -594,8 +605,8 @@ function Run()
       local cx, cy = barCenterX(i), tempToY(v)
       if prevX then
         setShape(meterName, shapeIdx,
-          string.format("Line %d,%d,%d,%d | StrokeWidth 2 | Stroke Color %s",
-            prevX, prevY, cx, cy, lineColor))
+          string.format("Line %d,%d,%d,%d | StrokeWidth %d | Stroke Color %s",
+            prevX, prevY, cx, cy, sc(2), lineColor))
         shapeIdx = shapeIdx + 1
       end
       prevX, prevY = cx, cy
@@ -632,8 +643,8 @@ function Run()
       local remaining = math.max(0, precipIn - fallen)
       local hFallen   = math.floor(math.min(fallen    / 2.0, 1.0) * maxPrecipH + 0.5)
       local hRemain   = math.floor(math.min(remaining / 2.0, 1.0) * maxPrecipH + 0.5)
-      if fallen    > 0.005 and hFallen < 3 then hFallen = 3 end
-      if remaining > 0.005 and hRemain < 3 then hRemain = 3 end
+      if fallen    > 0.005 and hFallen < sc(3) then hFallen = sc(3) end
+      if remaining > 0.005 and hRemain < sc(3) then hRemain = sc(3) end
       local hTotal = hFallen + hRemain
       if hFallen >= 1 then
         SKIN:Bang("!SetOption", meterName, "Shape" .. si, string.format(
@@ -652,7 +663,7 @@ function Run()
     else
       local alpha = (j < 0) and 160 or 200
       local h = math.floor(math.min(precipIn / 2.0, 1.0) * maxPrecipH + 0.5)
-      if precipIn > 0.005 and h < 3 then h = 3 end
+      if precipIn > 0.005 and h < sc(3) then h = sc(3) end
       if h >= 1 then
         SKIN:Bang("!SetOption", meterName, "Shape" .. si, string.format(
           "Rectangle %d,%d,%d,%d | Fill Color 40,100,200,%d | StrokeWidth 0",
@@ -664,8 +675,8 @@ function Run()
   end
 
   -- Shape 119: freeze line (forefront)
-  setShape(meterName, 119, string.format("Line 0,%d,%d,%d | StrokeWidth 1 | Stroke Color 255,0,0,255",
-    freezeY, graphW, freezeY))
+  setShape(meterName, 119, string.format("Line 0,%d,%d,%d | StrokeWidth %d | Stroke Color 255,0,0,255",
+    freezeY, graphW, freezeY, sc(1)))
 
   -- Shapes 120-122: freeze-fill patches (forefront)
   for p = 1, 3 do
@@ -678,8 +689,8 @@ function Run()
   end
 
   -- Shape 123: yellow warning line at 34°F (forefront)
-  setShape(meterName, 123, string.format("Line 0,%d,%d,%d | StrokeWidth 1 | Stroke Color 255,220,0,210",
-    warnY, graphW, warnY))
+  setShape(meterName, 123, string.format("Line 0,%d,%d,%d | StrokeWidth %d | Stroke Color 255,220,0,210",
+    warnY, graphW, warnY, sc(1)))
 
   -- Shapes 124-130: wind forecast polyline (today → +7), 7 segments
   -- Y=0 (top of graph) = MAX_WIND; rises up to graphH/3 at calm.
@@ -691,7 +702,7 @@ function Run()
 
     local function windToY(spd)
       local t = clamp(spd, 0, MAX_WIND) / MAX_WIND
-      return math.floor((1 - t) * (windBandH + 10) + 0.5)
+      return math.floor((1 - t) * (windBandH + sc(10)) + 0.5)
     end
 
     -- Build 8 points: today (i=pastDays) through today+7 (i=pastDays+futureDays)
@@ -758,8 +769,8 @@ function Run()
         local avgSpd  = (p0.spd + p1.spd) / 2
         local wr, wg, wb = interpStops(WIND_STOPS, avgSpd)
         setShape(meterName, 124 + i, string.format(
-          "Line %d,%d,%d,%d | StrokeWidth 2 | Stroke Color %d,%d,%d,220",
-          p0.x, p0.y, p1.x, p1.y, wr, wg, wb))
+          "Line %d,%d,%d,%d | StrokeWidth %d | Stroke Color %d,%d,%d,220",
+          p0.x, p0.y, p1.x, p1.y, sc(2), wr, wg, wb))
       else
         setShape(meterName, 124 + i, blank)
       end
@@ -772,8 +783,8 @@ function Run()
       local cx   = barCenterX(pastDays)
       local gr, gg, gb = interpStops(WIND_STOPS, currentWindGust)
       setShape(meterName, 132, string.format(
-        "Line %d,%d,%d,%d | StrokeWidth 2 | Stroke Color %d,%d,%d,220",
-        cx, yGst, cx, ySpd, gr, gg, gb))
+        "Line %d,%d,%d,%d | StrokeWidth %d | Stroke Color %d,%d,%d,220",
+        cx, yGst, cx, ySpd, sc(2), gr, gg, gb))
     else
       setShape(meterName, 132, blank)
     end
@@ -781,7 +792,7 @@ function Run()
 
   -- ===== Day-label meters: today + every-other future day =====
   -- Each meter is individually positioned at the bar center X in the ini.
-  -- barCenterX(i) = i*9 + 4  (barW=8, barGap=1)
+  -- barCenterX(i) = i*(barW+barGap) + barW/2 = i*16 + 7  (barW=14, barGap=2 at S=1.742)
   local labelMeterMap = {
     { barIdx = pastDays,     meter = "MeterAirTempDayLabelToday" },
     { barIdx = pastDays + 1, meter = "MeterAirTempDayLabelF1"   },

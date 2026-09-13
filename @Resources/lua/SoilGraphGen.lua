@@ -138,6 +138,15 @@ local MIN_STOPS_COLDCLAMP = {
 }
 
 
+-- Global panel scale (skin variable S). barW/barGap/graphH already arrive pre-scaled
+-- from the INI, so sc() is only for this file's own hard-coded stroke widths and radii.
+local S = 1
+local function sc(n)
+  local v = math.floor(n * S + 0.5)
+  if v < 1 and n > 0 then v = 1 end
+  return v
+end
+
 local function setShape(meterName, idx, shapeDef)
   if idx == 1 then
     SKIN:Bang("!SetOption", meterName, "Shape", shapeDef)
@@ -154,6 +163,7 @@ local function appendLog(path, msg)
 end
 
 function Run()
+  S = tonumber(SKIN:GetVariable("S", "1")) or 1
   local meterName = "MeterSoilGraph"
   local logPath    = SKIN:GetVariable("SoilGraphLog", "")
   local masterLog  = SKIN:GetVariable("HeartlandLog", "")
@@ -247,7 +257,7 @@ local lastUpdatedStr = "n/a"
   local rangeF = (maxF - minF <= 0) and 1 or (maxF - minF)
 
 -- Frame
-  local frame = string.format("Rectangle 0,0,%d,%d,4 | Fill Color 0,0,0,0 | StrokeWidth 1 | Stroke Color %s", graphW, graphH, frameColor)
+  local frame = string.format("Rectangle 0,0,%d,%d,%d | Fill Color 0,0,0,0 | StrokeWidth %d | Stroke Color %s", graphW, graphH, sc(4), sc(1), frameColor)
   setShape(meterName, idx, frame)
   idx = idx + 1
 
@@ -278,7 +288,7 @@ local lastUpdatedStr = "n/a"
     local r, g, b = interpStops(AVG_STOPS, clamp(currentTemp, 25, 90))
     -- Position at the rightmost rolling bar position (n-1)
     local xPos = (n - 1) * (barW + barGap)
-    setShape(meterName, idx, string.format("Rectangle %d,%d,%d,%d,0 | Fill Color %s | StrokeWidth 1 | Stroke Color 100,100,100,100", xPos, graphH-h, barW, h, rgba(r,g,b,255)))
+    setShape(meterName, idx, string.format("Rectangle %d,%d,%d,%d,0 | Fill Color %s | StrokeWidth %d | Stroke Color 100,100,100,100", xPos, graphH-h, barW, h, rgba(r,g,b,255), sc(1)))
     idx = idx + 1
   end
 
@@ -288,7 +298,7 @@ local lastUpdatedStr = "n/a"
     -- Max Bar (back layer, flat translucent red — warning overlay, not a heat gradient)
     if rows[i].max7 then
       local h = math.floor(((clamp(rows[i].max7, 25, maxF) - minF) / rangeF) * graphH + 0.5)
-      setShape(meterName, idx, string.format("Rectangle %d,%d,%d,%d,0 | Fill Color %s | StrokeWidth 1 | Stroke Color 255,0,0,220", (i-1)*(barW+barGap), graphH-h, barW, h, rgba(220,30,30,90)))
+      setShape(meterName, idx, string.format("Rectangle %d,%d,%d,%d,0 | Fill Color %s | StrokeWidth %d | Stroke Color 255,0,0,220", (i-1)*(barW+barGap), graphH-h, barW, h, rgba(220,30,30,90), sc(1)))
       idx = idx + 1
     end
     -- Avg Line (bright yellow polyline through each day's column center)
@@ -297,7 +307,7 @@ local lastUpdatedStr = "n/a"
       local cx = (i - 1) * (barW + barGap) + math.floor(barW / 2)
       local cy = graphH - h
       if prevAvgX then
-        setShape(meterName, idx, string.format("Line %d,%d,%d,%d | StrokeWidth 1 | Stroke Color 255,255,0,255", prevAvgX, prevAvgY, cx, cy))
+        setShape(meterName, idx, string.format("Line %d,%d,%d,%d | StrokeWidth %d | Stroke Color 255,255,0,255", prevAvgX, prevAvgY, cx, cy, sc(1)))
         idx = idx + 1
       end
       prevAvgX, prevAvgY = cx, cy
@@ -306,35 +316,35 @@ local lastUpdatedStr = "n/a"
     if rows[i].min7 then
       local h = math.floor(((clamp(rows[i].min7, 25, maxF) - minF) / rangeF) * graphH + 0.5)
       local r, g, b = interpStops(MIN_STOPS_HEAT, clamp(rows[i].min7, 25, 90))
-      setShape(meterName, idx, string.format("Rectangle %d,%d,%d,%d,0 | Fill Color %s | StrokeWidth 1 | Stroke Color 0,0,0,70", (i-1)*(barW+barGap), graphH-h, barW, h, rgba(r,g,b,200)))
+      setShape(meterName, idx, string.format("Rectangle %d,%d,%d,%d,0 | Fill Color %s | StrokeWidth %d | Stroke Color 0,0,0,70", (i-1)*(barW+barGap), graphH-h, barW, h, rgba(r,g,b,200), sc(1)))
       idx = idx + 1
     end
   end
   -- Freeze Line (32°F red) + Warning Line (34°F yellow)
   local freezeY = math.floor(graphH - (((32 - minF) / rangeF) * graphH) + 0.5)
-  setShape(meterName, idx, string.format("Line 0,%d,%d,%d | StrokeWidth 1 | Stroke Color 255,0,0,210", freezeY, graphW, freezeY))
+  setShape(meterName, idx, string.format("Line 0,%d,%d,%d | StrokeWidth %d | Stroke Color 255,0,0,210", freezeY, graphW, freezeY, sc(1)))
   idx = idx + 1
   local warnY = math.floor(graphH - (((34 - minF) / rangeF) * graphH) + 0.5)
-  setShape(meterName, idx, string.format("Line 0,%d,%d,%d | StrokeWidth 1 | Stroke Color 255,220,0,180", warnY, graphW, warnY))
+  setShape(meterName, idx, string.format("Line 0,%d,%d,%d | StrokeWidth %d | Stroke Color 255,220,0,180", warnY, graphW, warnY, sc(1)))
   idx = idx + 1
 
   -- Warm threshold lines (50°F yellow, 55/60°F green)
   local y50 = math.floor(graphH - (((50 - minF) / rangeF) * graphH) + 0.5)
-  setShape(meterName, idx, string.format("Line 0,%d,%d,%d | StrokeWidth 1 | Stroke Color 255,255,0,150", y50, graphW, y50))
+  setShape(meterName, idx, string.format("Line 0,%d,%d,%d | StrokeWidth %d | Stroke Color 255,255,0,150", y50, graphW, y50, sc(1)))
   idx = idx + 1
   local y55 = math.floor(graphH - (((55 - minF) / rangeF) * graphH) + 0.5)
-  setShape(meterName, idx, string.format("Line 0,%d,%d,%d | StrokeWidth 1 | Stroke Color 0,200,0,160", y55, graphW, y55))
+  setShape(meterName, idx, string.format("Line 0,%d,%d,%d | StrokeWidth %d | Stroke Color 0,200,0,160", y55, graphW, y55, sc(1)))
   idx = idx + 1
   local y60 = math.floor(graphH - (((60 - minF) / rangeF) * graphH) + 0.5)
-  setShape(meterName, idx, string.format("Line 0,%d,%d,%d | StrokeWidth 1 | Stroke Color 0,200,0,180", y60, graphW, y60))
+  setShape(meterName, idx, string.format("Line 0,%d,%d,%d | StrokeWidth %d | Stroke Color 0,200,0,180", y60, graphW, y60, sc(1)))
   idx = idx + 1
 
   -- Heat warn line (yellow) + Heat danger line (red)
   local yHeatWarn = math.floor(graphH - (((heatWarnF - minF) / rangeF) * graphH) + 0.5)
-  setShape(meterName, idx, string.format("Line 0,%d,%d,%d | StrokeWidth 1 | Stroke Color 255,220,0,180", yHeatWarn, graphW, yHeatWarn))
+  setShape(meterName, idx, string.format("Line 0,%d,%d,%d | StrokeWidth %d | Stroke Color 255,220,0,180", yHeatWarn, graphW, yHeatWarn, sc(1)))
   idx = idx + 1
   local yDanger = math.floor(graphH - (((dangerF - minF) / rangeF) * graphH) + 0.5)
-  setShape(meterName, idx, string.format("Line 0,%d,%d,%d | StrokeWidth 1 | Stroke Color 255,0,0,210", yDanger, graphW, yDanger))
+  setShape(meterName, idx, string.format("Line 0,%d,%d,%d | StrokeWidth %d | Stroke Color 255,0,0,210", yDanger, graphW, yDanger, sc(1)))
   --print("Final Shape Index: " .. idx)
 
   -- Cleanup

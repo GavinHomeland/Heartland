@@ -50,15 +50,50 @@ local ALL_PAIRS = {
     { key="DenseSmokeAdvisory",        t="MeterAlertDenseSmokeAdvisory",        row=3, warn=false },
 }
 
-local ACK_METER    = "MeterAlertAck"
-local ICON_STEP    = 75   -- px per icon slot (54px icon + 21px gap, 8 icons fills W-Pad exactly)
-local ICON_ORIGIN  = 24   -- left edge of first icon
-local ICONS_PER_ROW = 8  -- icons before wrapping to next row
-local ROW2_OFFSET  = 64   -- row 2 Y offset from AlertRowY
-local ROW3_OFFSET  = 128  -- row 3 Y offset from AlertRowY
-local BASE_H       = 441  -- SoilGraphY(130) + B2_BOT(295) + Pad(16); no alerts
+-- Global panel scale, read from skin variable S in Initialize(). Every pixel constant
+-- in this file is a BASE value (the original 620px-wide design) passed through sc().
+local S = 1
+local function sc(n)
+  local v = math.floor(n * S + 0.5)
+  if v < 1 and n > 0 then v = 1 end
+  return v
+end
 
-local POPUP_W = 360
+local ACK_METER     = "MeterAlertAck"
+local ICONS_PER_ROW = 8   -- icons before wrapping to next row (a count, never scaled)
+
+-- Scaled layout; filled in by buildScale() once S is known.
+local ICON_STEP, ICON_ORIGIN, ROW2_OFFSET, ROW3_OFFSET, ICON_SIZE, BASE_H
+local POPUP_W, POPUP_PAD, POPUP_TITLE_Y, POPUP_EXP_Y, POPUP_DESC_Y
+local POPUP_LINE_H, POPUP_BOT_PAD, POPUP_CLOSE_DX, POPUP_CLOSE_Y, POPUP_DROP
+
+local function buildScale()
+  ICON_STEP   = sc(75)   -- px per icon slot (54px icon + 21px gap, 8 fills W-Pad exactly)
+  ICON_ORIGIN = sc(24)   -- left edge of first icon
+  ROW2_OFFSET = sc(64)   -- row 2 Y offset from AlertRowY
+  ROW3_OFFSET = sc(128)  -- row 3 Y offset from AlertRowY
+  ICON_SIZE   = sc(54)   -- alert icon edge length
+  BASE_H      = sc(441)  -- SoilGraphY(130) + B2_BOT(295) + Pad(16); no alerts
+
+  POPUP_W        = sc(360)
+  POPUP_PAD      = sc(12)   -- popup inner left padding
+  POPUP_TITLE_Y  = sc(10)
+  POPUP_EXP_Y    = sc(36)
+  POPUP_DESC_Y   = sc(58)
+  POPUP_LINE_H   = sc(18)   -- fallback per-line height when desc H is unavailable
+  POPUP_BOT_PAD  = sc(14)
+  POPUP_CLOSE_DX = sc(30)   -- close button inset from popup right edge
+  POPUP_CLOSE_Y  = sc(8)
+  POPUP_DROP     = sc(64)   -- popup Y offset below the clicked icon
+end
+
+buildScale()
+
+function Initialize()
+  S = tonumber(SKIN:GetVariable("S", "1")) or 1
+  buildScale()
+end
+
 local POPUP_METERS = {
     "MeterAlertDetailBG", "MeterAlertDetailTitle",
     "MeterAlertDetailExpiry", "MeterAlertDetailDesc", "MeterAlertDetailClose",
@@ -141,7 +176,7 @@ end
 -- Only called when flags actually change.
 local function updateLayout(flags)
     HideDetail()   -- dismiss popup whenever alert layout changes
-    local alertRowY = tonumber(SKIN:GetVariable("AlertRowY") or "470")
+    local alertRowY = tonumber(SKIN:GetVariable("AlertRowY") or tostring(sc(470)))
     local slot = 0
     for _, p in ipairs(ALL_PAIRS) do
         if flags[p.key] then
@@ -217,7 +252,7 @@ end
 
 -- Called by icon LeftMouseUpAction: ShowDetail('KeyName')
 function ShowDetail(key)
-    local iconX, iconY = ICON_ORIGIN, tonumber(SKIN:GetVariable("AlertRowY") or "470")
+    local iconX, iconY = ICON_ORIGIN, tonumber(SKIN:GetVariable("AlertRowY") or tostring(sc(470)))
     for _, p in ipairs(ALL_PAIRS) do
         if p.key == key then
             local m = SKIN:GetMeter(p.t)
@@ -226,14 +261,14 @@ function ShowDetail(key)
         end
     end
 
-    local skinW = tonumber(SKIN:GetVariable("W")   or "620")
-    local pad   = tonumber(SKIN:GetVariable("Pad") or "16")
+    local skinW = tonumber(SKIN:GetVariable("W")   or tostring(sc(620)))
+    local pad   = tonumber(SKIN:GetVariable("Pad") or tostring(sc(16)))
 
     -- Horizontal clamp; always open below icon (popup grows downward)
     local px = iconX
     if px + POPUP_W > skinW - pad then px = skinW - pad - POPUP_W end
     if px < pad then px = pad end
-    local py = iconY + 64
+    local py = iconY + POPUP_DROP
 
     local d = cachedDetails[key]
     local title   = key
@@ -255,29 +290,29 @@ function ShowDetail(key)
     local wrappedDesc = wordWrap(formatNWSDesc(desc), 46)
 
     -- Update text meters; desc has no fixed H so Rainmeter auto-sizes it
-    set("MeterAlertDetailTitle",  {X=tostring(px+12), Y=tostring(py+10), W=tostring(POPUP_W-52), Text=title})
-    set("MeterAlertDetailExpiry", {X=tostring(px+12), Y=tostring(py+36), W=tostring(POPUP_W-24), Text=expLine})
-    set("MeterAlertDetailDesc",   {X=tostring(px+12), Y=tostring(py+58), W=tostring(POPUP_W-24), Text=wrappedDesc})
+    set("MeterAlertDetailTitle",  {X=tostring(px+POPUP_PAD), Y=tostring(py+POPUP_TITLE_Y), W=tostring(POPUP_W-sc(52)), Text=title})
+    set("MeterAlertDetailExpiry", {X=tostring(px+POPUP_PAD), Y=tostring(py+POPUP_EXP_Y),   W=tostring(POPUP_W-sc(24)), Text=expLine})
+    set("MeterAlertDetailDesc",   {X=tostring(px+POPUP_PAD), Y=tostring(py+POPUP_DESC_Y),  W=tostring(POPUP_W-sc(24)), Text=wrappedDesc})
 
     -- Read actual rendered height of desc (fallback: estimate from char count)
     local dm    = SKIN:GetMeter("MeterAlertDetailDesc")
     local descH = dm and dm:GetH() or 0
     if descH <= 0 then
-        -- Count explicit newlines in pre-wrapped text, ~13px per line
+        -- Count explicit newlines in pre-wrapped text
         local nlines = 1
         for _ in wrappedDesc:gmatch("\n") do nlines = nlines + 1 end
-        descH = nlines * 18 + 8
+        descH = nlines * POPUP_LINE_H + sc(8)
     end
-    local totalH = 58 + descH + 14   -- top padding + desc + bottom padding
+    local totalH = POPUP_DESC_Y + descH + POPUP_BOT_PAD   -- top padding + desc + bottom padding
 
-    set("MeterAlertDetailClose", {X=tostring(px+POPUP_W-30), Y=tostring(py+8)})
+    set("MeterAlertDetailClose", {X=tostring(px+POPUP_W-POPUP_CLOSE_DX), Y=tostring(py+POPUP_CLOSE_Y)})
 
     -- BG sized to fit actual content height
     SKIN:Bang("!SetOption", "MeterAlertDetailBG", "X", tostring(px))
     SKIN:Bang("!SetOption", "MeterAlertDetailBG", "Y", tostring(py))
     SKIN:Bang("!SetOption", "MeterAlertDetailBG", "Shape",
-        string.format("Rectangle 0,0,%d,%d,6 | StrokeWidth 1 | Stroke Color 255,255,255,50 | Fill Color 12,18,32,255",
-            POPUP_W, totalH))
+        string.format("Rectangle 0,0,%d,%d,%d | StrokeWidth %d | Stroke Color 255,255,255,50 | Fill Color 12,18,32,255",
+            POPUP_W, totalH, sc(6), sc(1)))
     SKIN:Bang("!SetOption", "MeterAlertDetailBG", "Hidden", "0")
     SKIN:Bang("!UpdateMeter", "MeterAlertDetailBG")
 
@@ -384,15 +419,15 @@ function Update()
     end
 
     -- Dynamic skin height
-    local alertRowY = tonumber(SKIN:GetVariable("AlertRowY") or "470")
-    local pad       = tonumber(SKIN:GetVariable("Pad") or "16")
+    local alertRowY = tonumber(SKIN:GetVariable("AlertRowY") or tostring(sc(470)))
+    local pad       = tonumber(SKIN:GetVariable("Pad") or tostring(sc(16)))
     local newH
     if row3 then
-        newH = alertRowY + ROW3_OFFSET + 54 + pad
+        newH = alertRowY + ROW3_OFFSET + ICON_SIZE + pad
     elseif row2 then
-        newH = alertRowY + ROW2_OFFSET + 54 + pad
+        newH = alertRowY + ROW2_OFFSET + ICON_SIZE + pad
     elseif row1 then
-        newH = alertRowY + 54 + pad
+        newH = alertRowY + ICON_SIZE + pad
     else
         newH = BASE_H
     end

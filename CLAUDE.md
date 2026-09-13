@@ -129,6 +129,55 @@ setShape(meterName, shapeIdx, "Path FreezePatch1 | StrokeWidth 0 | Fill Color 14
 `ClosePath 1` and `LineTo` are valid segment keywords. The error "Path shape has invalid parameters" was caused by inlining coordinates directly in the `Shape=` line.
 
 
+## Claude notes from 2026-09-12 run.
+
+### Panel scaled to span display 3 (1080px wide)
+
+The whole panel was uniformly scaled up by **S = 1.7419355** (= 1080/620) so it spans
+display 3 edge to edge. Display 3 is 1080x1920 portrait at desktop coords (-1080, -758);
+the skin is positioned there in Rainmeter.ini (`WindowX=-1080  WindowY=-758`).
+
+Only the *width* was targeted — height scales by the same factor, so the panel is now
+~768px tall on a 1920px screen and does not fill it top to bottom (as requested).
+
+**How scaling works — read this before adding any meter.**
+`S` is a variable in `[Variables]`. Every hard-coded pixel value is written as a formula
+against it, e.g. `Y=(170 * #S#)`, `FontSize=(26 * #S#)`, `X=(#SoilGraphX# + (3 * #S#))`.
+A new meter added with raw pixel values will render at the wrong size. To revert the whole
+panel to its original dimensions, set `S=1` and restore the base numbers noted in the
+`; base NNN` comments in `[Variables]`.
+
+**Critical constraint — variables Lua reads must be plain numbers, not formulas.**
+`SKIN:GetVariable()` returns the raw *text* of a variable and does NOT evaluate formulas,
+so `tonumber("(620 * 1.7419355)")` returns nil. These variables are therefore written as
+pre-computed literals with a `; base NNN` comment instead of a `#S#` formula:
+`W`, `H`, `Pad`, `AlertRowY`, `SoilGraphY`, `SoilGraphBarW/BarGap/H`,
+`AirTempGraphBarW/BarGap/H`. Temperature thresholds (`*MinF`, `*MaxF`, `SoilGraphDays`,
+etc.) are data, not pixels — never scale those.
+
+Bar widths were rounded to whole pixels so bar centers stay integral:
+soil `4 -> 7`, air temp `8 -> 14` with gap `1 -> 2` (graph widths 180 -> 315 and 197 -> 350).
+
+**Lua side.** Each drawing script reads `S` and passes its own hard-coded constants
+(stroke widths, corner radii, drop/splash sizes, fall speeds) through a local
+`sc(n)` helper. Geometry that arrives from skin variables is already scaled — do not
+pass it through `sc()` again or it will be scaled twice.
+- `AirTempGraphGen.lua`, `SoilGraphGen.lua` — read `S` at the top of `Run()`.
+- `RainBuckets.lua` — layout constants are forward-declared and assigned in
+  `buildLayout()`, called once at load (S=1) and again from `Initialize()` once `S` is
+  known. Restructured this way because `SKIN` availability during chunk load is not
+  guaranteed. Note `drawStructure()`'s stroke-color local was renamed `sc` -> `c` to
+  avoid shadowing the scale helper.
+- `AlertPulse.lua` — same pattern via `buildScale()` plus a new `Initialize()`.
+
+`WindArrowGlobalScale` was multiplied by S (0.8 -> 1.3935484); it scales the whole
+wind-arrow size formula uniformly, so `WindArrowBaseSize`/`ScaleFactor` stay untouched.
+
+Verified after reload: no errors or warnings in Rainmeter.log, all generators complete,
+both graphs right-justified at W-Pad, day labels aligned to bar centers, all three rain
+buckets and the dial row render fully inside the panel.
+
+
 ## Instructions for Claude (ignore for now)
 - [x] Extend rain indicator bars over the entire air temp graph, one for each day. Past = actual precip, today = Forcast in alpha 180 + actual in alpha 255, future = forecast precip (as is)
     - Use blue for rain, cyan for mix, white for snow

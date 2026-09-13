@@ -18,31 +18,15 @@ local OM_HRRR_JSON = ""
 local LOG_PATH     = ""
 local MASTER_LOG   = ""
 
--- Layout (meter coords; meter Y = SoilGraphY = 130)
-local W          = 60
-local ICON_H     = 47    -- Y=0..47: icon area
-local ICON_GAP   = 8     -- Y=47..55: gap
-local B0_TOP     = ICON_H + ICON_GAP  -- 55
-local BUCKET_H   = 64
-local GAP_H      = 24
-local NIPPLE_H   = 5
-local NIPPLE_GAP = 4     -- total gap at bucket bottom (2px each side of CX)
-local B0_BOT     = B0_TOP + BUCKET_H   -- 119
-local B1_TOP     = B0_BOT + GAP_H      -- 143
-local B1_BOT     = B1_TOP + BUCKET_H   -- 207
-local B2_TOP     = B1_BOT + GAP_H      -- 231
-local B2_BOT     = B2_TOP + BUCKET_H   -- 295
-local NIP0_TIP   = B0_BOT + NIPPLE_H   -- 124
-local NIP1_TIP   = B1_BOT + NIPPLE_H   -- 212
-local CX         = W / 2               -- 30 (nipple center, same for all buckets)
-
--- Bucket widths and X offsets (centered; each bucket narrower than the one below)
-local B2_W = W            -- 60
-local B1_W = W - 4        -- 56
-local B0_W = B1_W - 8     -- 48
-local B2_X = 0
-local B1_X = (W - B1_W) / 2   -- 2
-local B0_X = (W - B0_W) / 2   -- 6
+-- Global panel scale, read from skin variable S in Initialize().
+-- Every pixel constant below is a BASE value (the original 620px-wide design)
+-- passed through sc(), so the whole widget scales with the rest of the panel.
+local S = 1
+local function sc(n)
+  local v = math.floor(n * S + 0.5)
+  if v < 1 and n > 0 then v = 1 end
+  return v
+end
 
 -- Fill scales
 local RATE_FULL   = 1.0   -- inches/past-hour → full bucket 0
@@ -54,12 +38,8 @@ local STROKE_C    = "160,210,255,200"
 local FILL_C      = "80,160,255,180"
 local DROP_BASE_A = 180   -- raindrop base alpha (±50 random)
 
--- Drain physics per 100ms tick (commented out — levels now held from API data between fetches)
--- local DRAIN0_PER_TICK = 1.0 / 18000         -- full→empty in 30 min
--- local DECAY1_K        = 5.33e-6             -- bucket 1: reaches ~1% after 24h
--- local DECAY2_K        = 2.3e-7              -- bucket 2: half-life ~3.5 days
-
 -- Animation state
+-- (declared before buildLayout so the drip closures below capture these as upvalues)
 local disp0, disp1, disp2 = 0.0, 0.0, 0.0
 local isRaining      = true
 local testRate       = 0.15
@@ -77,33 +57,80 @@ for i = 1, NUM_DROPS do
                splashing=false, splashTick=0, splashY=0 }
 end
 
--- Drip blob state (2 slots: B0→B1 and B1→B2)
--- dripInterval: ticks between drips (B0→B1 is twice as frequent)
-local drip = {
-  { y=NIP0_TIP, active=false, cooldown=0, srcDisp=function() return disp0 end,
-    startY=NIP0_TIP, shapeIdx=27, dripInterval=12,
-    splashing=false, splashTick=0, splashY=0 },
-  { y=NIP1_TIP, active=false, cooldown=0, srcDisp=function() return disp1 end,
-    startY=NIP1_TIP, shapeIdx=28, dripInterval=25,
-    splashing=false, splashTick=0, splashY=0 },
-}
+local N_OVERFLOW = 3   -- overflow drops per side (a count, never scaled)
 
--- Overflow side drips: 3 staggered drops per side (6 sides = 18 shape slots)
--- Side index mapping: 1-2=B0, 3-4=B1, 5-6=B2
--- Shapes per side: B0-L={41,43,44}, B0-R={42,45,46},
---                  B1-L={37,47,48}, B1-R={38,49,50},
---                  B2-L={39,51,52}, B2-R={40,53,54}
-local OVERFLOW_DROP_LEN = 20  -- px below rim for B2 (no target bucket)
-local N_OVERFLOW = 3          -- drops per side
-local overflowSide = {
-  { wallX=B0_X-4,      topY=B0_TOP, shapes={41,43,44} },  -- B0 left
-  { wallX=B0_X+B0_W+1, topY=B0_TOP, shapes={42,45,46} },  -- B0 right
-  { wallX=B1_X-1,      topY=B1_TOP, shapes={37,47,48} },  -- B1 left
-  { wallX=B1_X+B1_W,   topY=B1_TOP, shapes={38,49,50} },  -- B1 right
-  { wallX=0,           topY=B2_TOP, shapes={39,51,52} },   -- B2 left
-  { wallX=B2_W-2,      topY=B2_TOP, shapes={40,53,54} },   -- B2 right
-}
--- Drop slots initialized in Initialize() after math.randomseed
+-- Layout (meter coords; meter Y = SoilGraphY). Base values in comments.
+-- Forward-declared here so every function below binds them as upvalues;
+-- buildLayout() fills them in once S is known.
+local W, ICON_H, ICON_GAP, B0_TOP, BUCKET_H, GAP_H, NIPPLE_H, NIPPLE_GAP
+local B0_BOT, B1_TOP, B1_BOT, B2_TOP, B2_BOT, NIP0_TIP, NIP1_TIP, CX
+local B2_W, B1_W, B0_W, B2_X, B1_X, B0_X
+local CHAMFER, FLARE, WALL, OVERFLOW_DROP_LEN, DROP_START_Y
+local drip, overflowSide
+
+local function buildLayout()
+  W          = sc(60)
+  ICON_H     = sc(47)   -- icon area
+  ICON_GAP   = sc(8)    -- gap below icon
+  B0_TOP     = ICON_H + ICON_GAP
+  BUCKET_H   = sc(64)
+  GAP_H      = sc(24)
+  NIPPLE_H   = sc(5)
+  NIPPLE_GAP = sc(4)    -- total gap at bucket bottom (half each side of CX)
+  B0_BOT     = B0_TOP + BUCKET_H
+  B1_TOP     = B0_BOT + GAP_H
+  B1_BOT     = B1_TOP + BUCKET_H
+  B2_TOP     = B1_BOT + GAP_H
+  B2_BOT     = B2_TOP + BUCKET_H
+  NIP0_TIP   = B0_BOT + NIPPLE_H
+  NIP1_TIP   = B1_BOT + NIPPLE_H
+  CX         = math.floor(W / 2)   -- nipple center, same for all buckets
+
+  -- Bucket widths and X offsets (centered; each bucket narrower than the one below)
+  B2_W = W
+  B1_W = W - sc(4)
+  B0_W = B1_W - sc(8)
+  B2_X = 0
+  B1_X = math.floor((W - B1_W) / 2)
+  B0_X = math.floor((W - B0_W) / 2)
+
+  CHAMFER = sc(3)   -- left chamfer outward flare
+  FLARE   = sc(2)   -- right chamfer outward flare / chamfer drop height
+  WALL    = sc(1)   -- wall stroke inset
+
+  OVERFLOW_DROP_LEN = sc(20)  -- px below rim for B2 (no target bucket)
+  DROP_START_Y      = sc(12)  -- within icon area (icon raised, covers roughly y=-10..37)
+
+  -- Drip blob state (2 slots: B0→B1 and B1→B2)
+  -- dripInterval: ticks between drips (B0→B1 is twice as frequent); a tick count, not px
+  drip = {
+    { y=NIP0_TIP, active=false, cooldown=0, srcDisp=function() return disp0 end,
+      startY=NIP0_TIP, shapeIdx=27, dripInterval=12,
+      splashing=false, splashTick=0, splashY=0 },
+    { y=NIP1_TIP, active=false, cooldown=0, srcDisp=function() return disp1 end,
+      startY=NIP1_TIP, shapeIdx=28, dripInterval=25,
+      splashing=false, splashTick=0, splashY=0 },
+  }
+
+  -- Overflow side drips: 3 staggered drops per side (6 sides = 18 shape slots)
+  -- Side index mapping: 1-2=B0, 3-4=B1, 5-6=B2
+  -- Shapes per side: B0-L={41,43,44}, B0-R={42,45,46},
+  --                  B1-L={37,47,48}, B1-R={38,49,50},
+  --                  B2-L={39,51,52}, B2-R={40,53,54}
+  -- Drop slots themselves are initialized in Initialize() after math.randomseed.
+  overflowSide = {
+    { wallX=B0_X-sc(4),      topY=B0_TOP, shapes={41,43,44} },  -- B0 left
+    { wallX=B0_X+B0_W+sc(1), topY=B0_TOP, shapes={42,45,46} },  -- B0 right
+    { wallX=B1_X-sc(1),      topY=B1_TOP, shapes={37,47,48} },  -- B1 left
+    { wallX=B1_X+B1_W,       topY=B1_TOP, shapes={38,49,50} },  -- B1 right
+    { wallX=0,               topY=B2_TOP, shapes={39,51,52} },  -- B2 left
+    { wallX=B2_W-sc(2),      topY=B2_TOP, shapes={40,53,54} },  -- B2 right
+  }
+end
+
+-- Populate at load with S=1 so nothing is nil if a callback fires before
+-- Initialize(); Initialize() reads the real S and rebuilds.
+buildLayout()
 
 -- ============================================================
 -- HELPERS
@@ -133,34 +160,34 @@ end
 -- STRUCTURE DRAWING
 -- ============================================================
 local function drawStructure()
-  local sc = STROKE_C
+  local c   = STROKE_C   -- named c, not sc: sc() is the global scale helper
   local si  = 5  -- start shape index for structure
 
   local function line(x1, y1, x2, y2)
     setShape(si, string.format(
-      "Line %d,%d,%d,%d | StrokeWidth 2 | Stroke Color %s", x1, y1, x2, y2, sc))
+      "Line %d,%d,%d,%d | StrokeWidth %d | Stroke Color %s", x1, y1, x2, y2, sc(2), c))
     si = si + 1
   end
 
-  -- bx = left edge X, bw = bucket width; chamfer flares 3px outward
+  -- bx = left edge X, bw = bucket width; chamfer flares outward
   local function drawBucketWithNipple(y1, y2, bx, bw)
-    local ng = NIPPLE_GAP / 2  -- 2
-    line(bx-3, y1, bx,       y1+2)          -- left chamfer (outward flare)
-    line(bx+bw+2, y1, bx+bw-1, y1+2)        -- right chamfer (outward flare)
-    line(bx,     y1+2, bx,     y2)           -- left wall
-    line(bx+bw-1, y1+2, bx+bw-1, y2)        -- right wall
-    line(bx,     y2, CX-ng, y2)              -- bottom left
-    line(CX+ng,  y2, bx+bw-1, y2)           -- bottom right
-    line(CX-ng,  y2, CX, y2+NIPPLE_H)       -- nipple left
-    line(CX+ng,  y2, CX, y2+NIPPLE_H)       -- nipple right
+    local ng = math.floor(NIPPLE_GAP / 2)
+    line(bx-CHAMFER, y1, bx,          y1+FLARE)   -- left chamfer (outward flare)
+    line(bx+bw+FLARE, y1, bx+bw-WALL, y1+FLARE)   -- right chamfer (outward flare)
+    line(bx,          y1+FLARE, bx,          y2)  -- left wall
+    line(bx+bw-WALL,  y1+FLARE, bx+bw-WALL,  y2)  -- right wall
+    line(bx,     y2, CX-ng, y2)                   -- bottom left
+    line(CX+ng,  y2, bx+bw-WALL, y2)              -- bottom right
+    line(CX-ng,  y2, CX, y2+NIPPLE_H)             -- nipple left
+    line(CX+ng,  y2, CX, y2+NIPPLE_H)             -- nipple right
   end
 
   local function drawBucketNoNipple(y1, y2, bx, bw)
-    line(bx-3, y1, bx,       y1+2)           -- left chamfer (outward flare)
-    line(bx+bw+2, y1, bx+bw-1, y1+2)         -- right chamfer (outward flare)
-    line(bx,     y1+2, bx,     y2)            -- left wall
-    line(bx+bw-1, y1+2, bx+bw-1, y2)         -- right wall
-    line(bx,     y2, bx+bw-1, y2)             -- full bottom (no nipple)
+    line(bx-CHAMFER, y1, bx,          y1+FLARE)   -- left chamfer (outward flare)
+    line(bx+bw+FLARE, y1, bx+bw-WALL, y1+FLARE)   -- right chamfer (outward flare)
+    line(bx,          y1+FLARE, bx,          y2)  -- left wall
+    line(bx+bw-WALL,  y1+FLARE, bx+bw-WALL,  y2)  -- right wall
+    line(bx,     y2, bx+bw-WALL, y2)              -- full bottom (no nipple)
   end
 
   drawBucketWithNipple(B0_TOP, B0_BOT, B0_X, B0_W)  -- 8 shapes → si 5..12
@@ -185,7 +212,7 @@ local function drawFill(shapeIdx, y1, y2, disp, bx, bw)
     return
   end
   local bucketH = y2 - y1
-  local fillH   = math.max(3, math.floor(d * bucketH + 0.5))
+  local fillH   = math.max(sc(3), math.floor(d * bucketH + 0.5))
   local fillTop = y2 - fillH
   setShape(shapeIdx, string.format(
     "Rectangle %d,%d,%d,%d,0 | Fill Color %s | StrokeWidth 0",
@@ -201,25 +228,24 @@ end
 -- ============================================================
 -- RAINDROP ANIMATION
 -- ============================================================
+-- Returns (drop count, fall speed in px/tick). Count is never scaled; speed is.
 local function intensityToParams(rate)
-  if rate >= 1.0 then return 8, 8
-  elseif rate >= 0.31 then return 6, 6
-  elseif rate >= 0.11 then return 4, 4
-  elseif rate >= 0.01 then return 2, 4
-  else return 1, 2
+  if rate >= 1.0 then return 8, sc(8)
+  elseif rate >= 0.31 then return 6, sc(6)
+  elseif rate >= 0.11 then return 4, sc(4)
+  elseif rate >= 0.01 then return 2, sc(4)
+  else return 1, sc(2)
   end
 end
-
-local DROP_START_Y = 12  -- within icon area (icon raised 10px, covers ~y=-10..37)
 
 local function spawnDrop(slot, speed, fillStopY, stagger)
   local startY = DROP_START_Y
   if stagger then
-    local travel = math.max(0, fillStopY - DROP_START_Y - 5)
+    local travel = math.max(0, fillStopY - DROP_START_Y - sc(5))
     startY = DROP_START_Y + math.floor(mathrand(0, travel))
   end
   -- Drops confined to B0 width
-  drops[slot].x         = math.floor(mathrand(B0_X + 2, B0_X + B0_W - 3))
+  drops[slot].x         = math.floor(mathrand(B0_X + sc(2), B0_X + B0_W - sc(3)))
   drops[slot].y         = startY
   drops[slot].speed     = speed
   drops[slot].alpha     = math.floor(clamp(DROP_BASE_A + mathrand(-50, 50), 50, 255))
@@ -269,16 +295,16 @@ local function updateDropShapes()
     local si = 28 + i  -- shapes 29..36
     if d.active and isRaining then
       setShape(si, string.format(
-        "Rectangle %d,%d,1,4,0 | Fill Color 160,210,255,%d | StrokeWidth 0",
-        d.x, d.y, d.alpha))
+        "Rectangle %d,%d,%d,%d,0 | Fill Color 160,210,255,%d | StrokeWidth 0",
+        d.x, d.y, sc(1), sc(4), d.alpha))
     elseif d.splashing and isRaining then
-      -- splashTick 4→1: alpha 220→55, width 4→10px, 2px tall
+      -- splashTick 4→1: alpha 220→55, width 4→10px (base), 2px tall
       local splashAlpha = math.floor(d.splashTick * 55)
-      local splashW     = (5 - d.splashTick) * 2 + 2
-      local splashX     = clamp(d.x - math.floor(splashW / 2), B0_X + 1, B0_X + B0_W - splashW - 1)
+      local splashW     = sc((5 - d.splashTick) * 2 + 2)
+      local splashX     = clamp(d.x - math.floor(splashW / 2), B0_X + sc(1), B0_X + B0_W - splashW - sc(1))
       setShape(si, string.format(
-        "Rectangle %d,%d,%d,2,0 | Fill Color 200,230,255,%d | StrokeWidth 0",
-        splashX, d.splashY - 1, splashW, splashAlpha))
+        "Rectangle %d,%d,%d,%d,0 | Fill Color 200,230,255,%d | StrokeWidth 0",
+        splashX, d.splashY - sc(1), splashW, sc(2), splashAlpha))
     else
       setShape(si, "Rectangle 0,0,1,1 | Fill Color 0,0,0,0 | StrokeWidth 0")
     end
@@ -310,7 +336,7 @@ local function advanceDrips()
         dynEndY = clamp(B2_BOT - math.floor(waterH), B2_TOP, B2_BOT)
       end
 
-      local blobSpeed = (thunderCode == 96 or thunderCode == 99) and 6 or 4
+      local blobSpeed = (thunderCode == 96 or thunderCode == 99) and sc(6) or sc(4)
       if bl.active then
         bl.y = bl.y + blobSpeed
         if bl.y >= dynEndY then
@@ -323,7 +349,7 @@ local function advanceDrips()
         if bl.cooldown > 0 then
           bl.cooldown = bl.cooldown - 1
         else
-          if dynEndY > bl.startY + 2 then
+          if dynEndY > bl.startY + sc(2) then
             bl.y      = bl.startY
             bl.active = true
           end
@@ -339,8 +365,8 @@ end
 
 local function updateDripShapes()
   local isHail = (thunderCode == 96 or thunderCode == 99)
-  local blobW  = isHail and 4 or 2
-  local blobH  = isHail and 5 or 3
+  local blobW  = isHail and sc(4) or sc(2)
+  local blobH  = isHail and sc(5) or sc(3)
   local blobC  = isHail and "255,255,255,220" or STROKE_C
   for _, bl in ipairs(drip) do
     if bl.active then
@@ -349,13 +375,13 @@ local function updateDripShapes()
         CX - math.floor(blobW / 2), bl.y, blobW, blobH, blobC))
     elseif bl.splashing then
       -- Splash at water surface: expanding horizontal bar, fading out
-      -- splashTick 4→1: alpha 240→60, width 4→10px, 2px tall
+      -- splashTick 4→1: alpha 240→60, width 4→10px (base), 2px tall
       local alpha = math.min(255, bl.splashTick * 60)
-      local sw    = (5 - bl.splashTick) * 2 + 2
-      local sx    = clamp(CX - math.floor(sw / 2), 1, W - sw - 1)
+      local sw    = sc((5 - bl.splashTick) * 2 + 2)
+      local sx    = clamp(CX - math.floor(sw / 2), sc(1), W - sw - sc(1))
       setShape(bl.shapeIdx, string.format(
-        "Rectangle %d,%d,%d,2,0 | Fill Color 200,230,255,%d | StrokeWidth 0",
-        sx, bl.splashY - 1, sw, alpha))
+        "Rectangle %d,%d,%d,%d,0 | Fill Color 200,230,255,%d | StrokeWidth 0",
+        sx, bl.splashY - sc(1), sw, sc(2), alpha))
     else
       setShape(bl.shapeIdx, "Rectangle 0,0,1,1 | Fill Color 0,0,0,0 | StrokeWidth 0")
     end
@@ -383,7 +409,7 @@ local function advanceOverflowDrips()
     for _, drop in ipairs(side.drops) do
       if isOverflow then
         if drop.active then
-          drop.y = drop.y + 4
+          drop.y = drop.y + sc(4)
           if drop.y >= dynEndY then
             drop.active   = false
             drop.cooldown = 0
@@ -410,8 +436,8 @@ local function updateOverflowDripShapes()
       local shapeIdx = side.shapes[k]
       if drop.active then
         setShape(shapeIdx, string.format(
-          "Rectangle %d,%d,2,3,0 | Fill Color %s | StrokeWidth 0",
-          side.wallX, drop.y, STROKE_C))
+          "Rectangle %d,%d,%d,%d,0 | Fill Color %s | StrokeWidth 0",
+          side.wallX, drop.y, sc(2), sc(3), STROKE_C))
       else
         setShape(shapeIdx, "Rectangle 0,0,1,1 | Fill Color 0,0,0,0 | StrokeWidth 0")
       end
@@ -427,6 +453,8 @@ function Initialize()
   OM_HRRR_JSON = SKIN:GetVariable("OM_HRRR_JSON", "")
   LOG_PATH     = SKIN:GetVariable("RainBucketsLog")
   MASTER_LOG   = SKIN:GetVariable("HeartlandLog")
+  S = tonumber(SKIN:GetVariable("S", "1")) or 1
+  buildLayout()
   math.randomseed(os.time())
 
   -- Initialize overflow drop slots with random start delays

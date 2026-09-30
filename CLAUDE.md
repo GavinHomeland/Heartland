@@ -282,6 +282,50 @@ B0 now reads, in order of preference:
   to the hourly row stamped at their last timestamp.
 - 5-minute rows land within about 5-7 minutes of real time.
 
+### Soil graph threshold lines + °F labels
+
+The horizontal lines were re-based on crop thresholds (supersedes the older
+32/34/50/55/60/86/95 set; the 34°F frost-warning line was kept on request):
+
+| °F | Colour | RGBA | Meaning |
+|---|---|---|---|
+| 95 (`SoilGraphDangerF`) | red | 255,0,0,210 | heat danger / root damage |
+| 86 (`SoilGraphHeatWarnF`) | orange | 255,140,0,210 | heat warning |
+| 75 | yellow | 255,220,0,180 | upper limit for cool crops |
+| 60 / 55 / 50 | green | 0,200,0,180 / 160 / 150 | target zone: garlic, cool crops, rooting |
+| 42 | blue | 70,150,255,230 | cold stall / growth halts |
+| 34 | yellow | 255,220,0,180 | frost warning |
+| 32 | red | 255,0,0,210 | freezing ground |
+
+All of them are rows in one `thresholds` table in `SoilGraphGen.lua`; add or
+move a line there. Each row has a `label` flag. Labelled rows fill the String
+meters `MeterSoilGraphLabel1..7` (shared `StyleSoilGraphLabel`, left of the
+graph, title size but `Segoe UI` not Semibold). Lua sets each label's `Text`
+and `Y` from the line's own position, so labels follow any scale or threshold
+change. 34 and 55 are unlabelled: at 2.76 px/°F, 34 sits 6px from 32 and 55
+sits 14px from 50 and 60. If more rows get `label = true`, add matching meters
+in the INI.
+
+**Taller graph, 95°F ceiling.** `SoilGraphH` went 174 -> 207 so the graph's
+bottom edge is level with the bottom of rain bucket B0 (`B0_BOT` in
+`RainBuckets.lua` = sc(47)+sc(8)+sc(64) = 207); the top did not move. It is a
+literal because Lua reads it — recompute it if `S` or the bucket layout changes.
+`SoilGraphMaxF` went 100 -> 95, so the scale is now 20-95°F and any reading
+above 95 is clamped to the top (the existing `clamp(v, 25, maxF)`); the 95 line
+therefore sits on the frame's top edge. `AirTempGraphY` now uses the literal
+174 instead of `#SoilGraphH#`, so the air temp graph stayed put; the gap
+between the two graphs shrank by 33px.
+
+**Legend tooltip.** Hovering any label shows the legend. It is built in Lua
+from each row's `name` (colour word) and `desc`, hot to cold, so it cannot
+drift from the lines; adjacent rows with the same `desc` collapse into one
+range line (`50-60°F`). The wording is the user's own.
+
+Research caveats on the wording (the numbers held up): tomato "bloom drop" is
+an air-temperature effect (days > 85°F, nights > 72°F), not a soil one; warm-crop
+*germination* peaks higher than 75°F (80-95°F); and 40°F is the more commonly
+quoted growth-stall figure than 42°F.
+
 ## Instructions for Claude (ignore for now)
 - [x] Extend rain indicator bars over the entire air temp graph, one for each day. Past = actual precip, today = Forcast in alpha 180 + actual in alpha 255, future = forecast precip (as is)
     - Use blue for rain, cyan for mix, white for snow

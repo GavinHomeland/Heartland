@@ -8,9 +8,16 @@
 --   2) Max7F bars (back, translucent red)
 --   3) Avg7F line (bright yellow, 1px polyline through column centers)
 --   4) Min7F bars (front)
---   5) Freeze line @ 32°F (red, on top)
---   6) Threshold lines @ 50°F (yellow), 55°F (green), 60°F (green)
---   7) Heat warn line @ SoilGraphHeatWarnF (yellow), danger line @ SoilGraphDangerF (red)
+--   5) Threshold lines (on top), cold to hot:
+--        32°F red     freezing ground
+--        34°F yellow  frost warning
+--        42°F blue   cold stall / growth halts
+--        50/55/60°F   green target zone (garlic, cool crops, active rooting)
+--        75°F yellow  upper limit for cool crops
+--        SoilGraphHeatWarnF (86) orange   heat warning
+--        SoilGraphDangerF   (95) red      heat danger / root damage
+-- Plus °F labels left of the frame at every line except 34 and 55 (no room).
+-- Hovering a label shows the legend as its tooltip.
 --
 -- Variables read from skin:
 --   SoilHistCsv          : rolling CSV path
@@ -320,31 +327,56 @@ local lastUpdatedStr = "n/a"
       idx = idx + 1
     end
   end
-  -- Freeze Line (32°F red) + Warning Line (34°F yellow)
-  local freezeY = math.floor(graphH - (((32 - minF) / rangeF) * graphH) + 0.5)
-  setShape(meterName, idx, string.format("Line 0,%d,%d,%d | StrokeWidth %d | Stroke Color 255,0,0,210", freezeY, graphW, freezeY, sc(1)))
-  idx = idx + 1
-  local warnY = math.floor(graphH - (((34 - minF) / rangeF) * graphH) + 0.5)
-  setShape(meterName, idx, string.format("Line 0,%d,%d,%d | StrokeWidth %d | Stroke Color 255,220,0,180", warnY, graphW, warnY, sc(1)))
-  idx = idx + 1
+  -- Threshold lines, cold to hot, drawn in front of the bars.
+  -- label=false where the neighbouring lines are too close to fit text (34 sits
+  -- 6px from 32; 55 sits 14px from 50 and 60). Labelled lines fill
+  -- MeterSoilGraphLabel1..N in order. name/desc feed the legend tooltip.
+  local TARGET = "Target Zone: Garlic, Cool Crops, Active Rooting"
+  local thresholds = {
+    { f = 32,        color = "255,0,0,210",    label = true,  name = "Red",    desc = "Freezing Ground" },
+    { f = 34,        color = "255,220,0,180",  label = false, name = "Yellow", desc = "Frost Warning" },
+    { f = 42,        color = "70,150,255,230", label = true,  name = "Blue",   desc = "Cold Stall / Growth Halts" },
+    { f = 50,        color = "0,200,0,150",    label = true,  name = "Green",  desc = TARGET },
+    { f = 55,        color = "0,200,0,160",    label = false, name = "Green",  desc = TARGET },
+    { f = 60,        color = "0,200,0,180",    label = true,  name = "Green",  desc = TARGET },
+    { f = 75,        color = "255,220,0,180",  label = true,  name = "Yellow", desc = "Warm-Crop Peak / Upper Limit for Cool-Crops" },
+    { f = heatWarnF, color = "255,140,0,210",  label = true,  name = "Orange", desc = "Heat Warning / Bloom Drop" },
+    { f = dangerF,   color = "255,0,0,210",    label = true,  name = "Red",    desc = "Heat Danger / Root Damage" },
+  }
 
-  -- Warm threshold lines (50°F yellow, 55/60°F green)
-  local y50 = math.floor(graphH - (((50 - minF) / rangeF) * graphH) + 0.5)
-  setShape(meterName, idx, string.format("Line 0,%d,%d,%d | StrokeWidth %d | Stroke Color 255,255,0,150", y50, graphW, y50, sc(1)))
-  idx = idx + 1
-  local y55 = math.floor(graphH - (((55 - minF) / rangeF) * graphH) + 0.5)
-  setShape(meterName, idx, string.format("Line 0,%d,%d,%d | StrokeWidth %d | Stroke Color 0,200,0,160", y55, graphW, y55, sc(1)))
-  idx = idx + 1
-  local y60 = math.floor(graphH - (((60 - minF) / rangeF) * graphH) + 0.5)
-  setShape(meterName, idx, string.format("Line 0,%d,%d,%d | StrokeWidth %d | Stroke Color 0,200,0,180", y60, graphW, y60, sc(1)))
-  idx = idx + 1
+  -- Legend for the label tooltips, hot to cold. Adjacent rows that share a
+  -- description collapse into one range line (50-60).
+  local legend = { "Soil temperature lines" }
+  local i = #thresholds
+  while i >= 1 do
+    local hi, lo = thresholds[i], thresholds[i]
+    while i > 1 and thresholds[i - 1].desc == hi.desc do
+      i = i - 1
+      lo = thresholds[i]
+    end
+    local range = (lo == hi) and string.format("%d", hi.f) or string.format("%d-%d", lo.f, hi.f)
+    legend[#legend + 1] = string.format("%s\176F  %s  (%s)", range, hi.name, hi.desc)
+    i = i - 1
+  end
+  local legendTip = table.concat(legend, "\n")
 
-  -- Heat warn line (yellow) + Heat danger line (red)
-  local yHeatWarn = math.floor(graphH - (((heatWarnF - minF) / rangeF) * graphH) + 0.5)
-  setShape(meterName, idx, string.format("Line 0,%d,%d,%d | StrokeWidth %d | Stroke Color 255,220,0,180", yHeatWarn, graphW, yHeatWarn, sc(1)))
-  idx = idx + 1
-  local yDanger = math.floor(graphH - (((dangerF - minF) / rangeF) * graphH) + 0.5)
-  setShape(meterName, idx, string.format("Line 0,%d,%d,%d | StrokeWidth %d | Stroke Color 255,0,0,210", yDanger, graphW, yDanger, sc(1)))
+  local graphY = tonumber(SKIN:GetVariable("SoilGraphY", "0")) or 0
+  local labelIdx = 0
+  for _, th in ipairs(thresholds) do
+    local y = math.floor(graphH - (((th.f - minF) / rangeF) * graphH) + 0.5)
+    setShape(meterName, idx, string.format("Line 0,%d,%d,%d | StrokeWidth %d | Stroke Color %s", y, graphW, y, sc(1), th.color))
+    idx = idx + 1
+    if th.label then
+      -- Y comes from the line's own position, so labels follow any scale or threshold change
+      labelIdx = labelIdx + 1
+      local labelName = "MeterSoilGraphLabel" .. labelIdx
+      SKIN:Bang("!SetOption", labelName, "Text", string.format("%d", th.f))
+      SKIN:Bang("!SetOption", labelName, "Y", tostring(graphY + y))
+      SKIN:Bang("!SetOption", labelName, "ToolTipText", legendTip)
+      SKIN:Bang("!UpdateMeter", labelName)
+    end
+  end
+  idx = idx - 1   -- leave idx on the last shape written, as the cleanup below expects
   --print("Final Shape Index: " .. idx)
 
   -- Cleanup

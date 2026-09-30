@@ -35,6 +35,11 @@
 # consumer downstream stays in inches, matching the Open-Meteo feeds.
 #
 # Today's row is a PARTIAL total: rain so far, through the last closed hour.
+#
+# LAST HOUR: also writes a one-line "asof,inches" file holding the rolling
+# trailing-60-minute total from the same stations' 5-minute rows. That feeds
+# the top rain bucket. asof is local time, so the reader can tell when it
+# has gone stale.
 # Targets Windows PowerShell 5.1 (what Rainmeter's RunCommand launches).
 # ============================================================
 
@@ -45,6 +50,7 @@ param(
     [int]   $Stations    = 5,     # stations to combine
     [int]   $Days        = 8,
     [string]$OutCsv      = '',
+    [string]$OutHourTxt  = '',
     [string]$StatusTxt   = '',
     [string]$FetchLog    = '',
     [string]$MasterLog   = ''
@@ -163,8 +169,54 @@ try {
 
     [IO.File]::WriteAllText($OutCsv, $sb.ToString(), $enc)
 
+    # ---- Rolling last-hour total, same stations and weights, from 5-minute rows.
+    # Mesonet stamps are fixed CST (UTC-6, no DST) and label the END of each
+    # interval, so the rows in (newest - 60 min, newest] are the trailing hour.
+    # A station is skipped if its newest row is over 20 min old or it has gaps.
+    # A failure here leaves the old file alone; RainBuckets.lua ignores it once
+    # it is stale and falls back to the model.
+    $hourDesc = 'n/a'
+    if ($OutHourTxt) {
+        try {
+            $nowCst  = [DateTime]::UtcNow.AddHours(-6)
+            $h_start = $nowCst.AddMinutes(-90).ToString('yyyyMMddHHmmss')
+            $h_end   = $nowCst.AddMinutes(10).ToString('yyyyMMddHHmmss')
+            $num = 0.0; $den = 0.0
+            foreach ($s in $used) {
+                try {
+                    $url  = $base + '?stn=' + [uri]::EscapeDataString($s.Name) +
+                            '&int=5min&t_start=' + $h_start + '&t_end=' + $h_end + '&vars=PRECIP'
+                    $rows = @(Invoke-Mesonet $url | ConvertFrom-Csv | Where-Object { $_.TIMESTAMP })
+                    if ($rows.Count -eq 0) { continue }
+                    $newest = ($rows | ForEach-Object { [datetime]$_.TIMESTAMP } | Measure-Object -Maximum).Maximum
+                    if ($newest -lt $nowCst.AddMinutes(-20)) { continue }
+                    $mm = 0.0; $n = 0
+                    foreach ($r in $rows) {
+                        if (([datetime]$r.TIMESTAMP) -le $newest.AddMinutes(-60)) { continue }
+                        $v = 0.0
+                        if ([double]::TryParse($r.PRECIP, [ref]$v)) { $mm += $v; $n++ }
+                    }
+                    if ($n -lt 10) { continue }   # 12 expected; too many gaps to trust
+                    $dist = [Math]::Max($s.Dist, 0.5)
+                    $w = 1.0 / [Math]::Pow($dist, $Power)
+                    $num += $w * ($mm / $MM_PER_IN)
+                    $den += $w
+                } catch {
+                    continue
+                }
+            }
+            if ($den -gt 0) {
+                $hourIn = $num / $den
+                [IO.File]::WriteAllText($OutHourTxt, ('{0},{1:F3}' -f (Get-Date -Format s), $hourIn), $enc)
+                $hourDesc = '{0:F2}in' -f $hourIn
+            }
+        } catch {
+            $hourDesc = 'n/a'
+        }
+    }
+
     $desc = ($used | ForEach-Object { '{0}({1:F0}mi)' -f $_.Name, $_.Dist }) -join ' '
-    Write-Status 'OK' ("p={0} total={1:F2}in stations={2} | {3}" -f $Power, $total, $used.Count, $desc)
+    Write-Status 'OK' ("p={0} total={1:F2}in hour={2} stations={3} | {4}" -f $Power, $total, $hourDesc, $used.Count, $desc)
 }
 catch {
     $msg = ($_.Exception.Message -replace '[\r\n]+', ' ' -replace '[^\x20-\x7E]', '?')

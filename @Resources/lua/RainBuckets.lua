@@ -16,6 +16,7 @@ local METER        = "MeterRainBuckets"
 local OM_JSON      = ""
 local OM_HRRR_JSON = ""
 local PRECIP_CSV   = ""
+local PRECIP_HOUR  = ""
 local LOG_PATH     = ""
 local MASTER_LOG   = ""
 
@@ -166,6 +167,48 @@ local function readGaugeCsv()
   end
   f:close()
   return out
+end
+
+-- Measured rolling last-hour rainfall (ks_precip_lasthour.txt: "asof,inches").
+-- Returns nil when the file is missing or older than HOUR_MAX_AGE, so a failed
+-- fetch cannot leave stale water standing in B0; the caller falls back to the model.
+local HOUR_MAX_AGE = 1800   -- seconds = three missed 10-minute fetch cycles
+local function readGaugeHour()
+  if PRECIP_HOUR == "" then return nil end
+  local f = io.open(PRECIP_HOUR, "r")
+  if not f then return nil end
+  local line = f:read("*l") or ""
+  f:close()
+  local y, mo, d, h, mi, s, v =
+    line:match("^(%d+)%-(%d+)%-(%d+)T(%d+):(%d+):(%d+),([%d%.]+)")
+  if not y then return nil end
+  local asof = os.time({ year = tonumber(y), month = tonumber(mo), day = tonumber(d),
+                         hour = tonumber(h), min = tonumber(mi), sec = tonumber(s) })
+  if math.abs(os.time() - asof) > HOUR_MAX_AGE then return nil end
+  return tonumber(v)
+end
+
+-- Model estimate of the last hour: the four 15-minute slots ending at
+-- current.time in om_hrrr.json. Returns nil when the block is absent.
+local function modelLastHour(hrrrJson)
+  local block   = hrrrJson:match('"minutely_15"%s*:%s*(%b{})')
+  local curTime = hrrrJson:match('"current"%s*:%s*%{[^}]*"time"%s*:%s*"([^"]+)"')
+  if not block or not curTime then return nil end
+  local timesStr = block:match('"time"%s*:%s*%[([^%]]+)%]')
+  local valsStr  = block:match('"precipitation"%s*:%s*%[([^%]]+)%]')
+  if not timesStr or not valsStr then return nil end
+  local vals = {}
+  for v in valsStr:gmatch("[^,%s]+") do vals[#vals+1] = tonumber(v) or 0 end
+  -- ISO timestamps sort lexically, so <= picks every slot already elapsed
+  local last, idx = 0, 0
+  for t in timesStr:gmatch('"([^"]+)"') do
+    idx = idx + 1
+    if t <= curTime then last = idx end
+  end
+  if last == 0 then return nil end
+  local sum = 0
+  for k = math.max(1, last - 3), last do sum = sum + (vals[k] or 0) end
+  return sum
 end
 
 local function mathrand(lo, hi)
@@ -472,7 +515,8 @@ function Initialize()
   OM_JSON      = SKIN:GetVariable("OM_JSON", "")
   OM_HRRR_JSON = SKIN:GetVariable("OM_HRRR_JSON", "")
   PRECIP_CSV   = SKIN:GetVariable("KSPrecipCsv", "")
-  LOG_PATH     = SKIN:GetVariable("RainBucketsLog")
+  PRECIP_HOUR  = SKIN:GetVariable("KSPrecipHourTxt", "")
+  LOG_PATH    = SKIN:GetVariable("RainBucketsLog")
   MASTER_LOG   = SKIN:GetVariable("HeartlandLog")
   S = tonumber(SKIN:GetVariable("S", "1")) or 1
   buildLayout()
@@ -592,11 +636,12 @@ function Run()
   local json = f:read("*a")
   f:close()
 
-  -- B0: current.precipitation = past-hour accumulation (inches)
+  -- current.precipitation is a 15-MINUTE sum (current.interval = 900 s), so it
+  -- only drives the "is it raining now" animation. B0's level is the rolling
+  -- last-hour total, set further down.
   local curPrecip = tonumber(json:match('"current"%s*:%s*%{[^}]*"precipitation"%s*:%s*([%d%.]+)')) or 0
-  disp0 = curPrecip / RATE_FULL
 
-  -- isRaining: true when past-hour precipitation is non-trivial
+  -- isRaining: true when the last 15 minutes' precipitation is non-trivial
   local wasRaining = isRaining
   isRaining = (curPrecip > 0.005)
   testRate  = curPrecip
@@ -640,10 +685,12 @@ function Run()
   local todayActual = nil   -- nil until hourly data confirms a value
   local todayTotal  = 0     -- HRRR daily sum for today (includes remaining forecast)
   local weekSum     = 0
+  local modelHour   = nil   -- model's rolling last hour; fallback for B0
   do
     local hf = io.open(OM_HRRR_JSON, "r")
     local hrrrJson = hf and hf:read("*a") or ""
     if hf then hf:close() end
+    modelHour = modelLastHour(hrrrJson)
 
     -- Parse daily sums
     local dailyBlock = hrrrJson:match('"daily"%s*:%s*(%b{})')
@@ -718,6 +765,13 @@ function Run()
     if gDays > 0 then weekSum = gSum end
   end
 
+  -- B0: rolling last-hour rainfall. Measured gauges first, then the model's
+  -- 15-minute slots, then the bare 15-minute value if neither is available.
+  local hourPrecip, hourSrc = readGaugeHour(), "gauge"
+  if not hourPrecip then hourPrecip, hourSrc = modelHour, "model" end
+  if not hourPrecip then hourPrecip, hourSrc = curPrecip, "15min" end
+
+  disp0 = hourPrecip / RATE_FULL
   disp1 = todayActual / DAILY_FULL
   disp2 = weekSum    / WEEKLY_FULL
 
@@ -725,16 +779,16 @@ function Run()
   updateFills()
 
   local tip = string.format(
-    "Last 15 min: %.2f in\nToday: %.2f in\nPast 7 days: %.2f in",
-    curPrecip, todayActual, weekSum)
+    "Last hour: %.2f in\nToday: %.2f in\nPast 7 days: %.2f in",
+    hourPrecip, todayActual, weekSum)
   SKIN:Bang("!SetOption", METER, "ToolTipText", tip)
 
   SKIN:Bang("!UpdateMeter", METER)
   SKIN:Bang("!Redraw")
 
   local endMsg = os.date("%Y-%m-%d %H:%M:%S") ..
-    string.format(" | RainBuckets | Run Complete precip=%.3f todayActual=%.3f weekSum=%.3f disp0=%.2f disp1=%.2f disp2=%.2f",
-      curPrecip, todayActual, weekSum, disp0, disp1, disp2)
+    string.format(" | RainBuckets | Run Complete hour=%.3f(%s) now15=%.3f todayActual=%.3f weekSum=%.3f disp0=%.2f disp1=%.2f disp2=%.2f",
+      hourPrecip, hourSrc, curPrecip, todayActual, weekSum, disp0, disp1, disp2)
   appendLog(LOG_PATH, endMsg)
   appendLog(MASTER_LOG, endMsg)
 end

@@ -213,8 +213,9 @@ stays in inches. Today's row is a partial total through the last closed hour.
 Consumers prefer the gauge for past + today and fall back to the model only if
 the fetch failed. Forecast days are still ECMWF — nothing measures the future.
 - `AirTempGraphGen.lua` — precip bars.
-- `RainBuckets.lua` — B1 (today) and B2 (past 7 days). B0 / `isRaining` still
-  use the model's `current` block, which is the live "is it raining now" signal.
+- `RainBuckets.lua` — B1 (today) and B2 (past 7 days). B0 is the gauge's rolling
+  last hour (see the 2026-09-30 notes). `isRaining` still uses the model's
+  `current` block, which is the live "is it raining now" signal.
 
 **Why a weighted average of stations.** Convective cells here are smaller than
 the station spacing, so any one gauge either shares your storm or misses it.
@@ -247,6 +248,39 @@ OM fetch already runs at startup, so startup is covered.
 **PowerShell gotcha:** inside a *method call*'s parentheses a comma is an
 argument separator, not an array constructor. `$sb.AppendLine('{0},{1}' -f $a, $b)`
 silently starves `-f` of its second value; it needs doubled parens.
+
+## Claude notes from 2026-09-30 run.
+
+### Top bucket (B0) is now the rolling last hour, from measured gauges
+
+B0 used to show `current.precipitation` from `om.json`. That value is a
+**15-minute** sum (`current.interval` = 900), and in `om.json` it is ECMWF's
+3-hourly forecast spread evenly — a forecast, not a measurement.
+
+B0 now reads, in order of preference:
+1. **`ks_precip_lasthour.txt`** — one line, `asof,inches`. Written by
+   `KSPrecipFetch.ps1` from the 5-minute `PRECIP` rows (`int=5min`) of the same
+   stations and IDW weights as the daily figure. Ignored when `asof` is more
+   than 30 min old (`HOUR_MAX_AGE`), so a failed fetch cannot leave stale water
+   in the bucket. The name ends in `.txt` on purpose: `.gitignore` excludes
+   `*.txt`, and `GitPush.ps1` runs `git add -A`.
+2. **Model rolling hour** — the four `minutely_15` slots ending at
+   `current.time` in `om_hrrr.json` (`OM_HRRR_URL` now requests
+   `minutely_15=precipitation&past_minutely_15=4&forecast_minutely_15=1`).
+3. The bare 15-minute value, only if both of the above are missing.
+
+`RainBuckets_log.txt` records which one was used: `hour=0.000(gauge|model|15min)`.
+`isRaining` (drops + rain icon) and the drop count are unchanged — still the
+15-minute model value from `om.json`, logged as `now15=`.
+
+**Mesonet timestamp facts (verified, needed for any sub-daily work):**
+- Stamps are fixed **CST (UTC-6) all year, no DST**. Checked against sunrise:
+  the pyranometer's first light is stamped 06:15 on 2026-09-30, which is only
+  possible in CST (sunrise was 07:31 CDT). The script therefore computes "now"
+  as `UtcNow - 6h`, not from the local clock.
+- Each row labels the **end** of its interval; twelve 5-minute rows sum exactly
+  to the hourly row stamped at their last timestamp.
+- 5-minute rows land within about 5-7 minutes of real time.
 
 ## Instructions for Claude (ignore for now)
 - [x] Extend rain indicator bars over the entire air temp graph, one for each day. Past = actual precip, today = Forcast in alpha 180 + actual in alpha 255, future = forecast precip (as is)
